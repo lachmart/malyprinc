@@ -131,6 +131,8 @@ lp_space._server_load_space_object = function() {
                                 {"id":1, "name":"Země", "x":null, "y":null, "picture":null, "size":null, "color": "blue", "type":"earth"},
                                 {"id":2, "name":null, "x":300, "y":100, "picture":null, "size":null,"color": "white", "type":"standard_planet"},
                                 {"id":3, "name":"Tutu", "x":600, "y":600, "picture":null, "size":null,"color": "white", "type":"standard_planet"},
+                                {"id":4, "name":"Jupiter", "x":1200, "y":600, "picture":null, "size":null,"color": "white", "type":"standard_planet"},
+                                {"id":5, "name":"Merkur", "x":1100, "y":200, "picture":null, "size":null,"color": "white", "type":"standard_planet"},
                             ]
                             };
     return json_from_server;

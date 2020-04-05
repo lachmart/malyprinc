@@ -7,6 +7,7 @@ lp_planet.earth = undefined;
 lp_planet.planets = {};
 lp_planet.planet_data = {};
 lp_planet.measure = undefined;
+lp_planet.measure_title = undefined;
 lp_planet.measure_source_id = undefined;
 lp_planet.measure_target_id = undefined;
 
@@ -68,7 +69,7 @@ lp_planet.create_earth = function (earth_data) {
     lp_planet.planet_data[planet_key].actual_x = lp_planet.earth.x();
     lp_planet.planet_data[planet_key].actual_y = lp_planet.earth.y();
 
-    lp_planet.earth.on('click', lp_planet.remove_measure);
+    lp_planet.earth.on('click', lp_pilot.start_flight);
 
     lp_space.add_to_space(lp_planet.earth);
 };
@@ -82,27 +83,40 @@ lp_planet.click = function(planet_id) {
         console.log("Invalid planet "+planet_id+".");
         return false;
     }
-    planet_data = lp_planet.planet_data[planet_id];
+    var planet_data = lp_planet.planet_data[planet_id];
 
     if (lp_pilot.get_pilot_position() === planet_id) {
         console.log("Navigation on same planet is not allowed.");
         return;
     }
 
-    if (planet_data.name === null) {
-        plane_name = "nepojmenovaná";
-    } else {
-        plane_name = planet_data.name;
-    }
+    var planet_name = lp_planet.get_planet_name(planet_id);
 
     // check if pilot is on planet.
     if (lp_pilot.is_on_planet()) {
-        if (confirm("Přejete si letět na planetu: "+plane_name+" ?")) {
+        if (confirm("Přejete si letět na planetu: "+planet_name+" ?")) {
             lp_planet.add_measure(lp_pilot.get_pilot_position(), planet_id)
         }
     } else {
         console.log("Pilot cannot navigate, because is on the way.");
     }
+};
+
+/**
+ * Get planet name
+ * @param planet_id
+ * @returns {string|*}
+ */
+lp_planet.get_planet_name = function(planet_id) {
+    var planet_data = lp_planet.planet_data[planet_id];
+
+    var planet_name;
+    if (planet_data.name === null) {
+        planet_name = "nepojmenovaná";
+    } else {
+        planet_name = planet_data.name;
+    }
+    return planet_name;
 };
 
 /**
@@ -127,6 +141,7 @@ lp_planet.add_measure = function(source_id, target_id) {
     lp_planet.measure_target_id = target_id;
 
     if (lp_planet.measure === undefined) {
+        // add line
         lp_planet.measure = new Konva.Line({
             points: [source.x(), source.y(), target.x(), target.y()],
             stroke: 'white',
@@ -134,11 +149,49 @@ lp_planet.add_measure = function(source_id, target_id) {
             dash: [4, 5]
         });
         lp_space.add_to_space(lp_planet.measure);
+        lp_planet._add_text_measure(source, target);
+
     } else {
+        // update line
         lp_planet.measure.points([source.x(), source.y(), target.x(), target.y()]);
+        // update text to line
+        lp_planet.measure_title.destroy();
+        lp_planet._add_text_measure(source, target);
     }
     lp_space.draw();
-    alert(lp_planet.get_distance_from_measure());
+};
+
+/**
+ * Add text to line of measure
+ * @param source object
+ * @param target object
+ * @private
+ */
+lp_planet._add_text_measure = function(source, target) {
+    var measured_distance = lp_planet.get_distance_from_measure();
+
+    x1 = ((source.x()+target.x())/2);
+    y1  = ((source.y()+target.y())/2);
+
+    var multiplier = 1;
+    if (source.y()<target.y() && source.x()>target.x()) {
+        multiplier = -1;
+    }
+    if (source.y()>target.y() && source.x()<target.x()) {
+        multiplier = -1;
+    }
+
+    lp_planet.measure_title = new Konva.Text({
+        x: x1,
+        y: y1,
+        text: measured_distance["distance"]+" "+measured_distance["angle"],
+        rotation: multiplier*(measured_distance["angle"]),
+        fontSize: 10,
+        fontFamily: 'Calibri',
+        fill: 'white'
+    });
+
+    lp_space.add_to_space(lp_planet.measure_title);
 };
 
 /**
@@ -152,9 +205,13 @@ lp_planet.get_distance_from_measure = function() {
         var target_x = lp_planet.planet_data[lp_planet.measure_target_id].x;
         var target_y = lp_planet.planet_data[lp_planet.measure_target_id].y;
 
-        var a = (source_x)-(target_x);
-        var b = (source_y)-(target_y);;
-        return Math.round(Math.sqrt(Math.pow(a,2)+Math.pow(b,2)));
+        var a = Math.abs((source_x)-(target_x));
+        var b = Math.abs((source_y)-(target_y));
+        var c = Math.abs(Math.sqrt(Math.pow(a,2)+Math.pow(b,2)));
+
+        var angle = Math.round(180-90-(Math.asin(a/c)* (180/Math.PI)));
+
+        return {"distance": Math.round(c), "angle": angle};
     }
     return null;
 };
@@ -167,6 +224,8 @@ lp_planet.remove_measure = function() {
     if (lp_planet.measure !== undefined) {
         lp_planet.measure.destroy();
         lp_planet.measure = undefined;
+        lp_planet.measure_title.destroy();
+        lp_planet.measure_title = undefined;
         lp_planet.measure_source_id = undefined;
         lp_planet.measure_target_id = undefined;
     }

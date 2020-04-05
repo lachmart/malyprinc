@@ -40,7 +40,6 @@ lp_pilot._server_load_pilot_data = function() {
     return json_from_server;
 };
 
-
 /**
  * return if pilot is on planet or not
  * @returns {boolean}
@@ -118,8 +117,8 @@ lp_pilot._add_avatar = function(avatar_type, id) {
                   x: planet.actual_x,
                   y: planet.actual_y,
                   radius: 10*lp_space.scale_width,
-                  fill: "black",
-                  stroke: "black",
+                  fill: "gray",
+                  stroke: "gray",
                   strokeWidth: 1
              });
              lp_space.add_to_space(lp_pilot.avatar);
@@ -129,5 +128,20 @@ lp_pilot._add_avatar = function(avatar_type, id) {
             // id is flight
             // TODO avatar on flight
             break
+    }
+};
+
+/**
+ * start flight
+ */
+lp_pilot.start_flight = function() {
+    if (lp_pilot.is_on_planet() && lp_planet.measure_target_id !== undefined) {
+        lp_planet.get_planet_name(lp_planet.measure_target_id);
+        if (confirm("Opravdu si ůpřejete zahájit let na planetu: "+lp_planet.get_planet_name(lp_planet.measure_target_id)+"?")) {
+            console.log("Flight was started.");
+            // TODO send to server;
+        }
+    } else {
+        alert("Nelze zahájit let. Je třeba zadat vzdálenost a úhel letu.");
     }
 };
