@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+
+	<title>{ifset title}{include title|stripHtml} | {/ifset}Nette Web</title>
+		{block scripts}
+			<script src="{$basePath}/js/jquery-3.4.1.min.js"></script>
+			<script src="{$basePath}/js/netteForms.min.js"></script>
+			<script src="{$basePath}/js/nette.ajax.js"></script> {* Nette Ajax depens on jQuery *}
+		{/block}
+		<script>
+		$(function () {
+		$.nette.init();
+		});
+		</script>
+</head>
+
+<body>
+	<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
+
+	{include content}
+
+
+
+</body>
+</html>

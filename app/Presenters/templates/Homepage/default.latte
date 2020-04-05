@@ -1,0 +1,26 @@
+{block content}
+	<h1 n:block="title">Přihlášený uživatel</h1>
+
+		<a n:href="Homepage:fly 4" class="ajax">Fly! (json zdroj s parametry)</a>
+			{* <a n:href="changeVariable!" class="ajax">Change variable!</a> *}
+
+			{snippet ajaxChange}
+				{$anyVariable}
+			{/snippet}
+
+			<a n:href="changeVariable!" class="ajax">Change variable! (using nette variables)</a>
+
+<script>
+$.getJSON( "ajax/fly",  { id: "John", time: "2pm" }, function( data ) {
+  var items = [];
+  $.each( data, function( key, val ) {
+    items.push( "<li id='" + key + "'>" + val + "</li>" );
+  });
+
+  $( "<ul/>", {
+    "class": "my-new-list",
+    html: items.join( "" )
+  }).appendTo( "body" );
+});
+</script>
+{/block}
