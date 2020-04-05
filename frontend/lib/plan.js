@@ -50,7 +50,7 @@ lp_space.recalculate_space = function() {
  * @private
  */
 lp_space._createStage = function() {
-    console.log("Creating Little prince space.");
+    console.log("Creating Little prince environment.");
     lp_space.stage = new Konva.Stage({
         container: lp_space.div_space_id,
         width: lp_space.basic_width*lp_space.scale_width,
@@ -72,7 +72,7 @@ lp_space._createStage = function() {
     });
 
     lp_space.stage.add(lp_space._layer);
-    lp_space._layer.add(lp_space._area);
+    lp_space.add_to_space(lp_space._area);
     lp_space._add_plannets();
     lp_space.draw();
 };
@@ -84,6 +84,15 @@ lp_space.draw = function() {
     console.log("Rendering space.");
     lp_space._layer.draw();
 };
+
+/**
+ * Add object to space without render
+ * @param object
+ */
+lp_space.add_to_space = function(object) {
+    lp_space._layer.add(object);
+};
+
 
 /**
  * Add planets from server
@@ -119,9 +128,9 @@ lp_space._server_load_space_object = function() {
     // TODO backend loading
     var json_from_server = {
                             "planet":[
-                                {"id":"1", "name":"Země", "x":null, "y":null, "picture":null, "size":null, "color": "blue", "type":"earth"},
-                                {"id":"2", "name":null, "x":300, "y":100, "picture":null, "size":null,"color": "white", "type":"standard_planet"},
-                                {"id":"3", "name":"Tutu", "x":600, "y":600, "picture":null, "size":null,"color": "white", "type":"standard_planet"},
+                                {"id":1, "name":"Země", "x":null, "y":null, "picture":null, "size":null, "color": "blue", "type":"earth"},
+                                {"id":2, "name":null, "x":300, "y":100, "picture":null, "size":null,"color": "white", "type":"standard_planet"},
+                                {"id":3, "name":"Tutu", "x":600, "y":600, "picture":null, "size":null,"color": "white", "type":"standard_planet"},
                             ]
                             };
     return json_from_server;
