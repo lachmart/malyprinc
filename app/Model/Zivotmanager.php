@@ -65,13 +65,14 @@ class ZivotManager
 		shuffle($specialIds);
 			$time = time();
 		foreach ($specialIds as $specialId) {
-			$time += 3*24*3600;
+		//	$time += 3*24*3600;
 			$values= [
 				'userId' => $userId,
 				'specialId' => $specialId,
 				'date'  => date('Y-m-d', $time)
 			];
 			$this->database->table('specialUser')->insert($values);
+			$time +=24*3600;
 		}
 	}
 	public function getTotal($userId, $date)
