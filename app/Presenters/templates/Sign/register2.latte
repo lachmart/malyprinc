@@ -1,0 +1,11 @@
+{block content}
+  pomoz nám doplnit zbytek informací a můžeme jít na to!
+      {$email}{$invitedBy}
+      {if $invitedBy}
+        Pozvaný
+        {control registerInvitedForm }
+      {else}
+        Skaut
+        {control registerSkautForm }
+      {/if}
+{/block}

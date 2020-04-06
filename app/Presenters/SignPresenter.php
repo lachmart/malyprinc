@@ -18,10 +18,18 @@ class SignPresenter extends Nette\Application\UI\Presenter
   /** @var UserManager */
   protected $userManager;
 
+/** @persistent */
+  public $email;
+/** @persistent */
+  public $invitedBy;
+
+
   public function __construct(Nette\Security\Passwords $passwords, UserManager $userManager)
 	{
     $this->passwords = $passwords;
     $this->userManager = $userManager;
+    if(!isset($this->invitedBy))
+      $this->invitedBy = 0;
 	}
 
   public function actionDefault()
@@ -36,39 +44,115 @@ class SignPresenter extends Nette\Application\UI\Presenter
   protected function createComponentRegisterForm()
 	{
     $form = new Form;
-    // mohu použít $this->database
-    $form->addText('username', 'jméno')->setRequired('Zadejte prosím jméno');
-    $form->addPassword('password', 'heslo');
+    $form->addEmail('email', 'Tvůj E-mail:')->setRequired('Zadej prosím email');
     $form->addSubmit('send', 'Registrovat');
     $form->onSuccess[] = [$this, 'registerFormSucceded'];
 
     return $form;
 	}
 
+  public function actionOut()
+  {
+    $this->user->logout();
+    $this->flashMessage('Byl jsi odhlášen', 'alert alert-success');
+    $this->redirect('Homepage:default');
+  }
+
   public function registerFormSucceded($form, $values)
   {
-    $values->password = $this->passwords->hash($values->password);
-    try {
-      //$this->user->login($values->name, $values->pass);
-      $row = $this->userManager->addUser($values);
-    } catch (Nette\Database\UniqueConstraintViolationException $e) {
-      $form->addError('Zvolené uživatelské jméno není unikátní.');
-    }
-    $this->flashMessage('Registrace proběhla úspěšně', 'alert alert-success');
-$this->redirect('Homepage:default');
+
+      if(isset($this->userManager->getUserByEmail($values->email)->email)) {
+          $this->flashMessage('Tento email už je zaregistrován. Zapomněl jsi heslo?', 'alert alert-danger');
+          return;
+        }
+
+      $this->email = $values->email;
+      $invitation = $this->userManager->isInvited($values->email);
+      if(isset($invitation->InvitedBy)) {
+          $this->flashMessage('Pozvaný člověk, který se chce registrovat', 'alert alert-success');
+          $this->invitedBy = $invitation->invitedBy;
+        }
+        else {
+          $this->flashMessage('Nový člověk, kterýmusí být skaut', 'alert alert-success');
+      }
+      $this->redirect('Sign:register2');
+  }
+
+  public function renderRegister2(){
+    $this->template->email = $this->email;
+    $this->template->invitedBy =  $this->invitedBy;
+  }
+private function createRegister2Form()
+	{
+    $form = new Form;
     // mohu použít $this->database
-    // zpracovani formulare
+    $form->addText('email', 'email')->setHtmlAttribute('readonly');
+    $form->addText('nickname', 'Přezdívka')->setRequired("Zadej prosím přezdívku, ať vím jak ti říkat");
+    $form->addText('name', 'Jméno a příjmení')->setRequired("Přezdívka je důležitější, ale rádi bychom věděli, jak se jmenuješ.");
+
+    $form->addPassword('password', 'heslo')->setRequired("Heslo je potřeba, aby ses mohl přihlásit");
+
+    $vekove_kategorie = [
+      '1' => '0 - 8 let',
+      '2' => '9 - 14 let',
+      '3'  => '15 a více let',
+    ];
+    $form->addSelect('age', 'Věk:', $vekove_kategorie)
+       ->setPrompt('Zvol svou věkovou kategorii')->setRequired();
+
+    $form->addSubmit('send', 'Registrovat');
+    $form->onSuccess[] = [$this, 'register2FormSucceded'];
+    $form->setDefaults(['email'=>$this->email]);
+    return $form;
+	}
+
+  protected function createComponentRegisterSkautForm()
+	{
+    $form = $this->createRegister2Form();
+
+    $form->addCheckbox('isSkaut', 'Jsem skaut')->setRequired("Tady se mohou registrovat pouze skauti. Chceš i tak hrát? Zařiď si pozvánku od kamaráda, který už hraje ;)");
+    $form->addText('stredisko', 'Středisko')->setRequired("Jsi z toho nejlepšího střediska?")
+    ->addRule(Form::INTEGER, 'Zadej prosím pouze číslo, například 4.');
+    $form->addText('oddil', 'Oddíl')->setRequired("Jak si vede tvůj oddíl?");
+
+    return $form;
+	}
+
+  protected function createComponentRegisterInvitedForm()
+	{
+    $form = $this->createRegister2Form();
+
+    $form->addCheckbox('isSkaut', 'Jsem skaut');
+    $form->addText('stredisko', 'Středisko')
+    ->addRule(Form::INTEGER, 'Zadej prosím pouze číslo, například 4.');
+    $form->addText('oddil', 'Oddíl');
+    $form->addText('invitedBy', 'Pozvánka od:');
+    $form->setDefaults(['invitedBy'=>$this->invitedBy]);
+
+    return $form;
+	}
+
+  public function register2FormSucceded($form, $values)
+  {
+      if(isset($this->userManager->getUserByEmail($values->email)->email)){
+          $this->flashMessage('Tento email už je zaregistrován. Zapomněl jsi heslo?', 'alert alert-danger');
+          $this->redirect('Sign:forgot');
+    }
+      $values->password = $this->passwords->hash($values->password);
+      $this->userManager->addUser($values);
+      $this->flashMessage('Registrace proběhla úspěšně', 'alert alert-success');
+      $this->redirect('Sign:in');
+
   }
 
   protected function createComponentSignForm()
 	{
     $form = new Form;
-    // mohu použít $this->database
-    $form->addText('name', 'jméno');
-    $form->addPassword('pass', 'heslo');
+    $form->addEmail('email', 'Email');
+    $form->addPassword('password', 'Heslo');
     $form->addSubmit('send', 'Přihlásit');
     $form->onSuccess[] = array($this, 'signInFormSucceeded');
-
+    $form->setDefaults(['email'=>$this->email]);
 		return $form;
 	}
 
@@ -79,8 +163,7 @@ $this->redirect('Homepage:default');
 
     $values = $form->getValues();
     try {
-  	// pokusíme se přihlásit uživatele...
-  	  $this->user->login($values->name, $values->pass);
+  	  $this->user->login($values->email, $values->password);
     } catch (Nette\Security\AuthenticationException $e) {
       $this->flashMessage('Nesprávné přihlašovací jméno nebo heslo.', 'alert alert-danger');
 
@@ -91,7 +174,6 @@ $this->redirect('Homepage:default');
   protected function createComponentForgotForm()
 	{
     $form = new Form;
-    // mohu použít $this->database
     $form->addEmail('email', 'email')->setRequired('Zadejte prosím email');
     $form->addSubmit('send', 'Zapomenout');
     $form->onSuccess[] = [$this, 'forgotsFormSucceeded'];

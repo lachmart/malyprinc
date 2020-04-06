@@ -19,7 +19,7 @@ class Authenticator implements NS\IAuthenticator
 		[$username, $password] = $credentials;
 
 		$row = $this->database->table('user')
-			->where('username', $username)->fetch();
+			->where('email', $username)->fetch();
 
 		if (!$row) {
 			throw new Nette\Security\AuthenticationException('User not found.');
@@ -29,6 +29,6 @@ class Authenticator implements NS\IAuthenticator
 			throw new Nette\Security\AuthenticationException('Invalid password.');
 		}
 
-		return new Nette\Security\Identity($row->id, 'user', ['username' => $row->username]);
+		return new Nette\Security\Identity($row->id, 'user', ['email' => $row->email]);
 	}
 }

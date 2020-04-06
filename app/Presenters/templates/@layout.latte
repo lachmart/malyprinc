@@ -18,8 +18,24 @@
 </head>
 
 <body>
-	<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
+<div id='menu'>
+	{if $user->loggedIn}
+<a n:href="Homepage:default">mapa</a>
+<a n:href="Denik:prukaz">průkaz</a>
+<a n:href="Denik:zivot">systém podpory života</a>
+<a n:href="Denik:objevy">Objevy</a>
+<a n:href="Denik:navigace">Navigace</a>
+<a n:href="Denik:denni">denní zápis</a>
+<a n:href="Sign:out">odhlásit se</a>
+{else}
+<a n:href="Sign:in">přihlásit se</a>
+<a n:href="Sign:register">registrovat</a>
+<a n:href="Sign:forgot">zapomenuté heslo</a>
+{/if}
 
+
+</div>
+		<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
 	{include content}
 
 

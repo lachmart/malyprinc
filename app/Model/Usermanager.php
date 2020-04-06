@@ -31,5 +31,13 @@ class UserManager
 	{
 			return $this->database->table($this->table)->insert($values);
 	}
+	public function updateUser($values)
+	{
+			return $this->database->table($this->table)->where('email', $values->email)->update($values);
+	}
+	public function isInvited($email)
+	{
+			return $this->database->table('invitations')->where('invitedEmail', $email)->fetch();
+	}
 
 }
