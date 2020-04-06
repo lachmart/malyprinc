@@ -1,6 +1,12 @@
 {block content}
 	<h1 n:block="title">Průkaz</h1>
 
+{if $pilotInfo->avatar}
+	<img src="{$basePath}/upload/avatars/{$user->id}.jpg">
+{else}
+	<img src="{$basePath}/upload/avatars/placeholder.jpg">
+{/if}<br><br>
+
 		Přezdívka:{$pilotInfo->nickname}<br>
 		email: {$pilotInfo->email}<br>
 		Jméno: {$pilotInfo->name}<br>
@@ -8,4 +14,7 @@
 		středisko: {$pilotInfo->stredisko}<br>
 		oddíl:{$pilotInfo->oddil}<br>
 		pozvaný:{$pilotInfo->invitedBy}<br>
+
+
+		<a n:href="Sign:change">Změnit údaje</a>
 {/block}

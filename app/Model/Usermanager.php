@@ -33,7 +33,7 @@ class UserManager
 	}
 	public function updateUser($values)
 	{
-			return $this->database->table($this->table)->where('email', $values->email)->update($values);
+			return $this->database->table($this->table)->where('id', $values->id)->update($values);
 	}
 	public function isInvited($email)
 	{

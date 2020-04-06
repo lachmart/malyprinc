@@ -8,6 +8,7 @@ use Nette;
 use App\Components;
 use Nette\Application\UI\Form;
 use App\Model\UserManager;
+use Nette\Utils\Image;
 
 
 class SignPresenter extends Nette\Application\UI\Presenter
@@ -86,11 +87,17 @@ private function createRegister2Form()
 	{
     $form = new Form;
     // mohu použít $this->database
-    $form->addText('email', 'email')->setHtmlAttribute('readonly');
+    $form->addHidden('email', 'email');
     $form->addText('nickname', 'Přezdívka')->setRequired("Zadej prosím přezdívku, ať vím jak ti říkat");
     $form->addText('name', 'Jméno a příjmení')->setRequired("Přezdívka je důležitější, ale rádi bychom věděli, jak se jmenuješ.");
 
     $form->addPassword('password', 'heslo')->setRequired("Heslo je potřeba, aby ses mohl přihlásit");
+    $form->addUpload('avatar', 'Foto:')
+    	->addRule(Form::IMAGE, 'Avatar musí být JPEG, PNG nebo GIF.')
+    ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 3 mB.', 3 * 1024 * 1024 /* v bytech */)
+    ->setDefaultValue('file');
+  //  ->addCondition(!$form::FILLED)
+    //->addFilter(function () {return null;});
 
     $vekove_kategorie = [
       '1' => '0 - 8 let',
@@ -100,8 +107,7 @@ private function createRegister2Form()
     $form->addSelect('age', 'Věk:', $vekove_kategorie)
        ->setPrompt('Zvol svou věkovou kategorii')->setRequired();
 
-    $form->addSubmit('send', 'Registrovat');
-    $form->onSuccess[] = [$this, 'register2FormSucceded'];
+
     $form->setDefaults(['email'=>$this->email]);
     return $form;
 	}
@@ -114,7 +120,8 @@ private function createRegister2Form()
     $form->addText('stredisko', 'Středisko')->setRequired("Jsi z toho nejlepšího střediska?")
     ->addRule(Form::INTEGER, 'Zadej prosím pouze číslo, například 4.');
     $form->addText('oddil', 'Oddíl')->setRequired("Jak si vede tvůj oddíl?");
-
+    $form->addSubmit('send', 'Registrovat');
+    $form->onSuccess[] = [$this, 'register2FormSucceded'];
     return $form;
 	}
 
@@ -126,11 +133,13 @@ private function createRegister2Form()
     $form->addText('stredisko', 'Středisko')
     ->addRule(Form::INTEGER, 'Zadej prosím pouze číslo, například 4.');
     $form->addText('oddil', 'Oddíl');
-    $form->addText('invitedBy', 'Pozvánka od:');
+    $form->addHidden('invitedBy', 'Pozvánka od:');
     $form->setDefaults(['invitedBy'=>$this->invitedBy]);
-
+    $form->addSubmit('send', 'Registrovat');
+    $form->onSuccess[] = [$this, 'register2FormSucceded'];
     return $form;
 	}
+
 
   public function register2FormSucceded($form, $values)
   {
@@ -138,10 +147,80 @@ private function createRegister2Form()
           $this->flashMessage('Tento email už je zaregistrován. Zapomněl jsi heslo?', 'alert alert-danger');
           $this->redirect('Sign:forgot');
     }
-      $values->password = $this->passwords->hash($values->password);
-      $this->userManager->addUser($values);
+
+      if($values->password)
+        $values->password = $this->passwords->hash($values->password);
+      else {
+        $values->offsetUnset('password');
+      }
+
+
+
+      if($values->avatar->hasFile()) {
+        $this->saveAvatar($values->avatar->toImage());
+        $values->avatar = 1;
+      }
+      else {
+        $values->offsetUnset('avatar');
+      }
       $this->flashMessage('Registrace proběhla úspěšně', 'alert alert-success');
       $this->redirect('Sign:in');
+
+  }
+
+  protected function createComponentChangeForm()
+  {
+    $form = new Form;
+    // mohu použít $this->database
+    $form->addHidden('email', 'email');
+    $form->addText('nickname', 'Přezdívka')->setRequired("Zadej prosím přezdívku, ať vím jak ti říkat");
+    $form->addText('name', 'Jméno a příjmení')->setRequired("Přezdívka je důležitější, ale rádi bychom věděli, jak se jmenuješ.");
+
+    $form->addPassword('password', 'heslo');
+    $form->addUpload('avatar', 'Foto:')
+      ->addRule(Form::IMAGE, 'Avatar musí být JPEG, PNG nebo GIF.')
+    ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 3 mB.', 3 * 1024 * 1024 /* v bytech */)
+    ->setDefaultValue('file');
+  //  ->addCondition(!$form::FILLED)
+    //->addFilter(function () {return null;});
+
+    $vekove_kategorie = [
+      '1' => '0 - 8 let',
+      '2' => '9 - 14 let',
+      '3'  => '15 a více let',
+    ];
+    $form->addSelect('age', 'Věk:', $vekove_kategorie)
+       ->setPrompt('Zvol svou věkovou kategorii')->setRequired();
+    $form->addText('stredisko', 'Středisko')
+    ->addRule(Form::INTEGER, 'Zadej prosím pouze číslo, například 4.');
+    $form->addText('oddil', 'Oddíl');
+    $form->setDefaults($this->userManager->getUserById($this->user->id));
+
+    $form->addSubmit('send', 'Změnit údaje');
+    $form->onSuccess[] = [$this, 'changeFormSucceded'];
+    return $form;
+  }
+
+  public function changeFormSucceded($form, $values)
+  {
+    $values->id = $this->user->id;
+
+      if($values->password)
+        $values->password = $this->passwords->hash($values->password);
+      else {
+        $values->offsetUnset('password');
+      }
+
+      if($values->avatar->hasFile()) {
+        $this->saveAvatar($values->avatar->toImage());
+        $values->avatar = 1;
+      }
+      else {
+        $values->offsetUnset('avatar');
+      }
+      $this->userManager->updateUser($values);
+      $this->flashMessage('Změna proběhla úspěšně', 'alert alert-success');
+      $this->redirect('Denik:prukaz');
 
   }
 
@@ -183,17 +262,22 @@ private function createRegister2Form()
 
   public function forgotsFormSucceeded(Form $form, $values)
   {
-    $token = Random::generate(10);
+    $values->id = $this->userManager->getUserByEmail($values->email)->id;
+    $values->token = Nette\Utils\Random::generate(10);
     try { ///update row zakaznik $values email
 
       //$this->user->login($values->name, $values->pass);
-      $row = $this->database->table('zakaznik')->insert($values);
+      $this->userManager->updateUser($values);
     } catch (Nette\Database\UniqueConstraintViolationException $e) {
-
-
       return;
     }
+    $this->flashMessage('Nic se nestalo. Napiš nám na podporu.', 'alert alert-danger');
   }
 
+  public function saveAvatar(Image $avatar)
+  {
+    $avatar->resize(300, 300, Image::EXACT);
+    $avatar->save('upload/avatars/'.$this->user->id.'.jpg', 80, Image::JPEG);
+  }
 
 }
