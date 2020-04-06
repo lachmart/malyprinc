@@ -36,7 +36,7 @@ lp_pilot._server_load_pilot_data = function() {
                                     "rank_name":"unknown",
                                     "category_id":1,
                                     "category_name":"skauti/skautky od 6 do 9 třídy",
-                                    "actual_position": 5987,
+                                    "actual_position": 1,
                                     "actual_flight": null
                                 };
 

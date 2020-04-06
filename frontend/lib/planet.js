@@ -48,6 +48,9 @@ lp_planet.create_planet = function (planet_data, picture_obj) {
          image: picture_obj,
          width: planet_data.size*lp_space.scale_width,
          height: planet_data.size*lp_space.scale_width,
+         shadowColor: 'black',
+         shadowBlur: 15,
+         shadowOffset: { x: 4, y: 4 },
     });
 
     lp_planet.planet_data[planet_key] = planet_data;
@@ -96,7 +99,10 @@ lp_planet.create_earth = function (earth_data) {
           y: (lp_space.stage.height()/2)-((earth_data.size*lp_space.scale_width)/2),
           image: lp_img_earth,
           width: earth_data.size*lp_space.scale_width,
-          height: earth_data.size*lp_space.scale_width
+          height: earth_data.size*lp_space.scale_width,
+          shadowColor: 'black',
+          shadowBlur: 15,
+          shadowOffset: { x: 4, y: 4 },
         });
 
     var planet_key = lp_planet.add_planet_prefix(earth_data.id);
@@ -108,6 +114,7 @@ lp_planet.create_earth = function (earth_data) {
     lp_planet.planet_data[planet_key].actual_y = lp_planet.earth.y()+((earth_data.size*lp_space.scale_width)/2);
 
     lp_planet.earth.on('click', lp_pilot.start_flight);
+    lp_planet.earth.on('tap', lp_pilot.start_flight);
 
     lp_space.add_to_space(lp_planet.earth);
 };
