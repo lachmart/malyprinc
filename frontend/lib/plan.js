@@ -138,7 +138,7 @@ lp_space._server_load_space_object = function() {
                                 {"id":1, "name":"Země", "custom_name":null,"x":null, "y":null, "size":150, "type":"earth"},
                                 {"id":2346, "name":null, "custom_name": null, "x":300, "y":100, "size":70, "type":"standard_planet"},
                                 {"id":3245, "name":"Tutu", "custom_name":null, "x":600, "y":600, "size":40, "type":"standard_planet"},
-                                {"id":4125, "name":"Dejmalova", "custom_name":null, "x":1200, "y":700, "size":50, "type":"special_planet"},
+                                {"id":4125, "name":"Dejmalova", "custom_name":null, "x":1300, "y":700, "size":50, "type":"special_planet"},
                                 {"id":5987, "name":"Vojačkova", "custom_name":null, "x":1100, "y":200, "size":80, "type":"standard_planet"},
                                 {"id":7865, "name":"Proxima", "custom_name":null, "x":324, "y":500, "size":60, "type":"special_planet"},
                             ]

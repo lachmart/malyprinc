@@ -7,9 +7,14 @@ var lp_pilot = function () {};
 var lp_img_lp = new Image();
 lp_img_lp.src = 'assets/lp.png';
 
+var lp_img_tooltip = new Image();
+lp_img_tooltip.src = 'assets/tooltip.png';
+
+var lp_img_pilot = new Image();
 
 lp_pilot.data = undefined;
 lp_pilot.avatar = undefined;
+lp_pilot.tooltip = undefined;
 
 /**
  * Loading pilot data to main plan
@@ -18,6 +23,11 @@ lp_pilot.init = function() {
     lp_pilot.data = lp_pilot._server_load_pilot_data();
     if (!lp_pilot._add_pilot_position()) {
         return false;
+    }
+
+    if (lp_pilot.data.photo !== null) {
+        console.log("Loading pilot photo.");
+        lp_pilot.load_picture(lp_pilot.data.photo);
     }
 
     // TODO continue
@@ -37,7 +47,8 @@ lp_pilot._server_load_pilot_data = function() {
                                     "category_id":1,
                                     "category_name":"skauti/skautky od 6 do 9 třídy",
                                     "actual_position": 1,
-                                    "actual_flight": null
+                                    "actual_flight": null,
+                                    "photo": null
                                 };
 
     console.log("Pilot data loaded.");
@@ -128,6 +139,10 @@ lp_pilot._add_avatar = function(avatar_type, id) {
                   shadowOffset: { x: 4, y: 4 },
              });
              lp_space.add_to_space(lp_pilot.avatar);
+
+             lp_pilot.avatar.on('click', lp_pilot._add_tooltip);
+             lp_pilot.avatar.on('tap', lp_pilot._add_tooltip);
+
              lp_space.draw();
              break;
         case 2:
@@ -136,6 +151,56 @@ lp_pilot._add_avatar = function(avatar_type, id) {
             break
     }
     console.log("Avatar of pilot added");
+};
+
+/**
+ * add small tooltip
+ * @private
+ */
+lp_pilot._add_tooltip = function() {
+     if (lp_pilot.tooltip===undefined) {
+
+         // protection
+         var x;
+         var scaleX;
+         if ((lp_pilot.avatar.x()+lp_pilot.avatar.width()+300) > lp_space.screen_width) {
+             x = lp_pilot.avatar.x();
+             scaleX = -1;
+         } else {
+             x = lp_pilot.avatar.x()+lp_pilot.avatar.width();
+             scaleX = 1;
+         }
+
+         lp_pilot.tooltip = new Konva.Image({
+              x: x,
+              y: lp_pilot.avatar.y()-20,
+              height: 155,
+              width: 300,
+              image: lp_img_tooltip,
+              shadowColor: 'black',
+              opacity: 0.4,
+              scaleX: scaleX,
+              shadowBlur: 15,
+              shadowOffset: { x: 4, y: 4 },
+         });
+
+         // TODO picture
+
+         lp_space.add_to_space(lp_pilot.tooltip);
+         console.log("Tooltip of pilot loaded");
+     } else {
+         lp_pilot.tooltip.destroy();
+         lp_pilot.tooltip = undefined;
+     }
+     lp_space.draw();
+};
+
+/**
+ * Load base64
+ * @param base64
+ */
+lp_pilot.load_picture = function(base64) {
+    lp_img_pilot.src = 'data:image/jpg;base64,'+base64;
 };
 
 /**

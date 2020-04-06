@@ -101,7 +101,7 @@ lp_planet.create_earth = function (earth_data) {
           width: earth_data.size*lp_space.scale_width,
           height: earth_data.size*lp_space.scale_width,
           shadowColor: 'black',
-          shadowBlur: 15,
+          shadowBlur: 20,
           shadowOffset: { x: 4, y: 4 },
         });
 
