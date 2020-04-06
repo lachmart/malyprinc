@@ -4,11 +4,15 @@
  */
 var lp_pilot = function () {};
 
+var lp_img_lp = new Image();
+lp_img_lp.src = 'assets/lp.png';
+
+
 lp_pilot.data = undefined;
 lp_pilot.avatar = undefined;
 
 /**
- * Loading pilot data
+ * Loading pilot data to main plan
  */
 lp_pilot.init = function() {
     lp_pilot.data = lp_pilot._server_load_pilot_data();
@@ -32,7 +36,7 @@ lp_pilot._server_load_pilot_data = function() {
                                     "rank_name":"unknown",
                                     "category_id":1,
                                     "category_name":"skauti/skautky od 6 do 9 třídy",
-                                    "actual_position": 1,
+                                    "actual_position": 5987,
                                     "actual_flight": null
                                 };
 
@@ -113,13 +117,15 @@ lp_pilot._add_avatar = function(avatar_type, id) {
         case 1:
              var planet = lp_planet.planet_data[id];
             // id is planet
-             lp_pilot.avatar = new Konva.Circle({
-                  x: planet.actual_x,
-                  y: planet.actual_y,
-                  radius: 10*lp_space.scale_width,
-                  fill: "gray",
-                  stroke: "gray",
-                  strokeWidth: 1
+             lp_pilot.avatar = new Konva.Image({
+                  x: planet.actual_x-(30*lp_space.scale_height),
+                  y: planet.actual_y-(68*lp_space.scale_width),
+                  height: 68*lp_space.scale_width,
+                  width: 30*lp_space.scale_height,
+                  image: lp_img_lp,
+                  shadowColor: 'black',
+                  shadowBlur: 15,
+                  shadowOffset: { x: 4, y: 4 },
              });
              lp_space.add_to_space(lp_pilot.avatar);
              lp_space.draw();
@@ -129,6 +135,7 @@ lp_pilot._add_avatar = function(avatar_type, id) {
             // TODO avatar on flight
             break
     }
+    console.log("Avatar of pilot added");
 };
 
 /**
@@ -136,8 +143,15 @@ lp_pilot._add_avatar = function(avatar_type, id) {
  */
 lp_pilot.start_flight = function() {
     if (lp_pilot.is_on_planet() && lp_planet.measure_target_id !== undefined) {
+        result = lp_planet.get_distance_from_measure();
+
+        // Time to end
+        var actual_time = new Date();
+        var time_to_end = new Date();
+        time_to_end.setTime(actual_time.getTime()+(result["time_to_fligh"]*60*60*1000));
+
         lp_planet.get_planet_name(lp_planet.measure_target_id);
-        if (confirm("Opravdu si ůpřejete zahájit let na planetu: "+lp_planet.get_planet_name(lp_planet.measure_target_id)+"?")) {
+        if (confirm("Opravdu si přejete zahájit let na planetu: "+lp_planet.get_planet_name(lp_planet.measure_target_id)+"? Let bude trvat "+result["time_to_fligh"]+" hodin. Čas příletu "+time_to_end)) {
             console.log("Flight was started.");
             // TODO send to server;
         }

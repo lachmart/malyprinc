@@ -3,6 +3,11 @@
     @description: main class for handling space and area
  */
 
+/* images fro planet.js */
+var lp_img_space = new Image();
+lp_img_space.src = 'assets/space.jpg';
+
+
 var lp_space = function () {};
 
 // Global array
@@ -25,6 +30,7 @@ lp_space.scale_height = undefined;
 lp_space.init = function()
 {
     lp_space.recalculate_space();
+    lp_pilot.init();
 };
 
 /**
@@ -61,14 +67,12 @@ lp_space._createStage = function() {
     lp_space._layer = new Konva.Layer();
 
     // create space for events
-    lp_space._area = new Konva.Rect({
+    lp_space._area = new Konva.Image({
         x:0,
         y:0,
+        image: lp_img_space,
         width: lp_space.stage.width(),
         height: lp_space.stage.height(),
-        fill: 'black',
-        stroke: 'black',
-        strokeWidth: 1
     });
 
     lp_space.stage.add(lp_space._layer);
@@ -107,7 +111,10 @@ lp_space._add_plannets = function() {
                 lp_planet.create_earth(plannets.planet[pos]);
                 break;
             case "standard_planet":
-                lp_planet.create_standard_planet(plannets.planet[pos]);
+                lp_planet.create_planet(plannets.planet[pos], lp_img_planet);
+                break;
+            case "special_planet":
+                lp_planet.create_planet(plannets.planet[pos], lp_img_planet2);
                 break;
             case "warm_hole":
                 // code block
@@ -128,11 +135,12 @@ lp_space._server_load_space_object = function() {
     // TODO backend loading
     var json_from_server = {
                             "planet":[
-                                {"id":1, "name":"Země", "x":null, "y":null, "picture":null, "size":null, "color": "blue", "type":"earth"},
-                                {"id":2, "name":null, "x":300, "y":100, "picture":null, "size":null,"color": "white", "type":"standard_planet"},
-                                {"id":3, "name":"Tutu", "x":600, "y":600, "picture":null, "size":null,"color": "white", "type":"standard_planet"},
-                                {"id":4, "name":"Jupiter", "x":1200, "y":600, "picture":null, "size":null,"color": "white", "type":"standard_planet"},
-                                {"id":5, "name":"Merkur", "x":1100, "y":200, "picture":null, "size":null,"color": "white", "type":"standard_planet"},
+                                {"id":1, "name":"Země", "custom_name":null,"x":null, "y":null, "size":150, "type":"earth"},
+                                {"id":2346, "name":null, "custom_name": null, "x":300, "y":100, "size":70, "type":"standard_planet"},
+                                {"id":3245, "name":"Tutu", "custom_name":null, "x":600, "y":600, "size":40, "type":"standard_planet"},
+                                {"id":4125, "name":"Dejmalova", "custom_name":null, "x":1200, "y":700, "size":50, "type":"standard_planet"},
+                                {"id":5987, "name":"Vojačkova", "custom_name":null, "x":1100, "y":200, "size":80, "type":"standard_planet"},
+                                {"id":7865, "name":"Proxima", "custom_name":null, "x":324, "y":500, "size":60, "type":"special_planet"},
                             ]
                             };
     return json_from_server;

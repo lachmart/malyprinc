@@ -2,21 +2,15 @@
 <html>
   <head>
       <script src="https://unpkg.com/konva@4.2.2/konva.min.js"></script>
+
       <script src="lib/plan.js"></script>
       <script src="lib/planet.js"></script>
       <script src="lib/pilot.js"></script>
-      <script src="lib/test.js"></script>
+
       <meta charset="utf-8" />
       <title>Malý princ</title>
   </head>
-  <body>
-  <div id="lp_space"></div>
-
-    <script type="text/javascript" >
-        lp_space.init();
-        lp_pilot.init();
-        // test();
-    </script>
-
+  <body onload="lp_space.init()">
+    <div id="lp_space"></div>
   </body>
 </html>
