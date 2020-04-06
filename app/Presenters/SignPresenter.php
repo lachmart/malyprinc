@@ -8,6 +8,7 @@ use Nette;
 use App\Components;
 use Nette\Application\UI\Form;
 use App\Model\UserManager;
+use App\Model\ZivotManager;
 use Nette\Utils\Image;
 
 
@@ -18,6 +19,8 @@ class SignPresenter extends Nette\Application\UI\Presenter
 
   /** @var UserManager */
   protected $userManager;
+  /** @var ZivotManager */
+  protected $zivotManager;
 
 /** @persistent */
   public $email;
@@ -25,10 +28,11 @@ class SignPresenter extends Nette\Application\UI\Presenter
   public $invitedBy;
 
 
-  public function __construct(Nette\Security\Passwords $passwords, UserManager $userManager)
+  public function __construct(Nette\Security\Passwords $passwords, UserManager $userManager, ZivotManager $zivotManager)
 	{
     $this->passwords = $passwords;
     $this->userManager = $userManager;
+    $this->zivotManager = $zivotManager;
     if(!isset($this->invitedBy))
       $this->invitedBy = 0;
 	}
@@ -92,11 +96,7 @@ private function createRegister2Form()
     $form->addText('name', 'Jméno a příjmení')->setRequired("Přezdívka je důležitější, ale rádi bychom věděli, jak se jmenuješ.");
 
     $form->addPassword('password', 'heslo')->setRequired("Heslo je potřeba, aby ses mohl přihlásit");
-    $form->addUpload('avatar', 'Foto:')
-    	->addRule(Form::IMAGE, 'Avatar musí být JPEG, PNG nebo GIF.')
-    ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 3 mB.', 3 * 1024 * 1024 /* v bytech */)
-    ->setDefaultValue('file');
-  //  ->addCondition(!$form::FILLED)
+    //  ->addCondition(!$form::FILLED)
     //->addFilter(function () {return null;});
 
     $vekove_kategorie = [
@@ -115,7 +115,9 @@ private function createRegister2Form()
   protected function createComponentRegisterSkautForm()
 	{
     $form = $this->createRegister2Form();
-
+    $form->addUpload('avatar', 'Foto:')
+      ->addRule(Form::IMAGE, 'Avatar musí být JPEG, PNG nebo GIF.')
+    ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 3 mB.', 3 * 1024 * 1024 /* v bytech */);
     $form->addCheckbox('isSkaut', 'Jsem skaut')->setRequired("Tady se mohou registrovat pouze skauti. Chceš i tak hrát? Zařiď si pozvánku od kamaráda, který už hraje ;)");
     $form->addText('stredisko', 'Středisko')->setRequired("Jsi z toho nejlepšího střediska?")
     ->addRule(Form::INTEGER, 'Zadej prosím pouze číslo, například 4.');
@@ -128,6 +130,9 @@ private function createRegister2Form()
   protected function createComponentRegisterInvitedForm()
 	{
     $form = $this->createRegister2Form();
+    $form->addUpload('avatar', 'Foto:')
+      ->addRule(Form::IMAGE, 'Avatar musí být JPEG, PNG nebo GIF.')
+    ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 3 mB.', 3 * 1024 * 1024 /* v bytech */);
 
     $form->addCheckbox('isSkaut', 'Jsem skaut');
     $form->addText('stredisko', 'Středisko')
@@ -154,15 +159,20 @@ private function createRegister2Form()
         $values->offsetUnset('password');
       }
 
-
-
       if($values->avatar->hasFile()) {
-        $this->saveAvatar($values->avatar->toImage());
+        $image = $values->avatar->toImage();
         $values->avatar = 1;
       }
       else {
         $values->offsetUnset('avatar');
       }
+
+      $id = $this->userManager->addUser($values)->id;
+      if(isset($image)) {
+        $this->saveAvatar($image, $id);
+      }
+      $this->zivotManager->generateSpecial($id);
+
       $this->flashMessage('Registrace proběhla úspěšně', 'alert alert-success');
       $this->redirect('Sign:in');
 
@@ -179,8 +189,7 @@ private function createRegister2Form()
     $form->addPassword('password', 'heslo');
     $form->addUpload('avatar', 'Foto:')
       ->addRule(Form::IMAGE, 'Avatar musí být JPEG, PNG nebo GIF.')
-    ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 3 mB.', 3 * 1024 * 1024 /* v bytech */)
-    ->setDefaultValue('file');
+    ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 3 mB.', 3 * 1024 * 1024 /* v bytech */);
   //  ->addCondition(!$form::FILLED)
     //->addFilter(function () {return null;});
 
@@ -212,7 +221,7 @@ private function createRegister2Form()
       }
 
       if($values->avatar->hasFile()) {
-        $this->saveAvatar($values->avatar->toImage());
+        $this->saveAvatar($values->avatar->toImage(), $values->id);
         $values->avatar = 1;
       }
       else {
@@ -262,6 +271,7 @@ private function createRegister2Form()
 
   public function forgotsFormSucceeded(Form $form, $values)
   {
+    $this->zivotManager->generateSpecial($this->userManager->getUserByEmail($values->email)->id);
     $values->id = $this->userManager->getUserByEmail($values->email)->id;
     $values->token = Nette\Utils\Random::generate(10);
     try { ///update row zakaznik $values email
@@ -274,10 +284,10 @@ private function createRegister2Form()
     $this->flashMessage('Nic se nestalo. Napiš nám na podporu.', 'alert alert-danger');
   }
 
-  public function saveAvatar(Image $avatar)
+  public function saveAvatar(Image $avatar, $userId)
   {
     $avatar->resize(300, 300, Image::EXACT);
-    $avatar->save('upload/avatars/'.$this->user->id.'.jpg', 80, Image::JPEG);
+    $avatar->save('upload/avatars/'.$userId.'.jpg', 80, Image::JPEG);
   }
 
 }

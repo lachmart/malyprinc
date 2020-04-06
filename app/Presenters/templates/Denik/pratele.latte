@@ -1,5 +1,12 @@
 {block content}
 	<h1 n:block="title">Přátelé a pozvánky</h1>
 
+Pozvat přítele do hry:
+{control inviteForm}
+
+Pozvaní přátelé:
+<p n:foreach="$Invited as $item">{$item->invitedEmail}</p>
+
+Sdílení:
 
 {/block}

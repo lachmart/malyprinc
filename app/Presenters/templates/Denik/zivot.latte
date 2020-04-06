@@ -1,5 +1,30 @@
 {block content}
-	<h1 n:block="title">Palubní život</h1>
+	<h1 n:block="title">Systém podpory života</h1>
+		Včera běžely systémy na {$totalZivotYesterday}%
+		{if $totalZivotYesterday < 70 }
+			TO je méně, než 70%! Dnes nemáš sílu na cestování a musíš stabilizovat podporu života na lodi.
+		{/if}
+<br>
+<br>
 
-		
+		Systémy běží na {$totalZivotToday}%<br>
+Dnes splněno:
+<p n:foreach="$zivotDone as $item">{$item->zivot->name}</p>
+	{if $specialDone}
+Dnes jsi splnil i specilání úkol {$specialDone->special->name}<br><br>
+{/if}
+	CO jsem splnil?<br>
+	{if $allDone}
+	Tady už jsi všechno splnil! Gratuluji.
+	{else}
+		{control zivotForm}
+	{/if}
+
+{if $specialToDo}
+	Dnes mám pro tebe i speciální úkol!
+	{$specialToDo->special->name}
+	{$specialToDo->special->description1}
+	{$specialToDo->special->description2}
+	 {control specialForm}
+{/if}
 {/block}
