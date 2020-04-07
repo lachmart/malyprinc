@@ -35,6 +35,14 @@ class UserManager
 	{
 			return $this->database->table($this->table)->where('id', $values->id)->update($values);
 	}
+	public function confirmEmail($email, $token)
+	{
+			return $this->database->table($this->table)->where('email', $email)->where('token', $token)->update(['emailConfirmed'=>1]);
+	}
+	public function resetPassword($email, $token, $newPassword)
+	{
+			return $this->database->table($this->table)->where('email', $email)->where('token', $token)->update(['password'=>$newPassword]);
+	}
 	public function isInvited($email)
 	{
 			return $this->database->table('invitations')->where('invitedEmail', $email)->fetch();

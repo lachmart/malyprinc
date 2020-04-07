@@ -10,15 +10,20 @@ use Nette\Application\UI\Form;
 use App\Model\UserManager;
 use App\Model\ZivotManager;
 use Nette\Utils\Image;
-
+use Nette\Mail\Message;
+use Nette\Mail\IMailer;
 
 class SignPresenter extends Nette\Application\UI\Presenter
 {
   /** @var  Nette\Security\Passwords */
   private $passwords;
 
+  /** @var IMailer @inject */
+	public $mailer;
+
   /** @var UserManager */
   protected $userManager;
+
   /** @var ZivotManager */
   protected $zivotManager;
 
@@ -28,11 +33,11 @@ class SignPresenter extends Nette\Application\UI\Presenter
   public $invitedBy;
 
 
-  public function __construct(Nette\Security\Passwords $passwords, UserManager $userManager, ZivotManager $zivotManager)
+  public function __construct( UserManager $userManager, ZivotManager $zivotManager, Nette\Security\Passwords $passwords)
 	{
-    $this->passwords = $passwords;
     $this->userManager = $userManager;
     $this->zivotManager = $zivotManager;
+    $this->passwords = $passwords;
     if(!isset($this->invitedBy))
       $this->invitedBy = 0;
 	}
@@ -63,6 +68,41 @@ class SignPresenter extends Nette\Application\UI\Presenter
     $this->redirect('Homepage:default');
   }
 
+  public function actionResetpassword($email, $token)
+  {
+      $newPassword = $this->generateToken();
+      if($this->userManager->resetPassword($email, $token, $this->passwords->hash($newPassword))) {
+        $this->sendMailReset($newPassword, $email);
+        $this->flashMessage('Na email '.$email.' jsme ti poslali další instrukce.', 'alert alert-success');
+      }
+      else {
+          $this->flashMessage('Něco se pokazilo, kontaktuj podporu', 'alert alert-danger');
+      }
+      $this->redirect('Homepage:default');
+
+   }
+
+   private function sendMailReset($token, $email){
+     $mail = $this->generateMailMessage($email);
+     $mail->setSubject('Heslo bylo resetovano malyprinc');
+    // ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
+
+      $mail->setHtmlBody('Vytvořili jsme ti nové heslo: '.$token.'<br>S tímto heslem se můžeš přihlašovat, ale co nejdříve si jej změň v nastavení.');
+      $this->mailer->send($mail);
+   }
+
+  public function actionConfirmemail($email, $token)
+  {
+      if($this->userManager->confirmEmail($email, $token)){
+        $this->flashMessage('Email: '.$email.' byl potvrzen.', 'alert alert-success');
+      }
+      else {
+          $this->flashMessage('Email je již potvrzen, nebo máš špatný odkaz. POkud se ti něco nezdá, kontaktuj podporu', 'alert alert-danger');
+      }
+      $this->redirect('Homepage:default');
+
+   }
+
   public function registerFormSucceded($form, $values)
   {
 
@@ -87,7 +127,8 @@ class SignPresenter extends Nette\Application\UI\Presenter
     $this->template->email = $this->email;
     $this->template->invitedBy =  $this->invitedBy;
   }
-private function createRegister2Form()
+
+  private function createRegister2Form()
 	{
     $form = new Form;
     // mohu použít $this->database
@@ -166,17 +207,29 @@ private function createRegister2Form()
       else {
         $values->offsetUnset('avatar');
       }
+      $token = $this->generateToken();
+      $values->token = $token;
 
       $id = $this->userManager->addUser($values)->id;
       if(isset($image)) {
         $this->saveAvatar($image, $id);
       }
       $this->zivotManager->generateSpecial($id);
-
-      $this->flashMessage('Registrace proběhla úspěšně', 'alert alert-success');
+      $this->sendMailRegistered($token, $values->email);
+      $this->flashMessage('Registrace proběhla úspěšně, na mail jsme ti poslali odkaz pro ověření, že jde o tvoji emailovou adresu.', 'alert alert-success');
       $this->redirect('Sign:in');
 
   }
+
+  private function sendMailRegistered($token, $email){
+    $mail = $this->generateMailMessage($email);
+	  $mail->setSubject('Potvrzení registrace malyprinc');
+	  // ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
+
+    $mail->setHtmlBody('<b>Sample HTML</b> <a href="url/sign/confirmEmail?email='.$email.'&token='.$token.'">odkaz</a>');
+     $this->mailer->send($mail);
+  }
+
 
   protected function createComponentChangeForm()
   {
@@ -228,10 +281,21 @@ private function createRegister2Form()
         $values->offsetUnset('avatar');
       }
       $this->userManager->updateUser($values);
+      $this->sendMailChanged($this->user->getIdentity()->email);
       $this->flashMessage('Změna proběhla úspěšně', 'alert alert-success');
       $this->redirect('Denik:prukaz');
 
   }
+
+  private function sendMailChanged($email){
+    $mail = $this->generateMailMessage($email);
+	  $mail->setSubject('Změne údajů malyprinc');
+	  // ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
+
+    $mail->setHtmlBody('<b>Sample HTML</b> Údaje ve tvém účtu byly změněny. Nebyl jsi to ty? Dej nám o tom prosím vědět.');
+    $this->mailer->send($mail);
+  }
+
 
   protected function createComponentSignForm()
 	{
@@ -271,17 +335,32 @@ private function createRegister2Form()
 
   public function forgotsFormSucceeded(Form $form, $values)
   {
-    $this->zivotManager->generateSpecial($this->userManager->getUserByEmail($values->email)->id);
-    $values->id = $this->userManager->getUserByEmail($values->email)->id;
-    $values->token = Nette\Utils\Random::generate(10);
-    try { ///update row zakaznik $values email
-
-      //$this->user->login($values->name, $values->pass);
-      $this->userManager->updateUser($values);
-    } catch (Nette\Database\UniqueConstraintViolationException $e) {
-      return;
+    $user = $this->userManager->getUserByEmail($values->email);
+    if ($user){
+      $values->id = $user->id;
+      $token = $this->generateToken();
+      $values->token = $token;
+      try {
+        $this->userManager->updateUser($values);
+      } catch (Nette\Database\UniqueConstraintViolationException $e) {
+        $this->flashMessage('Nic se nestalo. Napiš nám na podporu.', 'alert alert-danger');
+        return;
+      }
+        $this->sendMailForgot($token, $values->email);
+        $this->flashMessage('Na email jsme ti poslali instrukce.', 'alert alert-success');
     }
-    $this->flashMessage('Nic se nestalo. Napiš nám na podporu.', 'alert alert-danger');
+    else
+      $this->flashMessage('Nic se nestalo. Napiš nám na podporu.', 'alert alert-danger');
+
+  }
+
+  private function sendMailForgot($token, $email){
+    $mail = $this->generateMailMessage($email);
+    $mail->setSubject('Potvrzení registrace malyprinc');
+  //  ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
+    $mail->setHtmlBody('<b>Sample HTML</b> <a href="url/sign/resetPassword?email='.$email.'&token='.$token.'">odkaz</a>');
+
+    $this->mailer->send($mail);
   }
 
   public function saveAvatar(Image $avatar, $userId)
@@ -289,5 +368,16 @@ private function createRegister2Form()
     $avatar->resize(300, 300, Image::EXACT);
     $avatar->save('upload/avatars/'.$userId.'.jpg', 80, Image::JPEG);
   }
+
+  private function generateToken(){
+    return Nette\Utils\Random::generate(10);
+  }
+  private function generateMailMessage($to){
+    $mail = new Message;
+    $mail->setFrom('Malyprinc <noreply@localhost.local>');
+    $mail->addTo($to);
+    return $mail;
+  }
+
 
 }
