@@ -135,15 +135,17 @@ lp_planet.click = function(planet_id) {
         return;
     }
 
-    var planet_name = lp_planet.get_planet_name(planet_id);
+    if (!lp_pilot._flight) {
+        var planet_name = lp_planet.get_planet_name(planet_id);
 
-    // check if pilot is on planet.
-    if (lp_pilot.is_on_planet()) {
-        if (confirm("Přejete si letět na planetu: "+planet_name+" ?")) {
-            lp_planet.add_measure(lp_pilot.get_pilot_position(), planet_id)
+        // check if pilot is on planet.
+        if (lp_pilot.is_on_planet()) {
+            if (confirm("Přeješ si letět na planetu: "+planet_name+" ?")) {
+                lp_planet.add_measure(lp_pilot.get_pilot_position(), planet_id)
+            }
+        } else {
+            console.log("Pilot cannot navigate, because is on the way.");
         }
-    } else {
-        console.log("Pilot cannot navigate, because is on the way.");
     }
 };
 
@@ -271,7 +273,7 @@ lp_planet.get_distance_from_measure = function() {
 
         var hour_constant = lp_space.basic_width/75; // 75 hour to all space
         var time_to_flight = Math.round(Math.round(c)/hour_constant); // time in hour
-        return {"distance": Math.round(c)*100000, "angle": angle, "time_to_fligh": time_to_flight};
+        return {"distance": Math.round(c)*100000, "angle": angle, "time_to_fligh": time_to_flight, "real_distance": c2};
     }
     return null;
 };
