@@ -10,6 +10,7 @@ class ShareManager
 	/** @var Nette\Database\Context */
 	private $database;
   private $tableInvitation = 'invitations';
+  private $tableSharing = 'sharing';
 
 	public function __construct(Nette\Database\Context $database)
 	{
@@ -17,9 +18,18 @@ class ShareManager
 	}
 
 
-	public function getUserInvited($userId)
+	public function getEmailInvited($userId)
 	{
 		return $this->database->table($this->tableInvitation)->where('invitedBy',$userId);
+	}
+	public function getSharedAll($userId)
+	{
+		return $this->database->table($this->tableSharing)->where('sharingUser',$userId);
+	}
+	public function getReceivedActive($userId)
+	{
+		return $this->database->table($this->tableSharing)->where('receivingUser',$userId)
+		->where('sharingActive', 1);
 	}
 
 
@@ -30,7 +40,30 @@ class ShareManager
 			'invitedBy' => $userId
 		]);
 		return $this->database->table($this->tableInvitation)->insert($values);
+	}
 
+	public function addSharing($sharingId, $receivingId)
+	{
+		$values = ([
+			'sharingUser' => $sharingId,
+			'receivingUser' => $receivingId
+		]);
+		return $this->database->table($this->tableSharing)->insert($values);
+	}
+
+	public function changeSharingActive($sharingId, $receivingId, $active)
+	{
+		return $this->database->table($this->tableSharing)
+		->where('sharingUser', $sharingId)
+		->where('receivingUser', $receivingId)
+		->update(['sharingActive'=>$active]);
+	}
+	public function changeReceivingActive($receivingId, $sharingId, $active)
+	{
+		return $this->database->table($this->tableSharing)
+		->where('sharingUser', $sharingId)
+		->where('receivingUser', $receivingId)
+		->update(['receivingActive'=>$active]);
 	}
 
 

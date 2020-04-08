@@ -1,12 +1,42 @@
 {block content}
 	<h1 n:block="title">Přátelé a pozvánky</h1>
 
-Pozvat přítele do hry:
+{if $user->identity->isSkaut}
+Pozvat přítele do hry (tohle vidí pouze skauti):
 {control inviteForm}
 
 Pozvaní přátelé:
 <p n:foreach="$Invited as $item">{$item->invitedEmail}</p>
+{/if}
 
-Sdílení:
+Sdílení polohy:
+
+{control shareForm}
+
+Polohu jsem sdílel s:
+
+{foreach $Shared as $item}
+<p>{$item->receiving->email}
+ {if $item->sharingActive}
+	 <a n:href="Denik:stopsharing $item->receivingUser">Přestat sdílet</a>
+ {else}
+	 <a n:href="Denik:continuesharing $item->receivingUser">Obnovit sdílení</a>
+  {/if}
+ </p>
+{/foreach}
+
+Sleduji polohu:
+
+	{foreach $Received as $item}
+	<p>{$item->sharing->email}
+	 {if $item->receivingActive}
+		 <a n:href="Denik:stopreceiving $item->sharingUser">Vypnout sledování</a>
+	 {else}
+		 <a n:href="Denik:continuereceiving $item->sharingUser">Zapnout sledování</a>
+	  {/if}
+		<a n:href="Denik:startsharingto $item->sharingUser">Taky sdílet</a>
+
+	 </p>
+	{/foreach}
 
 {/block}

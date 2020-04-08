@@ -11,10 +11,14 @@ use App\Model\ZivotManager;
 use App\Model\ShareManager;
 use Nette\Application\UI\Form;
 use Nette\Utils\Html;
-
+use Nette\Mail\Message;
+use Nette\Mail\IMailer;
 
 class DenikPresenter extends BasePresenter
 {
+  /** @var IMailer @inject */
+  public $mailer;
+
   /** @var UserManager */
   protected $userManager;
 
@@ -39,7 +43,9 @@ class DenikPresenter extends BasePresenter
   }
   public function renderPratele()
 	{
-		$this->template->Invited = $this->shareManager->getUserInvited($this->user->getId());
+		$this->template->Invited = $this->shareManager->getEmailInvited($this->user->getId());
+		$this->template->Shared = $this->shareManager->getSharedAll($this->user->getId());
+		$this->template->Received = $this->shareManager->getReceivedActive($this->user->getId());
   }
 
   public function renderZivot()
@@ -54,6 +60,38 @@ class DenikPresenter extends BasePresenter
     $this->template->specialDone = $this->zivotManager->getSpecial($this->user->id,date('Y-m-d'), true);
     $this->template->specialToDo = $this->zivotManager->getSpecial($this->user->id, date('Y-m-d'),false);
 
+  }
+
+  public function actionStartsharingto($receivingUserId)
+  {		try {
+  			$this->shareManager->addSharing($this->user->id, $receivingUserId);
+  		} catch (Nette\Database\UniqueConstraintViolationException $e) {
+        $this->flashMessage('Vypadá to, že toto sdílení už bylo aktivováno.', 'alert alert-danger');
+      }
+
+    $this->redirect("Denik:pratele");
+  }
+  public function actionStopsharing($receivingUserId)
+  {
+    $this->shareManager->changeSharingActive($this->user->id, $receivingUserId, 0);
+    $this->redirect("Denik:pratele");
+  }
+  public function actionContinuesharing($receivingUserId)
+  {
+    $this->shareManager->changeSharingActive($this->user->id, $receivingUserId, 1);
+    $this->redirect("Denik:pratele");
+  }
+
+  public function actionStopreceiving($sharingUserId)
+  {
+    $this->shareManager->changeReceivingActive($this->user->id, $sharingUserId, 0);
+    $this->redirect("Denik:pratele");
+  }
+
+  public function actionContinuereceiving($sharingUserId)
+  {
+    $this->shareManager->changeReceivingActive($this->user->id, $sharingUserId, 1);
+    $this->redirect("Denik:pratele");
   }
 
   protected function createComponentZivotForm()
@@ -111,11 +149,76 @@ class DenikPresenter extends BasePresenter
 
   public function inviteFormSucceded($form, $values)
   {
-        $this->shareManager->addInvitation($this->user->id,$values->email);
+    if(!$this->user->getIdentity->skaut){
+      $this->flashMessage('Bohužel se jedná o skautskou hru a další hráč mohou zvát pouze skauti.', 'alert alert-danger');
+      $this->redirect("Denik:pratele");
+    }
+    if($this->userManager->getUserByEmail($values->email)){
+      $this->flashMessage('Tento uživatel už je zaregistrovaný. Můžeš s ním sdílet polohu.', 'alert alert-danger');
+      $this->redirect("Denik:pratele");
+    }
+    try {
+      $this->shareManager->addInvitation($this->user->id,$values->email);
+    } catch (Nette\Database\UniqueConstraintViolationException $e) {
+      $this->flashMessage('Na tento email už jsme pozvánku poslali. Možná byl pozván někým jiným...', 'alert alert-danger');
+      $this->redirect("Denik:pratele");
+    }
+    $this->sendMailInvited($values->email);
+    $this->flashMessage('Úspěšně jsi pozval '.$values->email.' na adresu jsme mu poslali email.', 'alert alert-success');
         $this->redirect("Denik:pratele");
   }
+  private function sendMailInvited($email){
+    $mail = $this->generateMailMessage($email);
+    $mail->setSubject('SPozvánka malyprinc');
+  //  ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
+    $mail->setHtmlBody('<b>Sample HTML</b> Uživatel '.$this->user->getIdentity()->email.'stě pozval do skautské online hry malyprinc. Můžeš se registrovat na adrese....');
 
+    $this->mailer->send($mail);
+  }
 
+  protected function createComponentShareForm()
+  {
+    $form = new Form;
+
+    $form->addEmail('email', 'E-mail');
+    $form->addSubmit('send', 'Sdílet polohu');
+    $form->onSuccess[] = [$this, 'shareFormSucceded'];
+    return $form;
+  }
+
+  public function shareFormSucceded($form, $values)
+  {
+    $user = $this->userManager->getUserByEmail($values->email);
+    if($user === null)
+      $form->addError('Takového hráče tu nemáme.');
+    else{
+      try {
+  			 $this->shareManager->addSharing($this->user->id,$user->id);
+  		} catch (Nette\Database\UniqueConstraintViolationException $e) {
+        $this->flashMessage('Vypadá to, že toto sdílení už bylo aktivováno.', 'alert alert-danger');
+        $this->redirect("Denik:pratele");
+      }
+      $this->sendMailShared($values->email);
+      $this->flashMessage($values->email. 'si teď může zobrazit tvoji polohu.', 'alert alert-success');
+      $this->redirect("Denik:pratele");
+      }
+  }
+
+  private function sendMailShared($email){
+    $mail = $this->generateMailMessage($email);
+    $mail->setSubject('Sdilení polohy malyprinc');
+  //  ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
+    $mail->setHtmlBody('<b>Sample HTML</b> Uživatel '.$this->user->getIdentity()->email.'s tebou právě začal sdílet polohu. V nastavení si můžeš jeho zobrazování kdykoliv vypnout.');
+
+    $this->mailer->send($mail);
+  }
+
+  private function generateMailMessage($to){
+    $mail = new Message;
+    $mail->setFrom('Malyprinc <noreply@localhost.local>');
+    $mail->addTo($to);
+    return $mail;
+  }
 
 
 }

@@ -29,6 +29,6 @@ class Authenticator implements NS\IAuthenticator
 			throw new Nette\Security\AuthenticationException('Invalid password.');
 		}
 
-		return new Nette\Security\Identity($row->id, 'user', ['email' => $row->email]);
+		return new Nette\Security\Identity($row->id, 'user', ['email' => $row->email, 'isSkaut' => $row->isSkaut]);
 	}
 }
