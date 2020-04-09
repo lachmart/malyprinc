@@ -13,6 +13,9 @@ lp_img_planet.src = 'assets/planet2.png';
 var lp_img_planet2 = new Image();
 lp_img_planet2.src = 'assets/planet.png';
 
+var lp_img_planet3 = new Image();
+lp_img_planet3.src = 'assets/planet4.png';
+
 
 var lp_planet = function () {};
 lp_planet.earth = undefined;
@@ -41,14 +44,29 @@ lp_planet.create_planet = function (planet_data, picture_obj) {
         return;
     }
 
+    var shadow_color;
+    if (planet_data.shadow_color===undefined) {
+        shadow_color = 'black';
+    } else {
+        shadow_color = planet_data.shadow_color;
+    }
+
+    var aspect_ratio;
+    if (planet_data.aspect_ration===undefined) {
+        aspect_ratio = 1;
+    } else {
+        aspect_ratio = planet_data.aspect_ration;
+    }
+
+
     var planet_key = lp_planet.add_planet_prefix(planet_data.id);
     lp_planet.planets[planet_key] = new Konva.Image({
          x: (planet_data.x*lp_space.scale_width)-((planet_data.size*lp_space.scale_width)/2),
          y: (planet_data.y*lp_space.scale_height)-((planet_data.size*lp_space.scale_width)/2),
          image: picture_obj,
          width: planet_data.size*lp_space.scale_width,
-         height: planet_data.size*lp_space.scale_width,
-         shadowColor: 'black',
+         height: planet_data.size*lp_space.scale_width*aspect_ratio,
+         shadowColor: shadow_color,
          shadowBlur: 15,
          shadowOffset: { x: 4, y: 4 },
     });
@@ -61,6 +79,14 @@ lp_planet.create_planet = function (planet_data, picture_obj) {
     // register events
     lp_planet.planets[planet_key].on('click', function () {lp_planet.click(planet_key);});
     lp_planet.planets[planet_key].on('tap', function () {lp_planet.click(planet_key);});
+
+    lp_planet.planets[planet_key].on("mouseenter", function () {
+        if (!lp_pilot.is_in_flight()) {
+            lp_space.stage.container().style.cursor = 'pointer';}
+        }
+
+    );
+    lp_planet.planets[planet_key].on("mouseleave", function () {lp_space.stage.container().style.cursor = 'default';});
 
     var planet_name = lp_planet.get_planet_name(planet_key);
 

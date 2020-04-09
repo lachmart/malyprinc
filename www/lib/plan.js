@@ -7,6 +7,9 @@
 var lp_img_space = new Image();
 lp_img_space.src = 'assets/space.jpg';
 
+var lp_logo = new Image();
+lp_logo.src = 'assets/logo.png';
+
 
 var lp_space = function () {};
 
@@ -78,8 +81,19 @@ lp_space._createStage = function() {
         height: lp_space.stage.height(),
     });
 
+    var logo = new Konva.Image({
+        x:5*lp_space.scale_width,
+        y:5*lp_space.scale_width,
+        opacity: 1,
+        image: lp_logo,
+
+        width: 70*lp_space.scale_width,
+        height: 70*lp_space.scale_width,
+    });
+
     lp_space.stage.add(lp_space._layer);
     lp_space.add_to_space(lp_space._area);
+    lp_space.add_to_space(logo);
     lp_space._add_plannets();
     lp_space.draw();
 };
@@ -119,6 +133,9 @@ lp_space._add_plannets = function() {
             case "special_planet":
                 lp_planet.create_planet(plannets.planet[pos], lp_img_planet2);
                 break;
+            case "chair_planet":
+                lp_planet.create_planet(plannets.planet[pos], lp_img_planet3);
+                break;
             case "warm_hole":
                 // code block
                 break;
@@ -141,9 +158,9 @@ lp_space._server_load_space_object = function() {
                                 {"id":1, "name":"Země", "custom_name":null,"x":null, "y":null, "size":150, "type":"earth"},
                                 {"id":2346, "name":null, "custom_name": null, "x":300, "y":100, "size":70, "type":"standard_planet"},
                                 {"id":3245, "name":"Tutu", "custom_name":null, "x":600, "y":600, "size":40, "type":"standard_planet"},
-                                {"id":4125, "name":"Dejmalova", "custom_name":null, "x":1100, "y":600, "size":40, "type":"special_planet"},
+                                {"id":4125, "name":"Dejmalova", "custom_name":null, "x":1100, "y":600, "size":60, "type":"chair_planet", "shadow_color":"orange", "aspect_ration":1.23},
                                 {"id":5987, "name":"Vojačkova", "custom_name":null, "x":1150, "y":200, "size":80, "type":"standard_planet"},
-                                {"id":5917, "name":"Hernova", "custom_name":null, "x":900, "y":500, "size":60, "type":"standard_planet"},
+                                {"id":5917, "name":"Hernova", "custom_name":null, "x":900, "y":520, "size":60, "type":"standard_planet"},
                                 {"id":8765, "name":null, "custom_name":null, "x":1050, "y":300, "size":20, "type":"standard_planet"},
                                 {"id":7865, "name":"Proxima", "custom_name":null, "x":424, "y":500, "size":60, "type":"special_planet"},
                                 {"id":1456, "name":"Royova", "custom_name":null, "x":700, "y":160, "size":90, "type":"special_planet"},

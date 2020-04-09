@@ -12,6 +12,9 @@ lp_img_tooltip.src = 'assets/tooltip.png';
 var lp_img_rocket = new Image();
 lp_img_rocket.src = 'assets/rocket.png';
 
+var lp_img_mision = new Image();
+lp_img_mision.src = 'assets/mise.png';
+
 var lp_pilot = function () {};
 
 lp_pilot._avatar_layer = undefined;
@@ -153,16 +156,19 @@ lp_pilot._add_avatar = function(avatar_type, id, json_flight) {
              lp_pilot.avatar = new Konva.Image({
                   x: planet.actual_x-(30*lp_space.scale_height),
                   y: planet.actual_y-(68*lp_space.scale_width),
-                  height: 68*lp_space.scale_width,
-                  width: 30*lp_space.scale_height,
+                  height: 70*lp_space.scale_width,
+                  width: 59*lp_space.scale_height,
                   image: lp_img_lp,
                   shadowColor: 'black',
-                  shadowBlur: 15,
+                  shadowBlur: 35,
                   shadowOffset: { x: 4, y: 4 },
              });
 
              lp_pilot.avatar.on('click', lp_pilot._add_tooltip);
              lp_pilot.avatar.on('tap', lp_pilot._add_tooltip);
+
+             lp_pilot.avatar.on("mouseenter", function () {lp_space.stage.container().style.cursor = 'pointer';});
+             lp_pilot.avatar.on("mouseleave", function () {lp_space.stage.container().style.cursor = 'default';});
 
              break;
         case 2: // on the way
@@ -185,7 +191,7 @@ lp_pilot._add_avatar = function(avatar_type, id, json_flight) {
                  shadowColor: 'red',
                  shadowBlur: blur_size,
                  shadowOffset: { x: 0, y: 0 },
-                 width: 30*lp_space.scale_width,
+                 width: 25*lp_space.scale_width,
                  height: 96*lp_space.scale_height,
             });
 
@@ -271,6 +277,9 @@ lp_pilot.get_flight_position = function(distance, start_at, time_to_flight) {
 lp_pilot._add_tooltip = function() {
      if (lp_pilot.tooltip===undefined) {
 
+         lp_pilot.hide_dialog();
+         lp_planet.remove_measure();
+
          // protection
          // TODO rewrite not functional flip image
          var x;
@@ -313,7 +322,7 @@ lp_pilot._add_tooltip = function() {
              text: lp_planet.get_planet_name(lp_pilot.get_pilot_position()),
              fontSize: header_size,
              fontFamily: 'Calibri',
-             fill: 'black'
+             fill: 'white'
          });
 
          var pilot_name = new Konva.Text({
@@ -322,7 +331,7 @@ lp_pilot._add_tooltip = function() {
              text: "Pilot : "+lp_pilot.data.name ,
              fontSize: basic_size,
              fontFamily: 'Calibri',
-             fill: 'black'
+             fill: 'white'
          });
 
          var rank_name = new Konva.Text({
@@ -331,7 +340,7 @@ lp_pilot._add_tooltip = function() {
              text: "Hodnost : "+lp_pilot.data.rank_name,
              fontSize: basic_size,
              fontFamily: 'Calibri',
-             fill: 'black'
+             fill: 'white'
          });
 
          lp_pilot.tooltip.add(tooltip_picture);
@@ -342,12 +351,22 @@ lp_pilot._add_tooltip = function() {
          lp_space.add_to_space(lp_pilot.tooltip);
          console.log("Tooltip of pilot loaded");
      } else {
-         lp_pilot.tooltip.destroy();
-         lp_pilot.tooltip = undefined;
+         lp_pilot.hide_tooltip();
      }
      lp_space.draw();
 };
 
+
+/**
+ * Hide tooltip card of pilot
+ */
+lp_pilot.hide_tooltip = function() {
+    if (lp_pilot.tooltip!==undefined) {
+        lp_pilot.tooltip.destroy();
+        lp_pilot.tooltip = undefined;
+        lp_space.draw();
+    };
+};
 
 /**
  * Start flight
@@ -355,48 +374,82 @@ lp_pilot._add_tooltip = function() {
 lp_pilot.start_flight = function() {
 
     lp_pilot.hide_dialog();
-     // if (confirm("Opravdu si přeješ zahájit let na planetu: "+lp_planet.get_planet_name(lp_planet.measure_target_id)+"? Let bude trvat "+result["time_to_fligh"]+" hodin.")) {
-    result = lp_planet.get_distance_from_measure();
+    lp_pilot.hide_tooltip();
+
+    var result = lp_planet.get_distance_from_measure();
+
+    var target_planet = lp_planet.planet_data[lp_planet.measure_target_id].object;
+    var dialog_x = (lp_space.screen_width/2)-(250*lp_space.scale_width);
+
+    var dialog_y;
+    if (lp_planet.planet_data[lp_planet.measure_target_id].y>=lp_space.basic_height/2) {
+        dialog_y = (0);
+    } else {
+        dialog_y = (lp_space.screen_height)-(186*lp_space.scale_height);
+    }
 
     lp_pilot.dialog = new Konva.Group({
-         x: (lp_space.screen_width)-(300*lp_space.scale_width),
-        y: (lp_space.screen_height/2)-(100*lp_space.scale_height),
-         width: 300*lp_space.scale_width,
-        height: 200*lp_space.scale_height,
-     });
+        x: dialog_x,
+        y: dialog_y,
+        width: 500*lp_space.scale_width,
+        height: 186*lp_space.scale_height,
+    });
 
-    var dialog_box = new Konva.Rect({
+    var dialog_box = new Konva.Image({
         x: 0,
         y: 0,
         width: lp_pilot.dialog.width(),
         height: lp_pilot.dialog.height(),
-        opacity: 0.4,
-        fill: 'white',
-        cornerRadius: 5
+        image: lp_img_mision,
+        opacity: 0.7,
     });
 
     lp_pilot.dialog.add(dialog_box);
+
+    var ratio = target_planet.width()/target_planet.height();
+
+    var planet_image = new Konva.Image({
+        x: lp_pilot.dialog.width()-((70*ratio*lp_space.scale_width)+(30)*lp_space.scale_width),
+        y: lp_pilot.dialog.height()-((70*lp_space.scale_width)+(30)*lp_space.scale_height),
+        width: (70*ratio*lp_space.scale_width),
+        height: (70*lp_space.scale_width),
+        image: target_planet.image(),
+        shadowColor: 'red',
+        shadowBlur: 15,
+        shadowOffset: { x: 0, y: 0 },
+        opacity: 1,
+    });
+
+    // Events
+    planet_image.on("click",lp_pilot._activate_flight);
+    planet_image.on("tap",lp_pilot._activate_flight);
+    planet_image.on("mouseenter", function () { lp_space.stage.container().style.cursor = 'pointer';});
+    planet_image.on("mouseleave", function () { lp_space.stage.container().style.cursor = 'default';});
+
+    lp_pilot.dialog.add(planet_image);
 
     var header_size = Math.round(lp_space.header_font*lp_space.scale_width);
     var basic_size = Math.round(lp_space.basic_font*lp_space.scale_width);
 
     // TODO Rewrite to factory
      var flight = new Konva.Text({
-          x: 10*lp_space.scale_width,
-          y: 10*lp_space.scale_height,
+          x: 120*lp_space.scale_width,
+          y: 30*lp_space.scale_height,
          text: "Cíl "+lp_planet.get_planet_name(lp_planet.measure_target_id),
          fontSize: header_size,
          fontFamily: 'Calibri',
-         fill: 'black'
+         fill: 'white',
+         opacity: 0.5,
      });
 
      var parameters = new Konva.Text({
           x: flight.x(),
           y: flight.y()+flight.height(),
-         text: "Parametry: "+result.distance+" au, letový úhel: "+result.angle,
+         text: "Parametry letu: "+result.distance/1000+"K au, letový úhel: "+result.angle,
          fontSize: basic_size,
          fontFamily: 'Calibri',
-         fill: 'black'
+         fill: 'white',
+         opacity: 0.5
      });
 
      var time = new Konva.Text({
@@ -405,21 +458,24 @@ lp_pilot.start_flight = function() {
          text: "Přílet na: "+lp_planet.get_planet_name(lp_planet.measure_target_id)+" za "+result["time_to_fligh"]+" hodin.",
          fontSize: basic_size,
          fontFamily: 'Calibri',
-         fill: 'black'
+         fill: 'white',
+         opacity: 0.5
      });
 
      // Time to end
      var actual_time = new Date();
      var time_to_end = new Date();
      time_to_end.setTime(actual_time.getTime()+(result["time_to_fligh"]*60*60*1000));
+     var display_time = time_to_end.getDate()+"."+(time_to_end.getMonth()+1)+"."+time_to_end.getFullYear()+" "+time_to_end.getHours()+":"+time_to_end.getMinutes();
 
      var time2 = new Konva.Text({
-          x: 10,
+          x:  flight.x(),
           y: time.y()+time.height(),
-         text: "V čase "+time_to_end,
+         text: "Čas doletu: "+display_time,
          fontSize: basic_size,
          fontFamily: 'Calibri',
-         fill: 'black'
+         fill: 'white',
+         opacity: 0.5
      });
 
      lp_pilot.dialog.add(flight);
@@ -427,13 +483,8 @@ lp_pilot.start_flight = function() {
      lp_pilot.dialog.add(time);
      lp_pilot.dialog.add(time2);
 
-    // Events
-    lp_pilot.dialog.on('click', lp_pilot._activate_flight);
-    lp_pilot.dialog.on('tap', lp_pilot._activate_flight);
-
-    lp_space.add_to_space(lp_pilot.dialog);
-    lp_space.add_to_space(lp_pilot.dialog);
-    lp_space.draw();
+    lp_pilot._avatar_layer.add(lp_pilot.dialog);
+    lp_pilot._avatar_layer.draw();
 };
 
 /**
@@ -443,6 +494,7 @@ lp_pilot.hide_dialog = function() {
     if (lp_pilot.dialog !== undefined) {
         lp_pilot.dialog.destroy();
         lp_pilot.dialog = undefined;
+        lp_pilot._avatar_layer.draw();
     };
 };
 
