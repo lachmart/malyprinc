@@ -26,6 +26,9 @@ lp_space.screen_height = undefined;
 lp_space.scale_width = undefined;
 lp_space.scale_height = undefined;
 
+lp_space.header_font = 20;
+lp_space.basic_font = 16;
+
 /* initialization of space for little prince */
 lp_space.init = function()
 {
@@ -138,9 +141,12 @@ lp_space._server_load_space_object = function() {
                                 {"id":1, "name":"Země", "custom_name":null,"x":null, "y":null, "size":150, "type":"earth"},
                                 {"id":2346, "name":null, "custom_name": null, "x":300, "y":100, "size":70, "type":"standard_planet"},
                                 {"id":3245, "name":"Tutu", "custom_name":null, "x":600, "y":600, "size":40, "type":"standard_planet"},
-                                {"id":4125, "name":"Dejmalova", "custom_name":null, "x":1300, "y":700, "size":50, "type":"special_planet"},
-                                {"id":5987, "name":"Vojačkova", "custom_name":null, "x":1100, "y":200, "size":80, "type":"standard_planet"},
-                                {"id":7865, "name":"Proxima", "custom_name":null, "x":324, "y":500, "size":60, "type":"special_planet"},
+                                {"id":4125, "name":"Dejmalova", "custom_name":null, "x":1100, "y":600, "size":40, "type":"special_planet"},
+                                {"id":5987, "name":"Vojačkova", "custom_name":null, "x":1150, "y":200, "size":80, "type":"standard_planet"},
+                                {"id":5917, "name":"Hernova", "custom_name":null, "x":900, "y":500, "size":60, "type":"standard_planet"},
+                                {"id":8765, "name":null, "custom_name":null, "x":1050, "y":300, "size":20, "type":"standard_planet"},
+                                {"id":7865, "name":"Proxima", "custom_name":null, "x":424, "y":500, "size":60, "type":"special_planet"},
+                                {"id":1456, "name":"Royova", "custom_name":null, "x":700, "y":160, "size":90, "type":"special_planet"},
                             ]
                             };
     return json_from_server;

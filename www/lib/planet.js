@@ -131,19 +131,22 @@ lp_planet.click = function(planet_id) {
     var planet_data = lp_planet.planet_data[planet_id];
 
     if (lp_pilot.get_pilot_position() === planet_id) {
-        console.log("Navigation on same planet is not allowed.");
+        lp_pilot._add_tooltip();
         return;
     }
 
-    var planet_name = lp_planet.get_planet_name(planet_id);
+    if (!lp_pilot.is_in_flight()) {
+        var planet_name = lp_planet.get_planet_name(planet_id);
 
-    // check if pilot is on planet.
-    if (lp_pilot.is_on_planet()) {
-        if (confirm("Přejete si letět na planetu: "+planet_name+" ?")) {
-            lp_planet.add_measure(lp_pilot.get_pilot_position(), planet_id)
+        // check if pilot is on planet.
+        if (lp_pilot.is_on_planet()) {
+
+            lp_planet.add_measure(lp_pilot.get_pilot_position(), planet_id);
+            lp_pilot.start_flight();
+
+        } else {
+            console.log("Pilot cannot navigate, because is on the way.");
         }
-    } else {
-        console.log("Pilot cannot navigate, because is on the way.");
     }
 };
 
@@ -173,7 +176,13 @@ lp_planet.get_planet_name = function(planet_id) {
  * @returns {string}
  */
 lp_planet.add_planet_prefix = function(id) {
-    return "pl_"+id;
+    var id_string = id.toString();
+    if (id_string.substring(0,2) !== "pl") {
+        return "pl_"+id_string;
+    }
+    else {
+        return id_string;
+    }
 };
 
 /**
@@ -232,9 +241,9 @@ lp_planet._add_text_measure = function(source, target) {
     lp_planet.measure_title = new Konva.Text({
         x: x1,
         y: y1,
-        text: measured_distance["distance"]+" "+measured_distance["angle"],
+        text: measured_distance["distance"]+" au",
         rotation: multiplier*(measured_distance["angle"]),
-        fontSize: 10,
+        fontSize: 14,
         fontFamily: 'Calibri',
         fill: 'white'
     });
@@ -271,7 +280,7 @@ lp_planet.get_distance_from_measure = function() {
 
         var hour_constant = lp_space.basic_width/75; // 75 hour to all space
         var time_to_flight = Math.round(Math.round(c)/hour_constant); // time in hour
-        return {"distance": Math.round(c)*100000, "angle": angle, "time_to_fligh": time_to_flight};
+        return {"distance": Math.round(c)*1000, "angle": angle, "time_to_fligh": time_to_flight, "real_distance": c2};
     }
     return null;
 };
