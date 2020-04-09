@@ -18,3 +18,5 @@ vendor
 log
 app/config/config.local
 www/upload/
+
+www/assets/source/
