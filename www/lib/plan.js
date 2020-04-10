@@ -53,6 +53,7 @@ lp_space.init = function()
 {
     lp_space.create_space();
     lp_pilot.init();
+    // TODO load frineds
 };
 
 /**
@@ -201,7 +202,7 @@ lp_space._server_load_space_object = function() {
                             "planet":[
                                 {"id":1, "name":"Země", "size":150, "type":"earth"},
                                 {"id":2346, "name":null, "custom_name": "Šamanova", "x":300, "y":100, "size":70, "type":"standard_planet"},
-                                {"id":3245, "name":"Tutu", "x":600, "y":600, "size":40, "type":"standard_planet"},
+                                {"id":3245, "name":"Tutu vesmírná planeta", "x":600, "y":600, "size":40, "type":"standard_planet"},
                                 {"id":4125, "name":"Dejmalova", "x":1100, "y":610, "size":60, "type":"chair_planet", "shadow_color":"orange", "aspect_ration":1.23},
                                 {"id":5987, "name":"Vojačkova", "x":1150, "y":200, "size":80, "type":"standard_planet"},
                                 {"id":5917, "name":"Hernova", "x":900, "y":520, "size":60, "type":"standard_planet"},
@@ -261,8 +262,13 @@ lp_space.display_activity = function(planet_id) {
     close_button.on("click", function() {lp_space.hide_displayed_activity()});
     close_button.on("tap", function() {lp_space.hide_displayed_activity()});
 
+    var title = lp_pilot._get_text(160*lp_space.scale_width,40*lp_space.scale_height, "Planeta "+ lp_planet.get_planet_name(lp_pilot.get_pilot_position()), Math.round(30* lp_space.scale_width), 300*lp_space.scale_width);
+
+    // TODO load activity and display from server.
+
     lp_space._activity_dialog.add(dialog_box);
     lp_space._activity_dialog.add(close_button);
+    lp_space._activity_dialog.add(title);
 
     lp_space._dialog_layer.add(lp_space._activity_dialog);
     lp_space._dialog_layer.draw();

@@ -4,12 +4,14 @@ var lp_action = function () {};
     Main action to open logbook
  */
 lp_action.go_to_deck_logbook = function() {
+    // TODO open link from server loogbook
     if (!lp_space.is_displayed_activity()) {
         alert("TODO otevřít deník");
     }
 };
 
 lp_action.go_to_live_support_system = function() {
+    // TODO open link from server live system support
     alert("TODO otevřít deník na systému podpory života");
 };
 

@@ -51,7 +51,7 @@ lp_pilot._server_load_pilot_data = function() {
                                     "name":"David Pokorný",
                                     "email":"david.pokorny@olc.cz",
                                     "rank_id":"1",
-                                    "rank_name":"unknown",
+                                    "rank_name":"Nadporučík vesmírné stanice",
                                     "category_id":1,
                                     "category_name":"skauti/skautky od 6 do 9 třídy",
                                     "actual_position": 1,
@@ -115,7 +115,6 @@ lp_pilot._add_pilot_position = function() {
             console.log("Unknown actual position on planet.");
             return false;
         }
-
         console.log("Pilot is on planet: "+lp_planet.planet_data[lp_planet.add_planet_prefix(lp_pilot.data.actual_position)].name);
         lp_pilot._add_avatar(1, lp_planet.add_planet_prefix(lp_pilot.data.actual_position));
         return true;
@@ -289,7 +288,7 @@ lp_pilot.pilot_details = function() {
          // protection
          var x;
          if ((lp_pilot.avatar.x()+lp_pilot.avatar.width()+(350*lp_space.scale_width)) > lp_space.screen_width) {
-             x = lp_pilot.avatar.x()-(350*lp_space.scale_width);
+             x = lp_pilot.avatar.x()-(380*lp_space.scale_width);
          } else {
              x = lp_pilot.avatar.x()+lp_pilot.avatar.width();
          }
@@ -322,10 +321,11 @@ lp_pilot.pilot_details = function() {
 
          // Buttons
          // button photo
+         // TODO change pilot photo
          var button1 = new Konva.Image({
               x: lp_pilot.tooltip.width()-((83*lp_space.scale_width)+15),
               y: 15*lp_space.scale_height,
-              height: 98*lp_space.scale_width,
+              height: 108*lp_space.scale_width,
               width: 83*lp_space.scale_height,
               image: lp_img_photo,
               opacity: 1,
@@ -347,20 +347,19 @@ lp_pilot.pilot_details = function() {
               opacity: 1,
          });
 
-         if (lp_planet.planet_data[lp_pilot.get_pilot_position()].type !== "worm_hole") {
-             // Activities are not for worm_hole
-             button2.on("mouseenter", function() {lp_space.add_button_effect(button2,true, "#BBD271", lp_space._layer)});
-             button2.on("mouseleave", function() {lp_space.add_button_effect(button2,false, null, lp_space._layer)});
 
-             button2.on("click", function() {lp_space.display_activity(lp_pilot.get_pilot_position())});
-             button2.on("tap", function() {lp_space.display_activity(lp_pilot.get_pilot_position())});
-             lp_pilot.tooltip.add(button2);
-         }
+         // Activities are not for worm_hole
+         button2.on("mouseenter", function() {lp_space.add_button_effect(button2,true, "#BBD271", lp_space._layer)});
+         button2.on("mouseleave", function() {lp_space.add_button_effect(button2,false, null, lp_space._layer)});
+
+         button2.on("click", function() {lp_pilot.click_activity(lp_planet.planet_data[lp_pilot.get_pilot_position()].type === "worm_hole");});
+         button2.on("tap", function() {lp_pilot.click_activity(lp_planet.planet_data[lp_pilot.get_pilot_position()].type === "worm_hole");});
+         lp_pilot.tooltip.add(button2);
 
          // Texts
          var planet = lp_pilot._get_text(20*lp_space.scale_width, 20*lp_space.scale_height,
                         "Planeta "+lp_planet.get_planet_name(lp_pilot.get_pilot_position()),
-                         header_size);
+                         header_size, 200*lp_space.scale_width);
 
          var pilot_name = lp_pilot._get_text(planet.x(), planet.y()+planet.height(),
                         "Pilot : "+lp_pilot.data.name ,
@@ -368,7 +367,7 @@ lp_pilot.pilot_details = function() {
 
          var rank_name = lp_pilot._get_text(planet.x(), pilot_name.y()+pilot_name.height(),
                         "Hodnost : "+lp_pilot.data.rank_name,
-                         basic_size);
+                         basic_size, 140*lp_space.scale_width);
 
          lp_pilot.tooltip.add(pilot_name);
          lp_pilot.tooltip.add(rank_name);
@@ -383,6 +382,18 @@ lp_pilot.pilot_details = function() {
 };
 
 /**
+ * Display ativity
+ * @param worm_hole
+ */
+lp_pilot.click_activity = function(worm_hole) {
+    if (worm_hole) {
+        lp_space.messagebox("Na červí díře není co objevovat, ale můžeš letět dále.");
+    } else {
+        lp_space.display_activity(lp_pilot.get_pilot_position());
+    }
+};
+
+/**
  * create text object
  * @param x
  * @param y
@@ -390,15 +401,21 @@ lp_pilot.pilot_details = function() {
  * @param size
  * @private
  */
-lp_pilot._get_text = function (x, y, text, size) {
-    return new Konva.Text({
+lp_pilot._get_text = function (x, y, text, size, width) {
+    var result = new Konva.Text({
           x: x,
           y: y,
          text: text,
          fontSize: size,
          fontFamily: 'Calibri',
          fill: 'white'
-     });
+    });
+
+    if (width !== undefined) {
+        result.width(width);
+    }
+
+    return result;
 };
 
 /**
@@ -452,6 +469,7 @@ lp_pilot.start_flight = function() {
 
     var ratio = target_planet.width()/target_planet.height();
 
+    // Change button to start/stop
     var planet_image = new Konva.Image({
         x: lp_pilot.dialog.width()-((70*ratio*lp_space.scale_width)+(30)*lp_space.scale_width),
         y: lp_pilot.dialog.height()-((70*lp_space.scale_width)+(30)*lp_space.scale_height),
@@ -461,6 +479,7 @@ lp_pilot.start_flight = function() {
     });
 
     // Events
+    // TODO add counter to start
     planet_image.on("click",lp_pilot._activate_flight);
     planet_image.on("tap",lp_pilot._activate_flight);
 
@@ -472,33 +491,14 @@ lp_pilot.start_flight = function() {
     var header_size = Math.round(lp_space.header_font*lp_space.scale_width);
     var basic_size = Math.round(lp_space.basic_font*lp_space.scale_width);
 
-    // TODO Rewrite to factory
-     var flight = new Konva.Text({
-          x: 120*lp_space.scale_width,
-          y: 30*lp_space.scale_height,
-         text: "Cíl "+lp_planet.get_planet_name(lp_planet.measure_target_id),
-         fontSize: header_size,
-         fontFamily: 'Calibri',
-         fill: 'white',
-     });
+    var flight = lp_pilot._get_text(120*lp_space.scale_width,30*lp_space.scale_height,
+                  "Cíl "+lp_planet.get_planet_name(lp_planet.measure_target_id), header_size);
 
-     var parameters = new Konva.Text({
-          x: flight.x(),
-          y: flight.y()+flight.height(),
-         text: "Parametry letu: "+result.distance/1000+"K au, letový úhel: "+result.angle,
-         fontSize: basic_size,
-         fontFamily: 'Calibri',
-         fill: 'white',
-     });
+    var parameters = lp_pilot._get_text(flight.x(), flight.y()+flight.height(),
+                "Parametry letu: "+result.distance/1000+"K au, letový úhel: "+result.angle, basic_size);
 
-     var time = new Konva.Text({
-          x: flight.x(),
-          y: parameters.y()+parameters.height(),
-         text: "Přílet na: "+lp_planet.get_planet_name(lp_planet.measure_target_id)+" za "+result["time_to_fligh"]+" hodin.",
-         fontSize: basic_size,
-         fontFamily: 'Calibri',
-         fill: 'white',
-     });
+     var time = lp_pilot._get_text(flight.x(), parameters.y()+parameters.height(),
+                "Přílet na: "+lp_planet.get_planet_name(lp_planet.measure_target_id)+" za "+result["time_to_fligh"]+" hodin.", basic_size);
 
      // Time to end
      var actual_time = new Date();
