@@ -39,16 +39,10 @@ lp_planet.create_planet = function (planet_data, picture_obj) {
         return;
     }
 
-    if (!lp_img_earth.complete) {
-        console.log("Picture lp_img_planet is not loaded.");
-        return;
-    }
+    var planet_key = lp_planet.add_planet_prefix(planet_data.id);
 
-    var shadow_color;
-    if (planet_data.shadow_color===undefined) {
-        shadow_color = 'black';
-    } else {
-        shadow_color = planet_data.shadow_color;
+    if (planet_data.type === "worm_hole") {
+        planet_data.size = 40;
     }
 
     var aspect_ratio;
@@ -58,18 +52,29 @@ lp_planet.create_planet = function (planet_data, picture_obj) {
         aspect_ratio = planet_data.aspect_ration;
     }
 
-
-    var planet_key = lp_planet.add_planet_prefix(planet_data.id);
     lp_planet.planets[planet_key] = new Konva.Image({
          x: (planet_data.x*lp_space.scale_width)-((planet_data.size*lp_space.scale_width)/2),
          y: (planet_data.y*lp_space.scale_height)-((planet_data.size*lp_space.scale_width)/2),
          image: picture_obj,
          width: planet_data.size*lp_space.scale_width,
          height: planet_data.size*lp_space.scale_width*aspect_ratio,
-         shadowColor: shadow_color,
-         shadowBlur: 15,
-         shadowOffset: { x: 4, y: 4 },
     });
+
+    if (planet_data.type === "worm_hole") {
+        lp_planet.planets[planet_key].opacity(0.3);
+    }
+    else {
+         var shadow_color;
+        if (planet_data.shadow_color===undefined) {
+            shadow_color = 'black';
+        } else {
+            shadow_color = planet_data.shadow_color;
+        }
+
+        lp_planet.planets[planet_key].shadowColor(shadow_color);
+        lp_planet.planets[planet_key].shadowBlur(15);
+        lp_planet.planets[planet_key].shadowOffset({ x: 4, y: 4 });
+    }
 
     lp_planet.planet_data[planet_key] = planet_data;
     lp_planet.planet_data[planet_key].object = lp_planet.planets[planet_key];
@@ -88,18 +93,20 @@ lp_planet.create_planet = function (planet_data, picture_obj) {
     );
     lp_planet.planets[planet_key].on("mouseleave", function () {lp_space.stage.container().style.cursor = 'default';});
 
-    var planet_name = lp_planet.get_planet_name(planet_key);
+    if (planet_data.type !== "worm_hole") {
+        var planet_name = lp_planet.get_planet_name(planet_key);
 
-    lp_planet.planet_data[planet_key].title = new Konva.Text({
-         x: lp_planet.planet_data[planet_key].actual_x,
-         y: lp_planet.planets[planet_key].y()+lp_planet.planets[planet_key].height()+5, //5 is offset
-         text: planet_name,
-         fontSize: 13,
-         fontFamily: 'Calibri',
-         fill: 'white'
-    });
+        lp_planet.planet_data[planet_key].title = new Konva.Text({
+            x: lp_planet.planet_data[planet_key].actual_x,
+            y: lp_planet.planets[planet_key].y() + lp_planet.planets[planet_key].height() + 5, //5 is offset
+            text: planet_name,
+            fontSize: 13,
+            fontFamily: 'Calibri',
+            fill: 'white'
+        });
+        lp_space.add_to_space(lp_planet.planet_data[planet_key].title);
+    }
 
-    lp_space.add_to_space(lp_planet.planet_data[planet_key].title);
     lp_space.add_to_space(lp_planet.planets[planet_key]);
 };
 
@@ -183,6 +190,10 @@ lp_planet.click = function(planet_id) {
  */
 lp_planet.get_planet_name = function(planet_id) {
     var planet_data = lp_planet.planet_data[planet_id];
+
+    if (planet_data.type === "worm_hole") {
+        return "?";
+    }
 
     var planet_name = planet_data.name;
     if (planet_name === null) {

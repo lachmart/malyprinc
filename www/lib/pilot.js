@@ -344,9 +344,12 @@ lp_pilot._add_tooltip = function() {
               opacity: 1,
          });
 
-         button2.on("mouseenter", function() {lp_space.add_button_effect(button2,true, "#BBD271", lp_space._layer)});
-         button2.on("mouseleave", function() {lp_space.add_button_effect(button2,false, null, lp_space._layer)});
-         lp_pilot.tooltip.add(button2);
+         if (lp_planet.planet_data[lp_pilot.get_pilot_position()].type !== "worm_hole") {
+             // Activities are not for worm_hole
+             button2.on("mouseenter", function() {lp_space.add_button_effect(button2,true, "#BBD271", lp_space._layer)});
+             button2.on("mouseleave", function() {lp_space.add_button_effect(button2,false, null, lp_space._layer)});
+             lp_pilot.tooltip.add(button2);
+         }
 
          // Texts
          var planet = lp_pilot._get_text(20*lp_space.scale_width, 20*lp_space.scale_height,
@@ -530,6 +533,10 @@ lp_pilot.hide_dialog = function() {
  * Activate flight
  */
 lp_pilot._activate_flight = function() {
+    if (!lp_pilot.is_system_for_live_support_ok()) {
+        return;
+    }
+
     if (lp_pilot.is_on_planet() && lp_planet.measure_target_id !== undefined) {
         if (lp_pilot.is_in_flight()) {
             return
@@ -602,7 +609,11 @@ lp_pilot.flight_progress = function() {
  */
 lp_pilot.set_planet_position = function(target_id) {
     // Set new position
-    lp_pilot.data.actual_position = target_id;
+    if (lp_planet.planet_data[target_id].type==="worm_hole") {
+        lp_pilot.data.actual_position = lp_planet.planet_data[target_id].end;
+    } else {
+        lp_pilot.data.actual_position = target_id;
+    }
 
     // reset flight
     lp_pilot.data.actual_flight = null;
@@ -653,4 +664,21 @@ lp_pilot.create_flight_json = function() {
         };
 
         return returned_json;
+};
+
+/**
+ * Check live system
+ * @returns {boolean}
+ */
+lp_pilot.is_system_for_live_support_ok = function() {
+
+    var actual_date = new Date();
+    // TODO server request
+    var json_answer = {"day": actual_date.toISOString(), "status": true, percentage: 70};
+
+    if (!json_answer.status && json_answer.day === actual_date.toISOString()) {
+        alert("TODO dialog nelze letět.");
+        return false;
+    }
+    return true;
 };
