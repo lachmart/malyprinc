@@ -147,7 +147,7 @@ lp_pilot._add_avatar = function(avatar_type, id, json_flight) {
     }
 
     if (lp_pilot.tooltip!==undefined) {
-        lp_pilot._add_tooltip();
+        lp_pilot.pilot_details();
     }
 
     if (lp_pilot.flight_tooltip!==undefined) {
@@ -170,8 +170,8 @@ lp_pilot._add_avatar = function(avatar_type, id, json_flight) {
                   shadowOffset: { x: 4, y: 4 },
              });
 
-             lp_pilot.avatar.on('click', lp_pilot._add_tooltip);
-             lp_pilot.avatar.on('tap', lp_pilot._add_tooltip);
+             lp_pilot.avatar.on('click', lp_pilot.pilot_details);
+             lp_pilot.avatar.on('tap', lp_pilot.pilot_details);
 
              lp_pilot.avatar.on("mouseenter", function () {lp_space.stage.container().style.cursor = 'pointer';});
              lp_pilot.avatar.on("mouseleave", function () {lp_space.stage.container().style.cursor = 'default';});
@@ -197,7 +197,7 @@ lp_pilot._add_avatar = function(avatar_type, id, json_flight) {
                  shadowColor: 'red',
                  shadowBlur: blur_size,
                  shadowOffset: { x: 0, y: 0 },
-                 width: 25*lp_space.scale_width,
+                 width: 30*lp_space.scale_width,
                  height: 96*lp_space.scale_height,
             });
 
@@ -280,10 +280,10 @@ lp_pilot.get_flight_position = function(distance, start_at, time_to_flight) {
  * add small tooltip
  * @private
  */
-lp_pilot._add_tooltip = function() {
+lp_pilot.pilot_details = function() {
      if (lp_pilot.tooltip===undefined) {
 
-         lp_pilot.hide_dialog();
+         lp_pilot.hide_flight_planer();
          lp_planet.remove_measure();
 
          // protection
@@ -298,8 +298,8 @@ lp_pilot._add_tooltip = function() {
          lp_pilot.tooltip = new Konva.Group({
              x: x,
              y: lp_pilot.avatar.y(),
-             height: 149*lp_space.scale_height,
-             width: 350*lp_space.scale_width,
+             height: 142*lp_space.scale_height,
+             width: 380*lp_space.scale_width,
          });
 
          // Pictures
@@ -310,6 +310,9 @@ lp_pilot._add_tooltip = function() {
               width: lp_pilot.tooltip.width(),
               image: lp_img_tooltip,
               opacity: 1,
+              shadowColor: 'black',
+              shadowBlur: 20,
+              shadowOffset: { x: 10, y: 10 },
          });
 
          lp_pilot.tooltip.add(tooltip_picture);
@@ -322,8 +325,8 @@ lp_pilot._add_tooltip = function() {
          var button1 = new Konva.Image({
               x: lp_pilot.tooltip.width()-((83*lp_space.scale_width)+15),
               y: 15*lp_space.scale_height,
-              height: 108*lp_space.scale_width,
-              width: 83*lp_space.scale_width,
+              height: 98*lp_space.scale_width,
+              width: 83*lp_space.scale_height,
               image: lp_img_photo,
               opacity: 1,
          });
@@ -336,10 +339,10 @@ lp_pilot._add_tooltip = function() {
 
          // button activity
          var button2 = new Konva.Image({
-              x: (150*lp_space.scale_width),
-              y: 90*lp_space.scale_height,
-              height: 45*lp_space.scale_width,
-              width: 45*lp_space.scale_width,
+              x: (163*lp_space.scale_width),
+              y: 85*lp_space.scale_height,
+              height: 48*lp_space.scale_width,
+              width: 48*lp_space.scale_height,
               image: lp_img_activity,
               opacity: 1,
          });
@@ -348,6 +351,9 @@ lp_pilot._add_tooltip = function() {
              // Activities are not for worm_hole
              button2.on("mouseenter", function() {lp_space.add_button_effect(button2,true, "#BBD271", lp_space._layer)});
              button2.on("mouseleave", function() {lp_space.add_button_effect(button2,false, null, lp_space._layer)});
+
+             button2.on("click", function() {lp_space.display_activity(lp_pilot.get_pilot_position())});
+             button2.on("tap", function() {lp_space.display_activity(lp_pilot.get_pilot_position())});
              lp_pilot.tooltip.add(button2);
          }
 
@@ -371,7 +377,7 @@ lp_pilot._add_tooltip = function() {
          lp_space.add_to_space(lp_pilot.tooltip);
          console.log("Tooltip of pilot loaded");
      } else {
-         lp_pilot.hide_tooltip();
+         lp_pilot.hide_pilot_details();
      }
      lp_space.draw();
 };
@@ -398,7 +404,7 @@ lp_pilot._get_text = function (x, y, text, size) {
 /**
  * Hide tooltip card of pilot
  */
-lp_pilot.hide_tooltip = function() {
+lp_pilot.hide_pilot_details = function() {
     if (lp_pilot.tooltip!==undefined) {
         lp_pilot.tooltip.destroy();
         lp_pilot.tooltip = undefined;
@@ -411,13 +417,13 @@ lp_pilot.hide_tooltip = function() {
  */
 lp_pilot.start_flight = function() {
 
-    lp_pilot.hide_dialog();
-    lp_pilot.hide_tooltip();
+    lp_pilot.hide_flight_planer();
+    lp_pilot.hide_pilot_details();
 
     var result = lp_planet.get_distance_from_measure();
 
     var target_planet = lp_planet.planet_data[lp_planet.measure_target_id].object;
-    var dialog_x = (lp_space.screen_width/2)-(250*lp_space.scale_width);
+    var dialog_x = (lp_space.screen_width/2)-(186*lp_space.scale_width);
 
     var dialog_y;
     if (lp_planet.planet_data[lp_planet.measure_target_id].y>=lp_space.basic_height/2) {
@@ -521,7 +527,7 @@ lp_pilot.start_flight = function() {
 /**
  * Hide dialog from screen
  */
-lp_pilot.hide_dialog = function() {
+lp_pilot.hide_flight_planer = function() {
     if (lp_pilot.dialog !== undefined) {
         lp_pilot.dialog.destroy();
         lp_pilot.dialog = undefined;
@@ -542,7 +548,7 @@ lp_pilot._activate_flight = function() {
             return
         }
 
-        lp_pilot.hide_dialog();
+        lp_pilot.hide_flight_planer();
         lp_planet.get_planet_name(lp_planet.measure_target_id);
 
         var json_to_server = lp_pilot.create_flight_json();
@@ -677,8 +683,9 @@ lp_pilot.is_system_for_live_support_ok = function() {
     var json_answer = {"day": actual_date.toISOString(), "status": true, percentage: 70};
 
     if (!json_answer.status && json_answer.day === actual_date.toISOString()) {
-        alert("TODO dialog nelze letět.");
+        lp_space.messagebox("Systém podpory života byl včera aktivní jen na "+json_answer.percentage+"%. Požadováno je nejméně 70%. Klikněte pro detaily.", lp_action.go_to_live_support_system);
         return false;
     }
     return true;
 };
+

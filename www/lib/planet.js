@@ -62,6 +62,9 @@ lp_planet.create_planet = function (planet_data, picture_obj) {
 
     if (planet_data.type === "worm_hole") {
         lp_planet.planets[planet_key].opacity(0.3);
+        lp_planet.planets[planet_key].shadowColor("orange");
+        lp_planet.planets[planet_key].shadowBlur(20);
+        lp_planet.planets[planet_key].shadowOffset({ x: 0, y: 0 });
     }
     else {
          var shadow_color;
@@ -86,7 +89,7 @@ lp_planet.create_planet = function (planet_data, picture_obj) {
     lp_planet.planets[planet_key].on('tap', function () {lp_planet.click(planet_key);});
 
     lp_planet.planets[planet_key].on("mouseenter", function () {
-        if (!lp_pilot.is_in_flight()) {
+        if (!lp_pilot.is_in_flight() && !lp_space.is_displayed_activity()) {
             lp_space.stage.container().style.cursor = 'pointer';}
         }
 
@@ -146,9 +149,6 @@ lp_planet.create_earth = function (earth_data) {
     lp_planet.planet_data[planet_key].actual_x = lp_planet.earth.x()+((earth_data.size*lp_space.scale_width)/2);
     lp_planet.planet_data[planet_key].actual_y = lp_planet.earth.y()+((earth_data.size*lp_space.scale_width)/2);
 
-    lp_planet.earth.on('click', lp_pilot.start_flight);
-    lp_planet.earth.on('tap', lp_pilot.start_flight);
-
     lp_space.add_to_space(lp_planet.earth);
 };
 
@@ -163,8 +163,8 @@ lp_planet.click = function(planet_id) {
     }
     var planet_data = lp_planet.planet_data[planet_id];
 
-    if (lp_pilot.get_pilot_position() === planet_id) {
-        lp_pilot._add_tooltip();
+    if (lp_pilot.get_pilot_position() === planet_id && !lp_pilot.is_in_flight()) {
+        lp_pilot.pilot_details();
         return;
     }
 
@@ -174,8 +174,11 @@ lp_planet.click = function(planet_id) {
         // check if pilot is on planet.
         if (lp_pilot.is_on_planet()) {
 
-            lp_planet.add_measure(lp_pilot.get_pilot_position(), planet_id);
-            lp_pilot.start_flight();
+            // nof flight when open activity
+            if (!lp_space.is_displayed_activity()) {
+                 lp_planet.add_measure(lp_pilot.get_pilot_position(), planet_id);
+                 lp_pilot.start_flight();
+            }
 
         } else {
             console.log("Pilot cannot navigate, because is on the way.");
