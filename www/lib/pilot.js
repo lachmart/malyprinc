@@ -15,6 +15,12 @@ lp_img_rocket.src = 'assets/rocket.png';
 var lp_img_mision = new Image();
 lp_img_mision.src = 'assets/mise.png';
 
+var lp_img_photo = new Image();
+lp_img_photo.src = 'assets/foto.png';
+
+var lp_img_activity = new Image();
+lp_img_activity.src = 'assets/activity.png';
+
 var lp_pilot = function () {};
 
 lp_pilot._avatar_layer = undefined;
@@ -281,69 +287,80 @@ lp_pilot._add_tooltip = function() {
          lp_planet.remove_measure();
 
          // protection
-         // TODO rewrite not functional flip image
          var x;
-         var scaleX;
-         if ((lp_pilot.avatar.x()+lp_pilot.avatar.width()+300) > lp_space.screen_width) {
-             x = lp_pilot.avatar.x();
-             scaleX = -1;
+         if ((lp_pilot.avatar.x()+lp_pilot.avatar.width()+(350*lp_space.scale_width)) > lp_space.screen_width) {
+             x = lp_pilot.avatar.x()-(350*lp_space.scale_width);
          } else {
              x = lp_pilot.avatar.x()+lp_pilot.avatar.width();
-             scaleX = 1;
          }
 
+         // Main relative group
          lp_pilot.tooltip = new Konva.Group({
              x: x,
-             y: lp_pilot.avatar.y()-20,
-             height: 155*lp_space.scale_width,
-             width: 300*lp_space.scale_height,
+             y: lp_pilot.avatar.y(),
+             height: 149*lp_space.scale_height,
+             width: 350*lp_space.scale_width,
          });
 
+         // Pictures
          var tooltip_picture = new Konva.Image({
               x: 0,
               y: 0,
               height: lp_pilot.tooltip.height(),
               width: lp_pilot.tooltip.width(),
               image: lp_img_tooltip,
-              shadowColor: 'black',
-              opacity: 0.4,
-              scaleX: scaleX,
-              shadowBlur: 15,
-              shadowOffset: { x: 4, y: 4 },
+              opacity: 1,
          });
+
+         lp_pilot.tooltip.add(tooltip_picture);
 
          var header_size = Math.round(lp_space.header_font*lp_space.scale_width);
          var basic_size = Math.round(lp_space.basic_font*lp_space.scale_width);
 
-         // TODO rewrite to factory
-         var planet = new Konva.Text({
-              x: 20*lp_space.scale_width,
-              y: 10*lp_space.scale_height,
-             text: lp_planet.get_planet_name(lp_pilot.get_pilot_position()),
-             fontSize: header_size,
-             fontFamily: 'Calibri',
-             fill: 'white'
+         // Buttons
+         // button photo
+         var button1 = new Konva.Image({
+              x: lp_pilot.tooltip.width()-((83*lp_space.scale_width)+15),
+              y: 15*lp_space.scale_height,
+              height: 108*lp_space.scale_width,
+              width: 83*lp_space.scale_width,
+              image: lp_img_photo,
+              opacity: 1,
          });
 
-         var pilot_name = new Konva.Text({
-              x: planet.x(),
-              y: planet.y()+planet.height(),
-             text: "Pilot : "+lp_pilot.data.name ,
-             fontSize: basic_size,
-             fontFamily: 'Calibri',
-             fill: 'white'
+         lp_pilot.tooltip.add(button1);
+         button1.on("mouseenter", function() {lp_space.add_button_effect(button1,true, "#B3C6C6",lp_space._layer)});
+         button1.on("mouseleave", function() {lp_space.add_button_effect(button1,false, null, lp_space._layer)});
+         button1.on("click", function() {lp_action.go_to_deck_logbook()});
+         button1.on("tap", function() {lp_action.go_to_deck_logbook()});
+
+         // button activity
+         var button2 = new Konva.Image({
+              x: (150*lp_space.scale_width),
+              y: 90*lp_space.scale_height,
+              height: 45*lp_space.scale_width,
+              width: 45*lp_space.scale_width,
+              image: lp_img_activity,
+              opacity: 1,
          });
 
-         var rank_name = new Konva.Text({
-              x: planet.x(),
-              y: pilot_name.y()+pilot_name.height(),
-             text: "Hodnost : "+lp_pilot.data.rank_name,
-             fontSize: basic_size,
-             fontFamily: 'Calibri',
-             fill: 'white'
-         });
+         button2.on("mouseenter", function() {lp_space.add_button_effect(button2,true, "#BBD271", lp_space._layer)});
+         button2.on("mouseleave", function() {lp_space.add_button_effect(button2,false, null, lp_space._layer)});
+         lp_pilot.tooltip.add(button2);
 
-         lp_pilot.tooltip.add(tooltip_picture);
+         // Texts
+         var planet = lp_pilot._get_text(20*lp_space.scale_width, 20*lp_space.scale_height,
+                        "Planeta "+lp_planet.get_planet_name(lp_pilot.get_pilot_position()),
+                         header_size);
+
+         var pilot_name = lp_pilot._get_text(planet.x(), planet.y()+planet.height(),
+                        "Pilot : "+lp_pilot.data.name ,
+                         basic_size);
+
+         var rank_name = lp_pilot._get_text(planet.x(), pilot_name.y()+pilot_name.height(),
+                        "Hodnost : "+lp_pilot.data.rank_name,
+                         basic_size);
+
          lp_pilot.tooltip.add(pilot_name);
          lp_pilot.tooltip.add(rank_name);
          lp_pilot.tooltip.add(planet);
@@ -356,6 +373,24 @@ lp_pilot._add_tooltip = function() {
      lp_space.draw();
 };
 
+/**
+ * create text object
+ * @param x
+ * @param y
+ * @param text
+ * @param size
+ * @private
+ */
+lp_pilot._get_text = function (x, y, text, size) {
+    return new Konva.Text({
+          x: x,
+          y: y,
+         text: text,
+         fontSize: size,
+         fontFamily: 'Calibri',
+         fill: 'white'
+     });
+};
 
 /**
  * Hide tooltip card of pilot
@@ -388,10 +423,11 @@ lp_pilot.start_flight = function() {
         dialog_y = (lp_space.screen_height)-(186*lp_space.scale_height);
     }
 
+    // Main dialog group
     lp_pilot.dialog = new Konva.Group({
         x: dialog_x,
         y: dialog_y,
-        width: 500*lp_space.scale_width,
+        width: 450*lp_space.scale_width,
         height: 186*lp_space.scale_height,
     });
 
@@ -401,7 +437,6 @@ lp_pilot.start_flight = function() {
         width: lp_pilot.dialog.width(),
         height: lp_pilot.dialog.height(),
         image: lp_img_mision,
-        opacity: 0.7,
     });
 
     lp_pilot.dialog.add(dialog_box);
@@ -414,17 +449,14 @@ lp_pilot.start_flight = function() {
         width: (70*ratio*lp_space.scale_width),
         height: (70*lp_space.scale_width),
         image: target_planet.image(),
-        shadowColor: 'red',
-        shadowBlur: 15,
-        shadowOffset: { x: 0, y: 0 },
-        opacity: 1,
     });
 
     // Events
     planet_image.on("click",lp_pilot._activate_flight);
     planet_image.on("tap",lp_pilot._activate_flight);
-    planet_image.on("mouseenter", function () { lp_space.stage.container().style.cursor = 'pointer';});
-    planet_image.on("mouseleave", function () { lp_space.stage.container().style.cursor = 'default';});
+
+    planet_image.on("mouseenter", function() {lp_space.add_button_effect(planet_image,true, "red", lp_pilot._avatar_layer)});
+    planet_image.on("mouseleave", function() {lp_space.add_button_effect(planet_image,false, null, lp_pilot._avatar_layer)});
 
     lp_pilot.dialog.add(planet_image);
 
@@ -439,7 +471,6 @@ lp_pilot.start_flight = function() {
          fontSize: header_size,
          fontFamily: 'Calibri',
          fill: 'white',
-         opacity: 0.5,
      });
 
      var parameters = new Konva.Text({
@@ -449,7 +480,6 @@ lp_pilot.start_flight = function() {
          fontSize: basic_size,
          fontFamily: 'Calibri',
          fill: 'white',
-         opacity: 0.5
      });
 
      var time = new Konva.Text({
@@ -459,7 +489,6 @@ lp_pilot.start_flight = function() {
          fontSize: basic_size,
          fontFamily: 'Calibri',
          fill: 'white',
-         opacity: 0.5
      });
 
      // Time to end
@@ -475,7 +504,6 @@ lp_pilot.start_flight = function() {
          fontSize: basic_size,
          fontFamily: 'Calibri',
          fill: 'white',
-         opacity: 0.5
      });
 
      lp_pilot.dialog.add(flight);

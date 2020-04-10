@@ -306,7 +306,7 @@ lp_planet.get_distance_from_measure = function() {
 
         var hour_constant = lp_space.basic_width/75; // 75 hour to all space
         var time_to_flight = Math.round(Math.round(c)/hour_constant); // time in hour
-        return {"distance": Math.round(c)*1000, "angle": angle, "time_to_fligh": time_to_flight, "real_distance": c2};
+        return {"distance": Math.round(c)*100, "angle": angle, "time_to_fligh": time_to_flight, "real_distance": c2};
     }
     return null;
 };

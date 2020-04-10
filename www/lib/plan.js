@@ -40,6 +40,26 @@ lp_space.init = function()
 };
 
 /**
+ * Add button effect
+ * @param button obj to add
+ * @param direction true enable, false disable
+ * @param color
+ * @param layer to render
+ */
+lp_space.add_button_effect = function(button, direction, color, layer) {
+    if (direction) {
+        button.shadowColor(color);
+        button.shadowBlur(25);
+        button.shadowOffset({ x: 0, y: 0 });
+        lp_space.stage.container().style.cursor = 'pointer';
+    } else {
+        button.shadowBlur(0);
+        lp_space.stage.container().style.cursor = 'default';
+    }
+    layer.draw();
+};
+
+/**
  * Basic calculation of dimensions
  */
 lp_space.recalculate_space = function() {
@@ -90,6 +110,11 @@ lp_space._createStage = function() {
         width: 70*lp_space.scale_width,
         height: 70*lp_space.scale_width,
     });
+
+    logo.on("mouseenter", function() {lp_space.add_button_effect(logo,true, "#B3C6C6",lp_space._layer)});
+    logo.on("mouseleave", function() {lp_space.add_button_effect(logo,false, null, lp_space._layer)});
+    logo.on("click", function() {lp_action.go_to_deck_logbook()});
+    logo.on("tap", function() {lp_action.go_to_deck_logbook()});
 
     lp_space.stage.add(lp_space._layer);
     lp_space.add_to_space(lp_space._area);
@@ -158,7 +183,7 @@ lp_space._server_load_space_object = function() {
                                 {"id":1, "name":"Země", "custom_name":null,"x":null, "y":null, "size":150, "type":"earth"},
                                 {"id":2346, "name":null, "custom_name": null, "x":300, "y":100, "size":70, "type":"standard_planet"},
                                 {"id":3245, "name":"Tutu", "custom_name":null, "x":600, "y":600, "size":40, "type":"standard_planet"},
-                                {"id":4125, "name":"Dejmalova", "custom_name":null, "x":1100, "y":600, "size":60, "type":"chair_planet", "shadow_color":"orange", "aspect_ration":1.23},
+                                {"id":4125, "name":"Dejmalova", "custom_name":null, "x":1100, "y":610, "size":60, "type":"chair_planet", "shadow_color":"orange", "aspect_ration":1.23},
                                 {"id":5987, "name":"Vojačkova", "custom_name":null, "x":1150, "y":200, "size":80, "type":"standard_planet"},
                                 {"id":5917, "name":"Hernova", "custom_name":null, "x":900, "y":520, "size":60, "type":"standard_planet"},
                                 {"id":8765, "name":null, "custom_name":null, "x":1050, "y":300, "size":20, "type":"standard_planet"},
