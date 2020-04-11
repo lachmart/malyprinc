@@ -45,7 +45,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
   public function actionDefault()
   {
       // if($this->user->isLoggedIn()) {
-      //     $this->redirect('Homepage:default');
+      //     $this->redirect('Map:default');
       // } else {
       //     $this->redirect('Sign:in');
       // }
@@ -65,7 +65,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
   {
     $this->user->logout();
     $this->flashMessage('Byl jsi odhlášen', 'alert alert-success');
-    $this->redirect('Homepage:default');
+    $this->redirect('Map:default');
   }
 
   public function actionResetpassword($email, $token)
@@ -78,7 +78,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
       else {
           $this->flashMessage('Něco se pokazilo, kontaktuj podporu', 'alert alert-danger');
       }
-      $this->redirect('Homepage:default');
+      $this->redirect('Map:default');
 
    }
 
@@ -99,7 +99,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
       else {
           $this->flashMessage('Email je již potvrzen, nebo máš špatný odkaz. POkud se ti něco nezdá, kontaktuj podporu', 'alert alert-danger');
       }
-      $this->redirect('Homepage:default');
+      $this->redirect('Map:default');
 
    }
 
@@ -320,7 +320,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
       $this->flashMessage('Nesprávné přihlašovací jméno nebo heslo.', 'alert alert-danger');
 
     }
-    $this->redirect('Homepage:default');
+    $this->redirect('Map:default');
   }
 
   protected function createComponentForgotForm()

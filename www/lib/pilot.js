@@ -47,16 +47,11 @@ lp_pilot.init = function() {
  */
 lp_pilot._server_load_pilot_data = function() {
     // TODO backend loading 2
-    var json_from_server =      {   "id":1,
-                                    "name":"David Pokorný",
-                                    "rank_id":"1",
-                                    "rank_name":"Nadporučík vesmírné stanice",
-                                    "category_id":1,
-                                    "category_name":"skauti/skautky od 6 do 9 třídy",
-                                    "actual_position": 1,
-                                    "actual_flight": null,
-                                    "photo": "absolutepath"
-                                };
+    var json_from_server =  $.ajax({
+                                  url: 'map/pilot',
+                                  async: false,
+                                  dataType: 'json'
+                              }).responseJSON;
 
 
     // add prefixes to source and target id, because server cannot know
@@ -552,6 +547,14 @@ lp_pilot._activate_flight = function() {
 
         var json_to_server = lp_pilot.create_flight_json();
 
+
+        $.ajax({
+                  url: 'map/flight',
+                  async: false,
+                  dataType: 'json',
+                  data: json_to_server
+              }).responseJSON;
+
         // TODO send to server json_to_server 3
 
         lp_pilot.data.actual_flight = json_to_server;
@@ -669,6 +672,7 @@ lp_pilot.create_flight_json = function() {
             "finish_at": time_to_end.toISOString()
         };
 
+
         return returned_json;
 };
 
@@ -689,4 +693,3 @@ lp_pilot.is_system_for_live_support_ok = function() {
     }
     return true;
 };
-

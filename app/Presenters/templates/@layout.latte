@@ -14,6 +14,7 @@
 			<script src="{$basePath}/lib/plan.js"></script>
 			<script src="{$basePath}/lib/planet.js"></script>
 			<script src="{$basePath}/lib/pilot.js"></script>
+			<script src="{$basePath}/lib/action.js"></script>
 
 		{/block}
 		<title>Malý princ</title>
@@ -27,7 +28,7 @@
 <body>
 <div id='menu'>
 	{if $user->loggedIn}
-<a n:href="Homepage:default">mapa</a>
+<a n:href="Map:default">mapa</a>
 <a n:href="Denik:prukaz">průkaz</a>
 <a n:href="Denik:zivot">systém podpory života</a>
 <a n:href="Denik:objevy">Objevy</a>

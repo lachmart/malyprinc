@@ -200,23 +200,12 @@ lp_space._add_plannets = function() {
  * @private
  */
 lp_space._server_load_space_object = function() {
-    // TODO backend loading 1
-    var json_from_server = {
-                            "planet":[
-                                {"id":1, "name":"Země", "size":150, "type":"earth"},
-                                {"id":2346, "name":null, "custom_name": "Šamanova", "x":300, "y":100, "size":70, "type":"standard_planet"},
-                                {"id":3245, "name":"Tutu vesmírná planeta", "x":600, "y":600, "size":40, "type":"standard_planet"},
-                                {"id":4125, "name":"Dejmalova", "x":1100, "y":610, "size":60, "type":"chair_planet", "shadow_color":"orange", "aspect_ration":1.23},
-                                {"id":5987, "name":"Vojačkova", "x":1150, "y":200, "size":80, "type":"standard_planet"},
-                                {"id":5917, "name":"Hernova", "x":900, "y":520, "size":60, "type":"standard_planet"},
-                                {"id":8765, "name":null, "custom_name":null, "x":1110, "y":250, "size":20, "type":"standard_planet"},
-                                {"id":7865, "name":"Proxima", "x":424, "y":500, "size":60, "type":"special_planet"},
-                                {"id":1456, "name":"Royova", "x":700, "y":160, "size":90, "type":"special_planet"},
-                                {"id":2456, "x":550, "y":356, "type":"worm_hole", "end": 2457},
-                                {"id":2457, "x":1220, "y":543, "type":"worm_hole", "end": 2456},
-                            ]
-                            };
-    return json_from_server;
+  return $.ajax({
+    url: 'map/planets',
+    async: false,
+    dataType: 'json'
+}).responseJSON;
+
 };
 
 /**

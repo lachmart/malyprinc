@@ -17,3 +17,4 @@ services:
 	- App\Model\UserManager
 	- App\Model\ZivotManager
 	- App\Model\ShareManager
+	- App\Model\FlightManager

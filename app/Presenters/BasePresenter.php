@@ -26,7 +26,7 @@ class BasePresenter extends Nette\Application\UI\Presenter
 	{
 		$this->getUser()->logout();
 		$this->flashMessage('Odhlášení proběhlo úspěšně. Těšíme se na další návštěvu.');
-		$this->redirect('Homepage:default');
+		$this->redirect('Map:default');
 	}
 
 	protected function createComponentMenu(): MenuComponent
