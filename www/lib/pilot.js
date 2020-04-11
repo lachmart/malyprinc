@@ -46,10 +46,9 @@ lp_pilot.init = function() {
  * @private
  */
 lp_pilot._server_load_pilot_data = function() {
-    // TODO backend loading
+    // TODO backend loading 2
     var json_from_server =      {   "id":1,
                                     "name":"David Pokorný",
-                                    "email":"david.pokorny@olc.cz",
                                     "rank_id":"1",
                                     "rank_name":"Nadporučík vesmírné stanice",
                                     "category_id":1,
@@ -387,7 +386,7 @@ lp_pilot.pilot_details = function() {
  */
 lp_pilot.click_activity = function(worm_hole) {
     if (worm_hole) {
-        lp_space.messagebox("Na červí díře není co objevovat, ale můžeš letět dále.");
+        lp_space.messagebox("Na červí díře není co objevovat, ale může pomoci jako zkratka. Leť dále.");
     } else {
         lp_space.display_activity(lp_pilot.get_pilot_position());
     }
@@ -553,7 +552,7 @@ lp_pilot._activate_flight = function() {
 
         var json_to_server = lp_pilot.create_flight_json();
 
-        // TODO send to server json_to_server
+        // TODO send to server json_to_server 3
 
         lp_pilot.data.actual_flight = json_to_server;
         lp_pilot.flight_progress();
@@ -631,7 +630,8 @@ lp_pilot.set_planet_position = function(target_id) {
     // display avatar
     lp_pilot._add_pilot_position();
 
-    // TODO json to server
+    // TODO json to server 4
+    // protection target_id
 };
 
 /**
@@ -679,7 +679,8 @@ lp_pilot.create_flight_json = function() {
 lp_pilot.is_system_for_live_support_ok = function() {
 
     var actual_date = new Date();
-    // TODO server request
+    // TODO server request 5
+    // question with day in iso
     var json_answer = {"day": actual_date.toISOString(), "status": true, percentage: 70};
 
     if (!json_answer.status && json_answer.day === actual_date.toISOString()) {

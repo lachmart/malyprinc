@@ -53,7 +53,7 @@ lp_space.init = function()
 {
     lp_space.create_space();
     lp_pilot.init();
-    // TODO load frineds
+    // TODO load frineds 6
 };
 
 /**
@@ -84,8 +84,11 @@ lp_space.create_space = function() {
     lp_space.basic_height = 810;
     lp_space.screen_width = window.innerWidth;
 
+
     // preserve 16:9 format
     lp_space.screen_height = 9/16*lp_space.screen_width;
+
+    console.log(lp_space.screen_width+" "+lp_space.screen_height);
 
     lp_space.scale_width = lp_space.screen_width/lp_space.basic_width;
     lp_space.scale_height = lp_space.screen_height/lp_space.basic_height;
@@ -197,7 +200,7 @@ lp_space._add_plannets = function() {
  * @private
  */
 lp_space._server_load_space_object = function() {
-    // TODO backend loading
+    // TODO backend loading 1
     var json_from_server = {
                             "planet":[
                                 {"id":1, "name":"Země", "size":150, "type":"earth"},
@@ -232,9 +235,21 @@ lp_space.display_activity = function(planet_id) {
     // Main dialog group
     lp_space._activity_dialog = new Konva.Group({
         x: (lp_space.screen_width/2)-((600*lp_space.scale_width)/2),
-        y: (lp_space.screen_height/2)-((625*lp_space.scale_width)/2),
+        y: (lp_space.screen_height/2)-((625*lp_space.scale_height)/2),
         width: 600*lp_space.scale_width,
-        height: 625*lp_space.scale_width,
+        height: 625*lp_space.scale_height,
+    });
+
+      // Cover
+    lp_space._cover = new Konva.Rect({
+        x: 0,
+        y: 0,
+        fill: 'black',
+        stroke: 'black',
+        strokeWidth: 1,
+        opacity: 0.5,
+        width: lp_space.screen_width,
+        height: lp_space.screen_height,
     });
 
     var dialog_box = new Konva.Image({
@@ -250,9 +265,9 @@ lp_space.display_activity = function(planet_id) {
 
     var close_button = new Konva.Image({
         x: lp_space._activity_dialog.width()-(110*lp_space.scale_width),
-        y: 40,
+        y: 30*lp_space.scale_height,
         width: 60*lp_space.scale_width,
-        height: 60*lp_space.scale_width,
+        height: 60*lp_space.scale_height,
         image: lp_close,
     });
 
@@ -264,8 +279,9 @@ lp_space.display_activity = function(planet_id) {
 
     var title = lp_pilot._get_text(160*lp_space.scale_width,40*lp_space.scale_height, "Planeta "+ lp_planet.get_planet_name(lp_pilot.get_pilot_position()), Math.round(30* lp_space.scale_width), 300*lp_space.scale_width);
 
-    // TODO load activity and display from server.
+    // TODO load activity and display from server. 7
 
+    lp_space._dialog_layer.add(lp_space._cover);
     lp_space._activity_dialog.add(dialog_box);
     lp_space._activity_dialog.add(close_button);
     lp_space._activity_dialog.add(title);
@@ -290,6 +306,8 @@ lp_space.hide_displayed_activity = function() {
     if (lp_space.is_displayed_activity()) {
         lp_space._activity_dialog.destroy();
         lp_space._activity_dialog = undefined;
+        lp_space._cover.destroy();
+        lp_space._cover = undefined;
         lp_space._dialog_layer.draw();
     }
 };
