@@ -212,17 +212,29 @@ lp_planet.get_planet_name = function(planet_id) {
 
 /**
  * Return id prefixed to name in array
- * @param id
+ * @param planet_id
  * @returns {string}
  */
-lp_planet.add_planet_prefix = function(id) {
-    var id_string = id.toString();
+lp_planet.add_planet_prefix = function(planet_id) {
+    var id_string = planet_id.toString();
     if (id_string.substring(0,2) !== "pl") {
         return "pl_"+id_string;
     }
     else {
         return id_string;
     }
+};
+
+/**
+ * Return id prefixed to name in array
+ * @param planet_id
+ * @returns {string}
+ */
+lp_planet.remove_planet_prefix = function(planet_id) {
+     if (planet_id.substring(0,2) === "pl") {
+         return parseInt(planet_id.substring(3));
+     }
+     return parseInt(planet_id);
 };
 
 /**
@@ -314,12 +326,12 @@ lp_planet.get_distance_from_measure = function() {
         // Because of ange it depend on size
         var a2 = Math.abs((source_x2)-(target_x2));
         var b2 = Math.abs((source_y2)-(target_y2));
-        var c2 = Math.abs(Math.sqrt(Math.pow(a2,2)+Math.pow(b2,2)));
+        var c2 = Math.round(Math.abs(Math.sqrt(Math.pow(a2,2)+Math.pow(b2,2))));
 
         var angle = Math.round(180-90-(Math.asin(a2/c2)* (180/Math.PI)));
 
         var hour_constant = lp_space.basic_width/75; // 75 hour to all space
-        var time_to_flight = Math.round(Math.round(c)/hour_constant); // time in hour
+        var time_to_flight = Math.round(c2/hour_constant); // time in hour
         return {"distance": Math.round(c)*100, "angle": angle, "time_to_fligh": time_to_flight, "real_distance": c2};
     }
     return null;

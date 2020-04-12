@@ -3,7 +3,7 @@
     @description: main class for handling space and area
  */
 
-/* images fro planet.js */
+/* images from planet.js */
 var lp_img_space = new Image();
 lp_img_space.src = 'assets/space.jpg';
 
@@ -22,7 +22,7 @@ lp_messagebox.src = 'assets/dialog2.png';
 var lp_close = new Image();
 lp_close.src = 'assets/close.png';
 
-
+// Namespace for functions
 var lp_space = function () {};
 
 // Global array
@@ -34,6 +34,7 @@ lp_space._earth = undefined;
 lp_space._activity_dialog = undefined;
 lp_space._messagebox = undefined;
 lp_space._cover = undefined;
+lp_space._text_object = undefined;
 
 lp_space.div_space_id = "lp_space";
 
@@ -88,7 +89,7 @@ lp_space.create_space = function() {
     // preserve 16:9 format
     lp_space.screen_height = 9/16*lp_space.screen_width;
 
-    console.log(lp_space.screen_width+" "+lp_space.screen_height);
+    console.log("Space area: "+lp_space.screen_width+"x"+lp_space.screen_height);
 
     lp_space.scale_width = lp_space.screen_width/lp_space.basic_width;
     lp_space.scale_height = lp_space.screen_height/lp_space.basic_height;
@@ -200,11 +201,30 @@ lp_space._add_plannets = function() {
  * @private
  */
 lp_space._server_load_space_object = function() {
-  return $.ajax({
+
+    // TODO Load from server 1
+     var json_from_server = {
+                            "planet":[
+                                {"id":1, "name":"Země", "size":150, "type":"earth"},
+                                {"id":2346, "name":null, "custom_name": "Šamanova", "x":300, "y":100, "size":70, "type":"standard_planet"},
+                                {"id":3245, "name":"Tutu vesmírná planeta", "x":600, "y":600, "size":40, "type":"standard_planet"},
+                                {"id":4125, "name":"Dejmalova", "x":1100, "y":610, "size":60, "type":"chair_planet", "shadow_color":"orange", "aspect_ration":1.23},
+                                {"id":5987, "name":"Vojačkova", "x":1150, "y":200, "size":80, "type":"standard_planet"},
+                                {"id":5917, "name":"Hernova", "x":900, "y":520, "size":60, "type":"standard_planet"},
+                                {"id":8765, "name":null, "custom_name":null, "x":1110, "y":250, "size":20, "type":"standard_planet"},
+                                {"id":7865, "name":"Proxima", "x":424, "y":500, "size":60, "type":"special_planet"},
+                                {"id":1456, "name":"Royova", "x":700, "y":160, "size":90, "type":"special_planet"},
+                                {"id":2456, "x":550, "y":356, "type":"worm_hole", "end": 2457},
+                                {"id":2457, "x":1220, "y":543, "type":"worm_hole", "end": 2456},
+                            ]
+                            };
+    return json_from_server;
+
+    /*return $.ajax({
     url: 'map/planets',
     async: false,
     dataType: 'json'
-}).responseJSON;
+}).responseJSON;*/
 
 };
 
@@ -253,7 +273,7 @@ lp_space.display_activity = function(planet_id) {
     });
 
     var close_button = new Konva.Image({
-        x: lp_space._activity_dialog.width()-(110*lp_space.scale_width),
+        x: lp_space._activity_dialog.width()-(80*lp_space.scale_width),
         y: 30*lp_space.scale_height,
         width: 60*lp_space.scale_width,
         height: 60*lp_space.scale_height,
@@ -262,13 +282,10 @@ lp_space.display_activity = function(planet_id) {
 
     close_button.on("mouseenter", function() {lp_space.add_button_effect(close_button,true, "white",lp_space._dialog_layer)});
     close_button.on("mouseleave", function() {lp_space.add_button_effect(close_button,false, null, lp_space._dialog_layer)});
-
     close_button.on("click", function() {lp_space.hide_displayed_activity()});
     close_button.on("tap", function() {lp_space.hide_displayed_activity()});
 
-    var title = lp_pilot._get_text(160*lp_space.scale_width,40*lp_space.scale_height, "Planeta "+ lp_planet.get_planet_name(lp_pilot.get_pilot_position()), Math.round(30* lp_space.scale_width), 300*lp_space.scale_width);
-
-    // TODO load activity and display from server. 7
+    var title = lp_pilot._get_text(100*lp_space.scale_width,40*lp_space.scale_height, "Planeta "+ lp_planet.get_planet_name(lp_pilot.get_pilot_position()), Math.round(30* lp_space.scale_width), 300*lp_space.scale_width);
 
     lp_space._dialog_layer.add(lp_space._cover);
     lp_space._activity_dialog.add(dialog_box);
@@ -277,10 +294,93 @@ lp_space.display_activity = function(planet_id) {
 
     lp_space._dialog_layer.add(lp_space._activity_dialog);
     lp_space._dialog_layer.draw();
+
+    var dialog_position = lp_space._activity_dialog.getAbsolutePosition();
+
+    lp_space._text_object = document.createElement('div');
+    document.body.appendChild(lp_space._text_object);
+
+    lp_space._text_object.innerHTML = "Chvilku vydrž, načítám aktivitu planety.";
+    lp_space._text_object.classList.add("activity_container");
+    lp_space._text_object.style.position = 'absolute';
+    lp_space._text_object.style.top = (dialog_position.y + title.y() + title.height() +30*lp_space.scale_height) + 'px';
+    lp_space._text_object.style.left = (dialog_position.x + title.x()) + 'px';
+    lp_space._text_object.style.color = "white";
+    lp_space._text_object.style.width = (lp_space._activity_dialog.width()-title.x()-(40*lp_space.scale_width))+"px";
+    lp_space._text_object.style.height = (lp_space._activity_dialog.height()- title.y()-title.height()-(80*lp_space.scale_height))+"px";
+    lp_space._text_object.style.overflowY = "auto";
+
+    // Load description from server
+    lp_space._text_object.innerHTML = lp_space.get_activity(planet_id);
 };
 
 /**
- *
+ * Get activity from server
+ */
+lp_space.get_activity = function(planet_id) {
+    var planet_id_int = lp_planet.remove_planet_prefix(planet_id);
+
+     /*return $.ajax({
+        url: 'map/planets',
+        async: false,
+        dataType: 'json'
+    }).responseJSON;*/
+    // TODO from server
+
+     var response_json = {
+         "author": "Tým malého prince",
+         "name": "Balení na cestu",
+         "category": "Mladší a starší", // text description from authors, not category from pilot
+         "accessories": "2 papíry velikosti A4, psací potřeby,nůžky,lepidlo",
+         "description": "Tvým  úkolem bude zhotovit si jednoduchou raketu z papíru a na ní naskládat věci potřebné na dalekou cestu. Můžeš použít jen věci které máš doma.<br>" +
+             "<br>" +
+             "Výroba rakety. Vem si list papíru velikosti A 4<br>" +
+             "                        Přelož kratší stranu papíru k delší straně a  nehtem zafixuj ohyb papíru.<br>" +
+             "                        Ustřihni papír tak, aby ti zůstali jen 2 trojúhelníky na sobě a ty pak rozstřihni aby                      <br>" +
+             "                        jsi měl dva samostatné trojúhelníky<br>" +
+             "                        Nyní si vem druhý list papíru a podlep na jeho kratší část trojúhelník tak, aby <br>" +
+             "                        dělal  stříšku, tedy špičku rakety.<br>" +
+             "                        Druhý trojúhelník podlep pod druhou krátkou stranu papíru (oba trojúhelníky          <br>" +
+             "                         směřují  stejným směrem) a nech z něho  vystrkovat  na každé straně jen 2 malé <br>" +
+             "                         trojúhelníky. <br>" +
+             "<br>" +
+             "Nyní máš raketu  hotovou. Skládá se z těla rakety tj. 1 celý list papíru + 5 trojúhelníků které dělají špičku rakety(ten velký)  a usměrňovací křídla (4 malé)<br>" +
+             "<br>" +
+             "Kategorie M (mladší) musí naskládat na tělo rakety minimálně 15 věcí<br>" +
+             "Kategorie S (starší) musí naskládat na tělo rakety minimálně 20 věcí<br>" +
+             "<br>" +
+             "Akce navíc - vyzdob špičku rakety (aspoň napiš svoje jméno)  a křídla.<br>" +
+             "skus rekord  (klidně i s celou rodinou kolik věcí na 1 list papíru naskládáte.",
+         "output": "Vyfoť svůj výtvor a nahraj jej do portálu.",
+         "notes": "Věci se mohou dotýkat a být na sobě.<br>" +
+             "Nepoužívejte věci které by se mohli rozbít, zvláště pak pozor na sklo.<br>" +
+             "Při slepování rakety si podlož lepené spoje jiným papírem nebo novinami.",
+     };
+
+     // prepared outpu html
+     var html = "";
+     if ((response_json === null || response_json.name === "") || planet_id_int != 1) {
+         html = "<div>Tato planeta nemá žádnou aktivitu :(.</div>";
+     } else {
+         html = "<h2>"+response_json.name+"</h2>";
+         if (response_json.author !== null && response_json.author !== "") {
+            html += "<div class='author'>Author: "+response_json.author+"</div>";
+         }
+         html += "<div class='category'>Věkové kategorie: "+response_json.category+"</div>";
+         html += "<div class='accessories'>Potřeby: "+response_json.accessories+"</div>";
+         html += "<div class='output'>Splnění: "+response_json.output+"</div>";
+         html += "<h2>Popis</h2>";
+         html += "<div class='description'>"+response_json.description+"</div>";
+         if (response_json.notes !== null && response_json.notes !== "") {
+             html += "<h2>Poznámky</h2>";
+             html += "<div>"+response_json.notes+"<div>";
+         }
+     }
+     return html;
+};
+
+/**
+ * Dialog is opened or not
  * @returns {boolean}
  */
 lp_space.is_displayed_activity = function() {
@@ -298,6 +398,9 @@ lp_space.hide_displayed_activity = function() {
         lp_space._cover.destroy();
         lp_space._cover = undefined;
         lp_space._dialog_layer.draw();
+        document.body.removeChild(lp_space._text_object);
+        lp_space._text_object = undefined;
+
     }
 };
 

@@ -47,11 +47,22 @@ lp_pilot.init = function() {
  */
 lp_pilot._server_load_pilot_data = function() {
     // TODO backend loading 2
-    var json_from_server =  $.ajax({
+     var json_from_server =      {   "id":1,
+                                    "name":"David Pokorný",
+                                    "rank_id":"1",
+                                    "rank_name":"Nadporučík vesmírné stanice",
+                                    "category_id":1,
+                                    "category_name":"skauti/skautky od 6 do 9 třídy",
+                                    "actual_position": 1,
+                                    "actual_flight": null,
+                                    "photo": "absolutepath"
+                                };
+
+    /*var json_from_server =  $.ajax({
                                   url: 'map/pilot',
                                   async: false,
                                   dataType: 'json'
-                              }).responseJSON;
+                              }).responseJSON;*/
 
 
     // add prefixes to source and target id, because server cannot know
@@ -548,12 +559,12 @@ lp_pilot._activate_flight = function() {
         var json_to_server = lp_pilot.create_flight_json();
 
 
-        $.ajax({
+        /*$.ajax({
                   url: 'map/flight',
                   async: false,
                   dataType: 'json',
                   data: json_to_server
-              }).responseJSON;
+              }).responseJSON;*/
 
         // TODO send to server json_to_server 3
 
@@ -633,7 +644,13 @@ lp_pilot.set_planet_position = function(target_id) {
     // display avatar
     lp_pilot._add_pilot_position();
 
+
+    var json_to_server = {
+        "target_id": lp_planet.remove_planet_prefix(target_id),
+        "new_name": null,
+    }
     // TODO json to server 4
+
     // protection target_id
 };
 
@@ -666,10 +683,11 @@ lp_pilot.create_flight_json = function() {
         time_to_end.setTime(actual_time.getTime()+(result["time_to_fligh"]*60*60*1000));
 
         var returned_json = {
-            "source_id": source_id,
-            "target_id": target_id,
+            "source_id": lp_planet.remove_planet_prefix(source_id),
+            "target_id": lp_planet.remove_planet_prefix(target_id),
             "start_at": actual_time.toISOString(),
-            "finish_at": time_to_end.toISOString()
+            "finish_at": time_to_end.toISOString(),
+            "distance": result.real_distance,
         };
 
 

@@ -20,3 +20,5 @@ app/config/config.local
 www/upload/
 
 www/assets/source/
+
+app/config/local.neon
