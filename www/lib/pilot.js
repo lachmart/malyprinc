@@ -120,8 +120,10 @@ lp_pilot._add_pilot_position = function() {
             console.log("Unknown actual position on planet.");
             return false;
         }
-        console.log("Pilot is on planet: "+lp_planet.planet_data[lp_planet.add_planet_prefix(lp_pilot.data.actual_position)].name);
+        var planet_id = lp_planet.add_planet_prefix(lp_pilot.data.actual_position);
+        console.log("Pilot is on planet: "+lp_planet.planet_data[planet_id].name);
         lp_pilot._add_avatar(1, lp_planet.add_planet_prefix(lp_pilot.data.actual_position));
+        lp_planet._rename_planet(planet_id);
         return true;
     } else
     {
@@ -650,8 +652,6 @@ lp_pilot.set_planet_position = function(target_id) {
         "new_name": null,
     }
     // TODO json to server 4
-
-    // protection target_id
 };
 
 /**

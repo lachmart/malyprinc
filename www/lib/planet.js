@@ -114,6 +114,19 @@ lp_planet.create_planet = function (planet_data, picture_obj) {
 };
 
 /**
+ * Rename planet if possible
+ * @param planet_id
+ * @private
+ */
+lp_planet._rename_planet = function(planet_id) {
+    planet_data = lp_planet.planet_data[planet_id];
+    if (planet_data.name === null && planet_data.custom_name === null) {
+        // TODO rename planet
+        alert("přejmenovat planetu");
+    }
+};
+
+/**
  * Add earth to stage
  * @param earth_data json
  * @private
