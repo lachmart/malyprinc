@@ -21,6 +21,10 @@ lp_img_photo.src = 'assets/foto.png';
 var lp_img_activity = new Image();
 lp_img_activity.src = 'assets/activity.png';
 
+var lp_img_start = new Image();
+lp_img_start.src = 'assets/start.png';
+
+
 var lp_pilot = function () {};
 
 lp_pilot._avatar_layer = undefined;
@@ -123,7 +127,9 @@ lp_pilot._add_pilot_position = function() {
         var planet_id = lp_planet.add_planet_prefix(lp_pilot.data.actual_position);
         console.log("Pilot is on planet: "+lp_planet.planet_data[planet_id].name);
         lp_pilot._add_avatar(1, lp_planet.add_planet_prefix(lp_pilot.data.actual_position));
+
         lp_planet._rename_planet(planet_id);
+
         return true;
     } else
     {
@@ -356,7 +362,7 @@ lp_pilot.pilot_details = function() {
 
 
          // Activities are not for worm_hole
-         button2.on("mouseenter", function() {lp_space.add_button_effect(button2,true, "#BBD271", lp_space._layer)});
+         button2.on("mouseenter", function() {lp_space.add_button_effect(button2,true, "#147EC2", lp_space._layer)});
          button2.on("mouseleave", function() {lp_space.add_button_effect(button2,false, null, lp_space._layer)});
 
          button2.on("click", function() {lp_pilot.click_activity(lp_planet.planet_data[lp_pilot.get_pilot_position()].type === "worm_hole");});
@@ -482,7 +488,7 @@ lp_pilot.start_flight = function() {
         y: lp_pilot.dialog.height()-((70*lp_space.scale_width)+(30)*lp_space.scale_height),
         width: (70*ratio*lp_space.scale_width),
         height: (70*lp_space.scale_width),
-        image: target_planet.image(),
+        image: lp_img_start,
     });
 
     // Events
@@ -560,6 +566,12 @@ lp_pilot._activate_flight = function() {
 
         var json_to_server = lp_pilot.create_flight_json();
 
+        // Set visited
+        if (lp_planet.measure_source_id !== "pl_1" && lp_planet.planet_data[lp_planet.measure_source_id].type!=="worm_hole") {
+            lp_planet.planet_data[lp_planet.measure_source_id].visited = true;
+            lp_planet.planet_data[lp_planet.measure_source_id].object.opacity(0.3);
+            lp_planet.planet_data[lp_planet.measure_source_id].title.opacity(0.3);
+        }
 
         /*$.ajax({
                   url: 'map/flight',
@@ -645,7 +657,6 @@ lp_pilot.set_planet_position = function(target_id) {
 
     // display avatar
     lp_pilot._add_pilot_position();
-
 
     var json_to_server = {
         "target_id": lp_planet.remove_planet_prefix(target_id),

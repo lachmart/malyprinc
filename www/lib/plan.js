@@ -206,14 +206,14 @@ lp_space._server_load_space_object = function() {
      var json_from_server = {
                             "planet":[
                                 {"id":1, "name":"Země", "size":150, "type":"earth"},
-                                {"id":2346, "name":null, "custom_name": "Šamanova", "x":300, "y":100, "size":70, "type":"standard_planet"},
-                                {"id":3245, "name":"Tutu vesmírná planeta", "x":600, "y":600, "size":40, "type":"standard_planet"},
-                                {"id":4125, "name":"Dejmalova", "x":1100, "y":610, "size":60, "type":"chair_planet", "shadow_color":"orange", "aspect_ration":1.23},
-                                {"id":5987, "name":"Vojačkova", "x":1150, "y":200, "size":80, "type":"standard_planet"},
-                                {"id":5917, "name":"Hernova", "x":900, "y":520, "size":60, "type":"standard_planet"},
-                                {"id":8765, "name":null, "custom_name":null, "x":1110, "y":250, "size":20, "type":"standard_planet"},
-                                {"id":7865, "name":"Proxima", "x":424, "y":500, "size":60, "type":"special_planet"},
-                                {"id":1456, "name":"Royova", "x":700, "y":160, "size":90, "type":"special_planet"},
+                                {"id":2346, "visited": true, "name":null, "custom_name": "Šamanova", "x":300, "y":100, "size":70, "type":"standard_planet"},
+                                {"id":3245, "visited": false, "name":"Tutu vesmírná planeta", "x":600, "y":600, "size":40, "type":"standard_planet"},
+                                {"id":4125, "visited": false, "name":"Dejmalova", "x":1100, "y":610, "size":60, "type":"chair_planet", "shadow_color":"orange", "aspect_ration":1.23},
+                                {"id":5987, "visited": false, "name":"Vojačkova", "x":1150, "y":200, "size":80, "type":"standard_planet"},
+                                {"id":5917, "visited": false, "name":"Hernova", "x":900, "y":520, "size":60, "type":"standard_planet"},
+                                {"id":8765, "visited": false, "name":null, "custom_name":null, "x":1110, "y":250, "size":20, "type":"standard_planet"},
+                                {"id":7865, "visited": false, "name":"Proxima", "x":424, "y":500, "size":60, "type":"special_planet"},
+                                {"id":1456, "visited": false, "name":"Royova", "x":700, "y":160, "size":90, "type":"special_planet"},
                                 {"id":2456, "x":550, "y":356, "type":"worm_hole", "end": 2457},
                                 {"id":2457, "x":1220, "y":543, "type":"worm_hole", "end": 2456},
                             ]
@@ -409,10 +409,11 @@ lp_space.hide_displayed_activity = function() {
  *
  * @param message
  * @param action_to_click
+ * @param picture
+ * @return dict with objects
  */
 
 lp_space.messagebox = function(message, action_to_click) {
-
     if (lp_space._dialog_layer===undefined) {
         lp_space._dialog_layer = new Konva.Layer();
         lp_space.stage.add(lp_space._dialog_layer);
@@ -459,7 +460,6 @@ lp_space.messagebox = function(message, action_to_click) {
 
     close_button.on("mouseenter", function() {lp_space.add_button_effect(close_button,true, "white",lp_space._dialog_layer)});
     close_button.on("mouseleave", function() {lp_space.add_button_effect(close_button,false, null, lp_space._dialog_layer)});
-
     close_button.on("click", function() {lp_space.hide_messagebox()});
     close_button.on("tap", function() {lp_space.hide_messagebox()});
 
@@ -489,6 +489,8 @@ lp_space.messagebox = function(message, action_to_click) {
     lp_space._dialog_layer.add(lp_space._cover);
     lp_space._dialog_layer.add(lp_space._messagebox);
     lp_space._dialog_layer.draw();
+
+    return {"text_message": text_message, "close_button": close_button, "dialog_box": dialog_box};
 };
 
 /**
@@ -500,6 +502,10 @@ lp_space.hide_messagebox = function() {
         lp_space._cover = undefined;
         lp_space._messagebox.destroy();
         lp_space._messagebox = undefined;
+        if (lp_space._text_object !== undefined) {
+            document.body.removeChild(lp_space._text_object);
+            lp_space._text_object = undefined;
+        }
         lp_space._dialog_layer.draw();
     }
 };

@@ -52,10 +52,18 @@ lp_planet.create_planet = function (planet_data, picture_obj) {
         aspect_ratio = planet_data.aspect_ration;
     }
 
+    var opacity;
+    if (planet_data.visited) {
+        opacity = 0.3;
+    } else {
+        opacity = 1;
+    }
+
     lp_planet.planets[planet_key] = new Konva.Image({
          x: (planet_data.x*lp_space.scale_width)-((planet_data.size*lp_space.scale_width)/2),
          y: (planet_data.y*lp_space.scale_height)-((planet_data.size*lp_space.scale_width)/2),
          image: picture_obj,
+         opacity:opacity,
          width: planet_data.size*lp_space.scale_width,
          height: planet_data.size*lp_space.scale_width*aspect_ratio,
     });
@@ -104,6 +112,7 @@ lp_planet.create_planet = function (planet_data, picture_obj) {
             y: lp_planet.planets[planet_key].y() + lp_planet.planets[planet_key].height() + 5, //5 is offset
             text: planet_name,
             fontSize: 13,
+            opacity: opacity,
             fontFamily: 'Calibri',
             fill: 'white'
         });
@@ -120,11 +129,96 @@ lp_planet.create_planet = function (planet_data, picture_obj) {
  */
 lp_planet._rename_planet = function(planet_id) {
     planet_data = lp_planet.planet_data[planet_id];
+    if (planet_data.type ==="worm_hole") {
+        return;
+    }
     if (planet_data.name === null && planet_data.custom_name === null) {
-        // TODO rename planet
-        alert("přejmenovat planetu");
+        var parts = lp_space.messagebox("Jsi tady první a máš právo pojmenovat planetu.");
+
+        var dialog_position = lp_space._messagebox.getAbsolutePosition();
+
+        // add textbox
+        lp_space._text_object = document.createElement('input');
+        document.body.appendChild(lp_space._text_object);
+
+        lp_space._text_object.classList.add("rename_planet");
+        lp_space._text_object.style.position = 'absolute';
+        lp_space._text_object.style.top = (dialog_position.y + parts.text_message.y()+ parts.text_message.height()+ (10*lp_space.scale_height)) + 'px';
+        lp_space._text_object.style.left = (dialog_position.x + parts.text_message.x()) + 'px';
+        lp_space._text_object.style.width = (parts.text_message.width()-(20*lp_space.scale_width))+"px";
+        lp_space._text_object.style.height = (40*lp_space.scale_height)+"px";
+        lp_space._text_object.maxLength = "25";
+        lp_space._text_object.style.fontSize = Math.round(25*lp_space.scale_height)+"px";
+        lp_space._text_object.focus();
+
+        // Add button
+        var button_to_send = new Konva.Rect({
+            x: parts.text_message.x()+parts.text_message.width(),
+            y: parts.text_message.y()+parts.text_message.height()+(10*lp_space.scale_height),
+            fill: 'gray',
+            stroke: 'gray',
+            strokeWidth: 1,
+            width: (40*lp_space.scale_width),
+            height: (40*lp_space.scale_height),
+        });
+
+        // Text to button
+        var ok_text = new Konva.Text({
+            x: button_to_send.x()+(10*lp_space.scale_width),
+            y: button_to_send.y()+(10*lp_space.scale_height),
+            fontSize: Math.round(20*lp_space.scale_width),
+            fontFamily: 'Calibri',
+            fill: 'white',
+            text: "ok",
+        });
+
+        button_to_send.on("mouseenter", function() {lp_space.add_button_effect(button_to_send,true, "white",lp_space._dialog_layer)});
+        button_to_send.on("mouseleave", function() {lp_space.add_button_effect(button_to_send,false, null, lp_space._dialog_layer)});
+        button_to_send.on("click",function() { lp_planet._send_rename(lp_space._text_object.value, planet_id); } );
+        button_to_send.on("tap", function () {lp_planet._send_rename(lp_space._text_object.value, planet_id); } );
+        ok_text.on("mouseenter", function() {lp_space.add_button_effect(ok_text,true, "white",lp_space._dialog_layer)});
+        ok_text.on("mouseleave", function() {lp_space.add_button_effect(ok_text,false, null, lp_space._dialog_layer)});
+        ok_text.on("click",function() { lp_planet._send_rename(lp_space._text_object.value, planet_id); } );
+        ok_text.on("tap", function () {lp_planet._send_rename(lp_space._text_object.value, planet_id); } );
+
+        lp_space._messagebox.add(button_to_send);
+        lp_space._messagebox.add(ok_text);
+        lp_space._dialog_layer.draw();
     }
 };
+
+/**
+ * Sending rename to server
+ * @private
+ */
+lp_planet._send_rename = function(new_name, planet_id) {
+
+    if (new_name==="") {
+        alert("Nový název planety nemůže být prázdný.");
+        lp_space._text_object.focus();
+        return;
+    }
+
+    var json_to_server = {
+        "target_id": lp_planet.remove_planet_prefix(planet_id),
+        "new_name": new_name,
+    };
+
+    // TODO 8 send rename planet
+    /*var json_from_server =  $.ajax({
+          url: 'map/pilot',
+          async: false,
+          dataType: 'json'
+      }).responseJSON;*/
+
+    // Set name to planet
+    lp_planet.planet_data[planet_id].custom_name = new_name;
+    lp_planet.planet_data[planet_id].title.text(lp_planet.get_planet_name(planet_id));
+    lp_space.draw();
+
+    lp_space.hide_messagebox();
+};
+
 
 /**
  * Add earth to stage
