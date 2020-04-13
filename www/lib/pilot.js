@@ -23,6 +23,8 @@ lp_img_activity.src = 'assets/activity.png';
 
 var lp_img_start = new Image();
 lp_img_start.src = 'assets/start.png';
+var lp_img_stop = new Image();
+lp_img_stop.src = 'assets/stop.png';
 
 
 var lp_pilot = function () {};
@@ -34,6 +36,10 @@ lp_pilot.tooltip = undefined;
 lp_pilot._flight = undefined;
 lp_pilot.flight_tooltip = undefined;
 lp_pilot.dialog = undefined;
+lp_pilot.counter = 5000;
+lp_pilot._start_button = undefined;
+lp_pilot._stop = false;
+lp_pilot.counter_title = undefined;
 
 /**
  * Loading pilot data to main plan
@@ -483,23 +489,22 @@ lp_pilot.start_flight = function() {
     var ratio = target_planet.width()/target_planet.height();
 
     // Change button to start/stop
-    var planet_image = new Konva.Image({
+    lp_pilot._start_button = new Konva.Image({
         x: lp_pilot.dialog.width()-((70*ratio*lp_space.scale_width)+(30)*lp_space.scale_width),
         y: lp_pilot.dialog.height()-((70*lp_space.scale_width)+(30)*lp_space.scale_height),
-        width: (70*ratio*lp_space.scale_width),
+        width: (70*lp_space.scale_width),
         height: (70*lp_space.scale_width),
         image: lp_img_start,
     });
 
     // Events
-    // TODO add counter to start
-    planet_image.on("click",lp_pilot._activate_flight);
-    planet_image.on("tap",lp_pilot._activate_flight);
+    lp_pilot._start_button.on("click",lp_pilot._activate_flight);
+    lp_pilot._start_button.on("tap",lp_pilot._activate_flight);
 
-    planet_image.on("mouseenter", function() {lp_space.add_button_effect(planet_image,true, "red", lp_pilot._avatar_layer)});
-    planet_image.on("mouseleave", function() {lp_space.add_button_effect(planet_image,false, null, lp_pilot._avatar_layer)});
+    lp_pilot._start_button.on("mouseenter", function() {lp_space.add_button_effect(lp_pilot._start_button,true, "red", lp_pilot._avatar_layer)});
+    lp_pilot._start_button.on("mouseleave", function() {lp_space.add_button_effect(lp_pilot._start_button,false, null, lp_pilot._avatar_layer)});
 
-    lp_pilot.dialog.add(planet_image);
+    lp_pilot.dialog.add(lp_pilot._start_button);
 
     var header_size = Math.round(lp_space.header_font*lp_space.scale_width);
     var basic_size = Math.round(lp_space.basic_font*lp_space.scale_width);
@@ -519,19 +524,14 @@ lp_pilot.start_flight = function() {
      time_to_end.setTime(actual_time.getTime()+(result["time_to_fligh"]*60*60*1000));
      var display_time = time_to_end.getDate()+"."+(time_to_end.getMonth()+1)+"."+time_to_end.getFullYear()+" "+time_to_end.getHours()+":"+time_to_end.getMinutes();
 
-     var time2 = new Konva.Text({
-          x:  flight.x(),
-          y: time.y()+time.height(),
-         text: "Čas doletu: "+display_time,
-         fontSize: basic_size,
-         fontFamily: 'Calibri',
-         fill: 'white',
-     });
+     var time2 = lp_pilot._get_text(flight.x(), time.y()+time.height(), "Čas doletu: "+display_time, basic_size);
+     lp_pilot.counter_title = lp_pilot._get_text(150*lp_space.scale_width, lp_pilot.dialog.height()-(40*lp_space.scale_height), "", header_size);
 
      lp_pilot.dialog.add(flight);
      lp_pilot.dialog.add(parameters);
      lp_pilot.dialog.add(time);
      lp_pilot.dialog.add(time2);
+     lp_pilot.dialog.add(lp_pilot.counter_title);
 
     lp_pilot._avatar_layer.add(lp_pilot.dialog);
     lp_pilot._avatar_layer.draw();
@@ -561,32 +561,70 @@ lp_pilot._activate_flight = function() {
             return
         }
 
-        lp_pilot.hide_flight_planer();
-        lp_planet.get_planet_name(lp_planet.measure_target_id);
+        lp_pilot._start_button.image(lp_img_stop);
+        lp_pilot._start_button.off('click tap');
+        lp_pilot._start_button.on("click tap", function () {
+            lp_pilot._stop = true;
+        });
 
-        var json_to_server = lp_pilot.create_flight_json();
+        var counter_animation = new Konva.Animation(function(frame) {
+            lp_pilot.counter -= frame.timeDiff;
 
-        // Set visited
-        if (lp_planet.measure_source_id !== "pl_1" && lp_planet.planet_data[lp_planet.measure_source_id].type!=="worm_hole") {
-            lp_planet.planet_data[lp_planet.measure_source_id].visited = true;
-            lp_planet.planet_data[lp_planet.measure_source_id].object.opacity(0.3);
-            lp_planet.planet_data[lp_planet.measure_source_id].title.opacity(0.3);
-        }
+            if (lp_pilot._stop) {
+                console.log("Flight counter interupted");
+                lp_planet.remove_measure();
+                lp_pilot.hide_flight_planer();
+                lp_pilot.counter = 5000;
+                lp_pilot._stop = false;
+                this.stop();
+            }
 
-        /*$.ajax({
-                  url: 'map/flight',
-                  async: false,
-                  dataType: 'json',
-                  data: json_to_server
-              }).responseJSON;*/
+            lp_pilot.counter_title.text(lp_pilot.counter/1000);
 
-        // TODO send to server json_to_server 3
+            if (lp_pilot.counter <= 0) {
+                console.log("Flight counter finished...");
+                this.stop();
+                lp_pilot.counter = 5000;
+                lp_pilot._activate_flight_after_counter();
+            }
+        }, lp_pilot._avatar_layer);
 
-        lp_pilot.data.actual_flight = json_to_server;
-        lp_pilot.flight_progress();
+        console.log("Flight counter started");
+        counter_animation.start();
     } else {
         console.log("Flight is not possible, because measure is missing.")
     }
+};
+
+/**
+ * Fight action after animation
+ * @private
+ */
+lp_pilot._activate_flight_after_counter = function() {
+    lp_pilot.hide_flight_planer();
+    lp_planet.get_planet_name(lp_planet.measure_target_id);
+
+    var json_to_server = lp_pilot.create_flight_json();
+
+    // Set visited
+    if (lp_planet.measure_source_id !== "pl_1" && lp_planet.planet_data[lp_planet.measure_source_id].type!=="worm_hole") {
+        lp_planet.planet_data[lp_planet.measure_source_id].visited = true;
+        lp_planet.planet_data[lp_planet.measure_source_id].object.opacity(0.3);
+        lp_planet.planet_data[lp_planet.measure_source_id].title.opacity(0.3);
+    }
+
+    /*$.ajax({
+              url: 'map/flight',
+              async: false,
+              dataType: 'json',
+              data: json_to_server
+          }).responseJSON;*/
+
+    // TODO send to server json_to_server 3
+
+    lp_pilot.data.actual_flight = json_to_server;
+    lp_pilot.flight_progress();
+
 };
 
 /* Starting flight */
