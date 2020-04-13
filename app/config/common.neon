@@ -18,3 +18,4 @@ services:
 	- App\Model\ZivotManager
 	- App\Model\ShareManager
 	- App\Model\FlightManager
+	- App\Model\PlanetManager
