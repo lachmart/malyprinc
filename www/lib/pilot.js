@@ -614,17 +614,21 @@ lp_pilot._activate_flight_after_counter = function() {
     }
 
     /*$.ajax({
-              url: 'map/flight',
-              async: false,
-              dataType: 'json',
-              data: json_to_server
-          }).responseJSON;*/
+          url: 'map/flight',
+          async: false,
+          dataType: 'json',
+          data: json_to_server
+      }).responseJSON;*/
 
-    // TODO send to server json_to_server 3
+    jQuery.ajax({
+        url: 'map/flight',
+        dataType: 'json',
+        data: json_to_server,
+        async: false,
+    });
 
     lp_pilot.data.actual_flight = json_to_server;
     lp_pilot.flight_progress();
-
 };
 
 /* Starting flight */
@@ -738,7 +742,6 @@ lp_pilot.create_flight_json = function() {
             "finish_at": time_to_end.toISOString(),
             "distance": result.real_distance,
         };
-
 
         return returned_json;
 };
