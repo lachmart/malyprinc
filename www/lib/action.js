@@ -32,3 +32,8 @@ lp_action.openFullscreen = function() {
     elem.msRequestFullscreen();
   }
 };
+
+// Main onload initialization
+window.addEventListener("load", function(){
+    lp_space.init();
+});
