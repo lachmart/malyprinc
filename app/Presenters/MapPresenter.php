@@ -93,6 +93,9 @@ class MapPresenter extends BasePresenter
           $this->setPosition($lastFlight->targetPlanetId);
           $actualPosition = $lastFlight->targetPlanetId;
         }
+        else {
+          $actualPosition = $user->position;
+        }
       }
       else {
         $actualPosition = 1; //pokud jsem neletel, jsem na zemi (ano je to skarede zjednoduseni)
