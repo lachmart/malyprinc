@@ -96,8 +96,8 @@ class MapPresenter extends BasePresenter
       $data = [
          "id"=>$user->id,
           "name"=>$user->nickname,
-          "rank_id"=>$user->rank,
-          "rank_name"=>"Nadporučík vesmírné stanice",
+          "rank_id"=>$user->rankId,
+          "rank_name"=>$user->rank->rankName,
           "category_id"=>$user->age,
           "category_name"=>"skauti/skautky od 6 do 9 třídy",
           "actual_position"=> $actualPosition,

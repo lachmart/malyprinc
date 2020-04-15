@@ -24,8 +24,7 @@ class UserManager
 	}
 	public function getUserById($id)
 	{
-		return $this->database->table($this->table)
-			->get($id);
+		return $this->database->table($this->table)->get($id);
 	}
 	public function addUser($values)
 	{
