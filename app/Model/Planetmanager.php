@@ -36,19 +36,19 @@ class PlanetManager
 
 	public function setPosition($userId, $planetId)
 	{
-			if($this->database->table('userPlanet')->where('userId', $userId)->where('planetId', $planetId)->fetch())
+			if($this->database->table('userplanet')->where('userId', $userId)->where('planetId', $planetId)->fetch())
 				return;
-			$this->database->table('userPlanet')->insert(['userId'=>$userId, 'planetId'=>$planetId]);
+			$this->database->table('userplanet')->insert(['userId'=>$userId, 'planetId'=>$planetId]);
 	}
 
 	public function getVisited($userId)
 	{
-			return $this->database->table('userPlanet')->where('userId', $userId)->fetchAll();
+			return $this->database->table('userplanet')->where('userId', $userId)->fetchAll();
 	}
 
 	public function wasVisited($userId, $planetId)
 	{
-		if( $this->database->table('userPlanet')->where('userId', $userId)->where('planetId', $planetId)->fetch())
+		if( $this->database->table('userplanet')->where('userId', $userId)->where('planetId', $planetId)->fetch())
 			return true;
 		return false;
 	}

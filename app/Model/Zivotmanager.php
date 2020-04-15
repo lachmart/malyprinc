@@ -26,7 +26,7 @@ class ZivotManager
 
 	public function getDoneToday($userId)
 	{
-		return $this->database->table('zivotUser')
+		return $this->database->table('zivotuser')
 		->where('userId',$userId)
 		->where('date',date('Y-m-d'));
 	}
@@ -37,7 +37,7 @@ class ZivotManager
 	      'zivotId' => $zivotId,
 	      'date'  => date('Y-m-d'),
 	    ];
-		return $this->database->table('zivotUser')->insert($values);
+		return $this->database->table('zivotuser')->insert($values);
 	}
 
 
@@ -47,14 +47,14 @@ class ZivotManager
 	}
 	public function getSpecial($userId, $date , $done)
 	{
-		return $this->database->table('specialUser')
+		return $this->database->table('specialuser')
 		->where('userId',$userId)
 		->where('date', $date)
 		->where('done',$done)->fetch();
 	}
 	public function updateSpecial($userId)
 	{
-		return $this->database->table('specialUser')
+		return $this->database->table('specialuser')
 		->where('userId',$userId)
 		//->where('date', date('Y-m-d'))
 		->update(['done'=>1]);
@@ -71,14 +71,14 @@ class ZivotManager
 				'specialId' => $specialId,
 				'date'  => date('Y-m-d', $time)
 			];
-			$this->database->table('specialUser')->insert($values);
+			$this->database->table('specialuser')->insert($values);
 			$time +=24*3600;
 		}
 	}
 	public function getTotal($userId, $date)
 	{
 		$total = 0;
-		$zivoty = $this->database->table('zivotUser')
+		$zivoty = $this->database->table('zivotuser')
 		->where('userId',$userId)
 		->where('date', $date);
 
