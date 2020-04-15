@@ -25,6 +25,7 @@ lp_planet.measure = undefined;
 lp_planet.measure_title = undefined;
 lp_planet.measure_source_id = undefined;
 lp_planet.measure_target_id = undefined;
+lp_planet.flight_counter = undefined;
 
 /**
  * Create standard planet based data
@@ -111,7 +112,7 @@ lp_planet.create_planet = function (planet_data, picture_obj) {
             x: lp_planet.planet_data[planet_key].actual_x,
             y: lp_planet.planets[planet_key].y() + lp_planet.planets[planet_key].height() + 5, //5 is offset
             text: planet_name,
-            fontSize: 13,
+            fontSize: Math.round(13*lp_space.scale_width),
             opacity: opacity,
             fontFamily: 'Calibri',
             fill: 'white'
@@ -402,7 +403,7 @@ lp_planet._add_text_measure = function(source, target) {
         y: y1,
         text: measured_distance["distance"]+" au",
         rotation: multiplier*(measured_distance["angle"]),
-        fontSize: 14,
+        fontSize: Math.round(14*lp_space.scale_width),
         fontFamily: 'Calibri',
         fill: 'white'
     });
@@ -458,4 +459,45 @@ lp_planet.remove_measure = function() {
         lp_planet.measure_target_id = undefined;
     }
     lp_space.draw();
+};
+
+/**
+ * Display flight counter
+ * @param counter
+ */
+lp_planet.display_counter_time = function(counter) {
+
+    var displayed_counter = "zbývá "+counter.toFixed(3)+" s";
+
+    if (lp_planet.flight_counter!== undefined) {
+        lp_planet.flight_counter.text(displayed_counter );
+    } else {
+        lp_planet.flight_counter = new Konva.Text({
+            x: 0,
+            y: 5*lp_space.scale_height,
+            text: displayed_counter,
+            fontSize: Math.round(40*lp_space.scale_width),
+            width: lp_space.screen_width,
+            fontFamily: 'Calibri',
+            opacity: 0.5,
+            fill: 'white',
+            align: 'right'
+        });
+
+    lp_pilot._avatar_layer.add(lp_planet.flight_counter);
+    }
+
+    lp_pilot._avatar_layer.draw();
+};
+
+/**
+ * Hide flight counter
+ * @param counter
+ */
+lp_planet.hide_counter_time = function() {
+    if (lp_planet.flight_counter!== undefined) {
+        lp_planet.flight_counter.destroy();
+        lp_planet.flight_counter = undefined;
+        lp_pilot._avatar_layer.draw();
+    }
 };

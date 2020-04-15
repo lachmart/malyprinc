@@ -36,10 +36,11 @@ lp_pilot.tooltip = undefined;
 lp_pilot._flight = undefined;
 lp_pilot.flight_tooltip = undefined;
 lp_pilot.dialog = undefined;
-lp_pilot.counter = 5000;
+lp_pilot.counter = 10000;
 lp_pilot._start_button = undefined;
 lp_pilot._stop = false;
 lp_pilot.counter_title = undefined;
+lp_pilot._internal_blur = 5;
 
 /**
  * Loading pilot data to main plan
@@ -56,18 +57,6 @@ lp_pilot.init = function() {
  * @private
  */
 lp_pilot._server_load_pilot_data = function() {
-    // TODO backend loading 2
-     // var json_from_server =      {   "id":1,
-     //                                "name":"David Pokorný",
-     //                                "rank_id":"1",
-     //                                "rank_name":"Nadporučík vesmírné stanice",
-     //                                "category_id":1,
-     //                                "category_name":"skauti/skautky od 6 do 9 třídy",
-     //                                "actual_position": 1,
-     //                                "actual_flight": null,
-     //                                "photo": "absolutepath"
-     //                            };
-
     var json_from_server =  $.ajax({
                                   url: 'map/pilot',
                                   async: false,
@@ -252,13 +241,20 @@ lp_pilot.get_flight_position = function(distance, start_at, time_to_flight) {
     var actual_date = new Date();
 
     // seconds
-    var second_difference = Math.round((actual_date.getTime()-Date.parse(start_at)));
-    var from_start = 1/(time_to_flight*1000)* second_difference;
+    //var second_difference = Math.round((actual_date.getTime()-Date.parse(start_at)));
+    //var from_start = 1/(time_to_flight*1000)* second_difference;
+
+    // minutes
+    var second_difference = Math.round((actual_date.getTime()-Date.parse(start_at))/60000);
+    var from_start = 1/(time_to_flight*60)* second_difference;
 
     var remain_distance = distance - (Math.round(distance*from_start));
-    var remain_time = (time_to_flight*60) - ((time_to_flight*60)*from_start); // vrací v minutách
+    var remain_time = (time_to_flight*60) - ((time_to_flight*60)*from_start); // in minutes
 
-    // TODO set hours interval instead of seconds
+    var ms_difference = Math.round((actual_date.getTime()-Date.parse(start_at)));
+    var ms_from_start = 1/(time_to_flight*3600000)* ms_difference;
+    var remain_time_in_ms = (time_to_flight*3600000) - ((time_to_flight*3600000)*ms_from_start); // in ms
+    var remain_time_in_s = remain_time_in_ms/1000;
 
     var finish = false;
     if (from_start >= 1) {
@@ -291,7 +287,7 @@ lp_pilot.get_flight_position = function(distance, start_at, time_to_flight) {
     }
 
     return {"x":new_x_pos ,"y":new_y_pos, "m1":multiplier, "m2":multiplier2, "finish": finish, "remain":remain_distance,
-    "remain_time":remain_time};
+    "remain_time":remain_time, "remain_s": remain_time_in_s};
 };
 
 /**
@@ -574,7 +570,7 @@ lp_pilot._activate_flight = function() {
                 console.log("Flight counter interupted");
                 lp_planet.remove_measure();
                 lp_pilot.hide_flight_planer();
-                lp_pilot.counter = 5000;
+                lp_pilot.counter = 10000;
                 lp_pilot._stop = false;
                 this.stop();
             }
@@ -584,7 +580,7 @@ lp_pilot._activate_flight = function() {
             if (lp_pilot.counter <= 0) {
                 console.log("Flight counter finished...");
                 this.stop();
-                lp_pilot.counter = 5000;
+                lp_pilot.counter = 10000;
                 lp_pilot._activate_flight_after_counter();
             }
         }, lp_pilot._avatar_layer);
@@ -612,13 +608,6 @@ lp_pilot._activate_flight_after_counter = function() {
         lp_planet.planet_data[lp_planet.measure_source_id].object.opacity(0.3);
         lp_planet.planet_data[lp_planet.measure_source_id].title.opacity(0.3);
     }
-
-    /*$.ajax({
-          url: 'map/flight',
-          async: false,
-          dataType: 'json',
-          data: json_to_server
-      }).responseJSON;*/
 
     jQuery.ajax({
         url: 'map/flight',
@@ -667,8 +656,21 @@ lp_pilot.flight_progress = function() {
         lp_planet.measure_title.text("Cíl:"+Math.round(position.remain_time)+" min.");
         lp_space.draw();
 
+        // Animation of flare
+        var blur_size = lp_pilot.avatar.shadowBlur();
+        if (blur_size>= 60) {
+            lp_pilot._internal_blur = -5;
+        }
+        if (blur_size<= 10) {
+            lp_pilot._internal_blur = 5;
+        }
+        lp_pilot.avatar.shadowBlur(blur_size+lp_pilot._internal_blur);
+
+        lp_planet.display_counter_time(position.remain_s);
+
         if (position.finish) {
             console.log("Flight finished");
+            lp_planet.hide_counter_time();
             this.stop();
             lp_pilot.set_planet_position(lp_planet.measure_target_id);
         }
@@ -677,6 +679,7 @@ lp_pilot.flight_progress = function() {
 
     lp_pilot._flight.start();
 };
+
 
 /**
  * Set position to new planet
@@ -704,7 +707,7 @@ lp_pilot.set_planet_position = function(target_id) {
         "target_id": lp_planet.remove_planet_prefix(target_id),
         "new_name": null,
     }
-    // TODO json to server 4
+    // TODO json to server 4, zdá se, že to funguje. i bez odeslání.
 };
 
 /**
