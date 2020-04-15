@@ -9,6 +9,7 @@ use App\Components;
 use App\Model\UserManager;
 use App\Model\ZivotManager;
 use App\Model\ShareManager;
+use App\Model\PlanetManager;
 use Nette\Application\UI\Form;
 use Nette\Utils\Html;
 use Nette\Mail\Message;
@@ -28,12 +29,16 @@ class DenikPresenter extends BasePresenter
   /** @var ShareManager */
   protected $shareManager;
 
+  /** @var PlanetManager */
+  protected $planetManager;
 
-  public function __construct(UserManager $userManager, ZivotManager $zivotManager, ShareManager $shareManager)
+
+  public function __construct(UserManager $userManager, ZivotManager $zivotManager, ShareManager $shareManager, PlanetManager $planetManager)
 	{
     $this->userManager = $userManager;
     $this->zivotManager = $zivotManager;
     $this->shareManager = $shareManager;
+    $this->planetManager = $planetManager;
 	}
 
 
@@ -63,6 +68,11 @@ class DenikPresenter extends BasePresenter
 
     $this->template->specialDone = $this->zivotManager->getSpecial($this->user->id,date('Y-m-d'), true);
     $this->template->specialToDo = $this->zivotManager->getSpecial($this->user->id, date('Y-m-d'),false);
+
+  }
+  public function renderObjevy()
+	{
+    $this->template->navstevy = $this->planetManager->getVisited($this->user->getId());
 
   }
 

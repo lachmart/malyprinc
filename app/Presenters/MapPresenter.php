@@ -49,7 +49,9 @@ class MapPresenter extends BasePresenter
       $planets = $this->planetManager->getAll();
 
       foreach($planets as $planet){
-        array_push($data,$planet->toArray());
+        $planet = $planet->toArray();
+        $planet["visited"] = $this->planetManager->wasVisited($this->user->getId(), $planet['id']);
+        array_push($data,$planet);
       }
       $data = ["planet"=>$data];
 	    $this->sendJson($data);
@@ -87,10 +89,14 @@ class MapPresenter extends BasePresenter
     else {
       $lastFlight = $this->flightManager->getlastFinishedFlight($user->id);
       if($lastFlight){
-        if($lastFlight->targetPlanetId != $user->position)
+        if($lastFlight->targetPlanetId != $user->position){
           $this->setPosition($lastFlight->targetPlanetId);
+          $actualPosition = $lastFlight->targetPlanetId;
+        }
       }
-      $actualPosition = $lastFlight->targetPlanetId;
+      else {
+        $actualPosition = 1; //pokud jsem neletel, jsem na zemi (ano je to skarede zjednoduseni)
+      }
     }
 
       $data = [

@@ -41,6 +41,18 @@ class PlanetManager
 			$this->database->table('userPlanet')->insert(['userId'=>$userId, 'planetId'=>$planetId]);
 	}
 
+	public function getVisited($userId)
+	{
+			return $this->database->table('userPlanet')->where('userId', $userId)->fetchAll();
+	}
+
+	public function wasVisited($userId, $planetId)
+	{
+		if( $this->database->table('userPlanet')->where('userId', $userId)->where('planetId', $planetId)->fetch())
+			return true;
+		return false;
+	}
+
 	public function getActivity($id)
 	{
 		return $this->database->table('activity')->get($id);

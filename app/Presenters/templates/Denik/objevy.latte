@@ -1,4 +1,8 @@
 {block content}
-	<h1 n:block="title">Objevy</h1>
+	<h1 n:block="title">Navštívené planety</h1>
+
+		{foreach $navstevy as $navsteva}
+			{$navsteva->planetId}
+		{/foreach}
 
 {/block}
