@@ -81,7 +81,7 @@ class MapPresenter extends BasePresenter
       $actualFlight= [
          //"userId"=>$this->user->getId(),
          "source_id"=>$actualFlight->sourcePlanetId,
-         "target_id"=>$actualFlight->sourcePlanetId,
+         "target_id"=>$actualFlight->targetPlanetId,
          "start_at"=>$actualFlight->start,
          "finish_at"=>$actualFlight->finish,
         ];

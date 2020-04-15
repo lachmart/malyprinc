@@ -166,7 +166,7 @@ class DenikPresenter extends BasePresenter
 
   public function inviteFormSucceded($form, $values)
   {
-    if(!$this->user->getIdentity->skaut){
+    if(!$this->user->identity->isSkaut){
       $this->flashMessage('Bohužel se jedná o skautskou hru a další hráč mohou zvát pouze skauti.', 'alert alert-danger');
       $this->redirect("Denik:pratele");
     }
