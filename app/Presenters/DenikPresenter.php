@@ -37,6 +37,10 @@ class DenikPresenter extends BasePresenter
 	}
 
 
+  public function actionDefault()
+	{
+	   $this->setView('prukaz');
+  }
   public function renderPrukaz()
 	{
 		$this->template->pilotInfo = $this->userManager->getUserById($this->user->getId());
@@ -97,6 +101,7 @@ class DenikPresenter extends BasePresenter
   protected function createComponentZivotForm()
   {
     $form = new Form;
+    $this->makeBootstrap4($form);
     $zivotDone =  $this->zivotManager->getDoneToday($this->user->id)->fetchAll();
     foreach ($this->zivotManager->getAll() as $id => $row){
       if(array_search($id, array_column($zivotDone, 'zivotId'))===false){
@@ -124,6 +129,7 @@ class DenikPresenter extends BasePresenter
   protected function createComponentSpecialForm()
   {
     $form = new Form;
+    $this->makeBootstrap4($form);
 
     $form->addSubmit('send', 'Splnil jsem speciální úkol!');
     $form->onSuccess[] = [$this, 'specialFormSucceded'];
@@ -140,6 +146,7 @@ class DenikPresenter extends BasePresenter
   protected function createComponentInviteForm()
   {
     $form = new Form;
+    $this->makeBootstrap4($form);
 
     $form->addEmail('email', 'E-mail');
     $form->addSubmit('send', 'Pozvat přítele');
@@ -179,6 +186,7 @@ class DenikPresenter extends BasePresenter
   protected function createComponentShareForm()
   {
     $form = new Form;
+    $this->makeBootstrap4($form);
 
     $form->addEmail('email', 'E-mail');
     $form->addSubmit('send', 'Sdílet polohu');
@@ -219,6 +227,7 @@ class DenikPresenter extends BasePresenter
     $mail->addTo($to);
     return $mail;
   }
+
 
 
 }
