@@ -27,16 +27,23 @@ class PlanetManager
 		return $this->database->table($this->table)->get($id);
 	}
 
-	public function addFlight($data)
+	public function setNewName($planetId, $newName)
 	{
-		return $this->database->table($this->table)->insert($data);
+		$planet = $this->getPlanetById($planetId);
+		if(!$planet->custom_name)
+			return $planet->update(['custom_name'=>$newName]);
 	}
 
-	public function getActualFlight($userId)
+	public function setPosition($userId, $planetId)
 	{
-		return $this->database->table($this->table)
-		->where('userId', $userId)
-		->where('finish >', time())
-		->fetch();
+			if($this->database->table('userPlanet')->where('userId', $userId)->where('planetId', $planetId)->fetch())
+				return;
+			$this->database->table('userPlanet')->insert(['userId'=>$userId, 'planetId'=>$planetId]);
 	}
+
+	public function getActivity($id)
+	{
+		return $this->database->table('activity')->get($id);
+	}
+
 }

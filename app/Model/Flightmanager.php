@@ -32,7 +32,16 @@ class FlightManager
 	{
 		return $this->database->table($this->table)
 		->where('userId', $userId)
-		->where('finish >', time())
+		->where('finish >', date('Y-m-d\TH:i:s.u'))
+		->fetch();
+	}
+	public function getlastFinishedFlight($userId)
+	{
+		return $this->database->table($this->table)
+		->where('userId', $userId)
+		->where('finish <', date('Y-m-d\TH:i:s.u'))
+		->order('id DESC')
+		->limit(1)
 		->fetch();
 	}
 }

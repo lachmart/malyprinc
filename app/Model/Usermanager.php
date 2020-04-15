@@ -47,5 +47,9 @@ class UserManager
 	{
 			return $this->database->table('invitations')->where('invitedEmail', $email)->fetch();
 	}
+	public function setPosition($id, $planetId)
+	{
+			return $this->database->table($this->table)->where('id', $id)->update(['position'=>$planetId]);
+	}
 
 }

@@ -203,28 +203,28 @@ lp_space._add_plannets = function() {
 lp_space._server_load_space_object = function() {
 
     // TODO Load from server 1
-     var json_from_server = {
-                            "planet":[
-                                {"id":1, "name":"Země", "size":150, "type":"earth"},
-                                {"id":2346, "visited": true, "name":null, "custom_name": "Šamanova", "x":300, "y":100, "size":70, "type":"standard_planet"},
-                                {"id":3245, "visited": false, "name":"Tutu vesmírná planeta", "x":600, "y":600, "size":40, "type":"standard_planet"},
-                                {"id":4125, "visited": false, "name":"Dejmalova", "x":1100, "y":610, "size":60, "type":"chair_planet", "shadow_color":"orange", "aspect_ration":1.23},
-                                {"id":5987, "visited": false, "name":"Vojačkova", "x":1150, "y":200, "size":80, "type":"standard_planet"},
-                                {"id":5917, "visited": false, "name":"Hernova", "x":900, "y":520, "size":60, "type":"standard_planet"},
-                                {"id":8765, "visited": false, "name":null, "custom_name":null, "x":1110, "y":250, "size":20, "type":"standard_planet"},
-                                {"id":7865, "visited": false, "name":"Proxima", "x":424, "y":500, "size":60, "type":"special_planet"},
-                                {"id":1456, "visited": false, "name":"Royova", "x":700, "y":160, "size":90, "type":"special_planet"},
-                                {"id":2456, "x":550, "y":356, "type":"worm_hole", "end": 2457},
-                                {"id":2457, "x":1220, "y":543, "type":"worm_hole", "end": 2456},
-                            ]
-                            };
-    return json_from_server;
+    //  var json_from_server = {
+    //                         "planet":[
+    //                             {"id":1, "name":"Země", "size":150, "type":"earth"},
+    //                             {"id":2346, "visited": true, "name":null, "custom_name": "Šamanova", "x":300, "y":100, "size":70, "type":"standard_planet"},
+    //                             {"id":3245, "visited": false, "name":"Tutu vesmírná planeta", "x":600, "y":600, "size":40, "type":"standard_planet"},
+    //                             {"id":4125, "visited": false, "name":"Dejmalova", "x":1100, "y":610, "size":60, "type":"chair_planet", "shadow_color":"orange", "aspect_ration":1.23},
+    //                             {"id":5987, "visited": false, "name":"Vojačkova", "x":1150, "y":200, "size":80, "type":"standard_planet"},
+    //                             {"id":5917, "visited": false, "name":"Hernova", "x":900, "y":520, "size":60, "type":"standard_planet"},
+    //                             {"id":8765, "visited": false, "name":null, "custom_name":null, "x":1110, "y":250, "size":20, "type":"standard_planet"},
+    //                             {"id":7865, "visited": false, "name":"Proxima", "x":424, "y":500, "size":60, "type":"special_planet"},
+    //                             {"id":1456, "visited": false, "name":"Royova", "x":700, "y":160, "size":90, "type":"special_planet"},
+    //                             {"id":2456, "x":550, "y":356, "type":"worm_hole", "end": 2457},
+    //                             {"id":2457, "x":1220, "y":543, "type":"worm_hole", "end": 2456},
+    //                         ]
+    //                         };
+    // return json_from_server;
 
-    /*return $.ajax({
+    return $.ajax({
     url: 'map/planets',
     async: false,
     dataType: 'json'
-}).responseJSON;*/
+}).responseJSON;
 
 };
 
@@ -320,42 +320,43 @@ lp_space.display_activity = function(planet_id) {
 lp_space.get_activity = function(planet_id) {
     var planet_id_int = lp_planet.remove_planet_prefix(planet_id);
 
-     /*return $.ajax({
-        url: 'map/planets',
+     response_json = $.ajax({
+        url: 'map/activity',
         async: false,
+        data: {"planet_id": planet_id_int},
         dataType: 'json'
-    }).responseJSON;*/
+    }).responseJSON;
     // TODO from server
 
-     var response_json = {
-         "author": "Tým malého prince",
-         "name": "Balení na cestu",
-         "category": "Mladší a starší", // text description from authors, not category from pilot
-         "accessories": "2 papíry velikosti A4, psací potřeby,nůžky,lepidlo",
-         "description": "Tvým  úkolem bude zhotovit si jednoduchou raketu z papíru a na ní naskládat věci potřebné na dalekou cestu. Můžeš použít jen věci které máš doma.<br>" +
-             "<br>" +
-             "Výroba rakety. Vem si list papíru velikosti A 4<br>" +
-             "                        Přelož kratší stranu papíru k delší straně a  nehtem zafixuj ohyb papíru.<br>" +
-             "                        Ustřihni papír tak, aby ti zůstali jen 2 trojúhelníky na sobě a ty pak rozstřihni aby                      <br>" +
-             "                        jsi měl dva samostatné trojúhelníky<br>" +
-             "                        Nyní si vem druhý list papíru a podlep na jeho kratší část trojúhelník tak, aby <br>" +
-             "                        dělal  stříšku, tedy špičku rakety.<br>" +
-             "                        Druhý trojúhelník podlep pod druhou krátkou stranu papíru (oba trojúhelníky          <br>" +
-             "                         směřují  stejným směrem) a nech z něho  vystrkovat  na každé straně jen 2 malé <br>" +
-             "                         trojúhelníky. <br>" +
-             "<br>" +
-             "Nyní máš raketu  hotovou. Skládá se z těla rakety tj. 1 celý list papíru + 5 trojúhelníků které dělají špičku rakety(ten velký)  a usměrňovací křídla (4 malé)<br>" +
-             "<br>" +
-             "Kategorie M (mladší) musí naskládat na tělo rakety minimálně 15 věcí<br>" +
-             "Kategorie S (starší) musí naskládat na tělo rakety minimálně 20 věcí<br>" +
-             "<br>" +
-             "Akce navíc - vyzdob špičku rakety (aspoň napiš svoje jméno)  a křídla.<br>" +
-             "skus rekord  (klidně i s celou rodinou kolik věcí na 1 list papíru naskládáte.",
-         "output": "Vyfoť svůj výtvor a nahraj jej do portálu.",
-         "notes": "Věci se mohou dotýkat a být na sobě.<br>" +
-             "Nepoužívejte věci které by se mohli rozbít, zvláště pak pozor na sklo.<br>" +
-             "Při slepování rakety si podlož lepené spoje jiným papírem nebo novinami.",
-     };
+     // var response_json = {
+     //     "author": "Tým malého prince",
+     //     "name": "Balení na cestu",
+     //     "category": "Mladší a starší", // text description from authors, not category from pilot
+     //     "accessories": "2 papíry velikosti A4, psací potřeby,nůžky,lepidlo",
+     //     "description": "Tvým  úkolem bude zhotovit si jednoduchou raketu z papíru a na ní naskládat věci potřebné na dalekou cestu. Můžeš použít jen věci které máš doma.<br>" +
+     //         "<br>" +
+     //         "Výroba rakety. Vem si list papíru velikosti A 4<br>" +
+     //         "                        Přelož kratší stranu papíru k delší straně a  nehtem zafixuj ohyb papíru.<br>" +
+     //         "                        Ustřihni papír tak, aby ti zůstali jen 2 trojúhelníky na sobě a ty pak rozstřihni aby                      <br>" +
+     //         "                        jsi měl dva samostatné trojúhelníky<br>" +
+     //         "                        Nyní si vem druhý list papíru a podlep na jeho kratší část trojúhelník tak, aby <br>" +
+     //         "                        dělal  stříšku, tedy špičku rakety.<br>" +
+     //         "                        Druhý trojúhelník podlep pod druhou krátkou stranu papíru (oba trojúhelníky          <br>" +
+     //         "                         směřují  stejným směrem) a nech z něho  vystrkovat  na každé straně jen 2 malé <br>" +
+     //         "                         trojúhelníky. <br>" +
+     //         "<br>" +
+     //         "Nyní máš raketu  hotovou. Skládá se z těla rakety tj. 1 celý list papíru + 5 trojúhelníků které dělají špičku rakety(ten velký)  a usměrňovací křídla (4 malé)<br>" +
+     //         "<br>" +
+     //         "Kategorie M (mladší) musí naskládat na tělo rakety minimálně 15 věcí<br>" +
+     //         "Kategorie S (starší) musí naskládat na tělo rakety minimálně 20 věcí<br>" +
+     //         "<br>" +
+     //         "Akce navíc - vyzdob špičku rakety (aspoň napiš svoje jméno)  a křídla.<br>" +
+     //         "skus rekord  (klidně i s celou rodinou kolik věcí na 1 list papíru naskládáte.",
+     //     "output": "Vyfoť svůj výtvor a nahraj jej do portálu.",
+     //     "notes": "Věci se mohou dotýkat a být na sobě.<br>" +
+     //         "Nepoužívejte věci které by se mohli rozbít, zvláště pak pozor na sklo.<br>" +
+     //         "Při slepování rakety si podlož lepené spoje jiným papírem nebo novinami.",
+     // };
 
      // prepared outpu html
      var html = "";

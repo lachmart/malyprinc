@@ -27,6 +27,7 @@ class MapPresenter extends BasePresenter
   /** @var PlanetManager */
   protected $planetManager;
 
+  private $hourConstant = 1440/75;
   public function __construct(UserManager $userManager, ZivotManager $zivotManager, ShareManager $shareManager, FlightManager $flightManager, PlanetManager $planetManager)
   {
     $this->userManager = $userManager;
@@ -43,23 +44,7 @@ class MapPresenter extends BasePresenter
 
   public function actionPlanets(): void
   {
-    //  var_dump($_GET);
-  		//$this->payload->message = 'Success';
-      //$this->sendPayload();
-    //  $data = ['one' => $_GET['id'],'two' => $_GET['time'],'three' => 'hello'];
-        // $data = [ "planet" => [
-        //       ["id" => 1, "name" => "Země", "size" => 150, "type" => "earth"],
-        //       ["id" => 2346, "name" => null, "custom_name" =>  "Šamanova", "x" => 300, "y" => 100, "size" => 70, "type" => "standard_planet"],
-        //       ["id" => 3245, "name" => "Tutu vesmírná planeta", "x" => 600, "y" => 600, "size" => 40, "type" => "standard_planet"],
-        //       ["id" => 4125, "name" => "Dejmalova", "x" => 1100, "y" => 610, "size" => 60, "type" => "chair_planet", "shadow_color" => "orange", "aspect_ration" => 1.23],
-        //       ["id" => 5987, "name" => "Vojačkova", "x" => 1150, "y" => 200, "size" => 80, "type" => "standard_planet"],
-        //       ["id" => 5917, "name" => "Hernova", "x" => 900, "y" => 520, "size" => 60, "type" => "standard_planet"],
-        //       ["id" => 8765, "name" => null, "custom_name" => null, "x" => 1110, "y" => 250, "size" => 20, "type" => "standard_planet"],
-        //       ["id" => 7865, "name" => "Proxima", "x" => 424, "y" => 500, "size" => 60, "type" => "special_planet"],
-        //       ["id" => 1456, "name" => "Royova", "x" => 700, "y" => 160, "size" => 90, "type" => "special_planet"],
-        //       ["id" => 2456, "x" => 550, "y" => 356, "type" => "worm_hole", "end" =>  2457],
-        //       ["id" => 2457, "x" => 1220, "y" => 543, "type" => "worm_hole", "end" =>  2456],
-        //   ]];
+
       $data = array();
       $planets = $this->planetManager->getAll();
 
@@ -89,14 +74,23 @@ class MapPresenter extends BasePresenter
     }
 
     $actualFlight = $this->flightManager->getActualFlight($user->id);
+    $actualPosition = null;
     if($actualFlight){
       $actualFlight= [
-         "userId"=>$this->user->getId(),
+         //"userId"=>$this->user->getId(),
          "source_id"=>$actualFlight->sourcePlanetId,
          "target_id"=>$actualFlight->sourcePlanetId,
          "start_at"=>$actualFlight->start,
          "finish_at"=>$actualFlight->finish,
         ];
+    }
+    else {
+      $lastFlight = $this->flightManager->getlastFinishedFlight($user->id);
+      if($lastFlight){
+        if($lastFlight->targetPlanetId != $user->position)
+          $this->setPosition($lastFlight->targetPlanetId);
+      }
+      $actualPosition = $lastFlight->targetPlanetId;
     }
 
       $data = [
@@ -106,7 +100,7 @@ class MapPresenter extends BasePresenter
           "rank_name"=>"Nadporučík vesmírné stanice",
           "category_id"=>$user->age,
           "category_name"=>"skauti/skautky od 6 do 9 třídy",
-          "actual_position"=> $user->position,
+          "actual_position"=> $actualPosition,
           "actual_flight"=>$actualFlight,
           "photo"=> $photoPath
       ];
@@ -119,15 +113,23 @@ class MapPresenter extends BasePresenter
     $flight = [    "userId"=>$this->user->getId(),
                    "sourcePlanetId"=>$_GET['source_id'],
                    "targetPlanetId"=>$_GET['target_id'],
-                   "start"=>$_GET['start_at'],
-                   "finish"=>$_GET['finish_at'],
+                   "start"=>date('Y-m-d\TH:i:s.u'),
+                  // "finish"=>$_GET['finish_at'],
                  ];
    $distanceRecieved = $_GET['distance'];
    if(!$this->confirmPosition($flight["sourcePlanetId"])){
      $this->sendJson(false);
      $this->terminate();
    }
-  // $this->confirmDistance($flight["sourcePlanetId"], $flight["targetPlanetId"], $distanceRecieved);
+   $this->confirmDistance($flight["sourcePlanetId"], $flight["targetPlanetId"], $distanceRecieved);
+   if(!$this->confirmDistance($flight["sourcePlanetId"], $flight["targetPlanetId"], $distanceRecieved)){
+     $this->sendJson(false);
+     $this->terminate();
+   }
+
+    $flightTime = (int) round($distanceRecieved/$this->hourConstant); //travel time in hours
+
+    $flight['finish'] = date('Y-m-d\TH:i:s.u', strtotime($flight['start']) + 3600*$flightTime);
 
     $this->flightManager->addFlight($flight);
     $this->sendJson(true);
@@ -141,9 +143,8 @@ class MapPresenter extends BasePresenter
     $a = $source->x - $target->x;
     $b = $source->y - $target->y;
     $c = sqrt(($a*$a)+($b*$b));
-    $this->sendJson($c);
-    $this->terminate();
-    return $c == $distance;
+
+    return round($c) == round($distance);
   }
 
   private function confirmPosition($planetId){
@@ -153,9 +154,45 @@ class MapPresenter extends BasePresenter
     return ($this->userManager->getUserById($this->user->getId())->position == $planetId);
   }
 
+  private function confirmSetPosition($planetId){
+    if($this->flightManager->getActualFlight($this->user->getId()))
+      return false;
+
+    $lastFlight = $this->flightManager->getlastFinishedFlight($this->user->getId());
+    if($lastFlight)
+      return ($lastFlight->targetPlanetId == $planetId);
+
+    return false;
+  }
+  private function setPosition($newPosition){
+    $this->planetManager->setPosition($this->user->getId(), $newPosition);
+    $this->userManager->setPosition($this->user->getId(), $newPosition);
+  }
+
   public function actionSetposition(): void
   {
-	    $this->sendJson(true);
+    $newPosition = $_GET['target_id'];
+    $newName = $_GET['new_name'];
+    if(!$this->confirmSetPosition($newPosition)){
+      $this->sendJson(false);
       $this->terminate();
+    }
+    if($newName)
+      $this->PlanetManager->setNewName($newPosition, $newName);
+
+    $this->setPosition($newPosition);
+	  $this->sendJson(true);
+    $this->terminate();
+  }
+
+  public function actionActivity(): void
+  {
+    $activity = $this->planetManager->getActivity($_GET['planet_id']);
+    if($activity)
+      $this->sendJson($activity->toArray());
+    else {
+      $this->sendJson(null);
+    }
+    $this->terminate();
   }
 }
