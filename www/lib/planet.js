@@ -18,14 +18,19 @@ lp_img_planet3.src = 'assets/planet4.png';
 
 
 var lp_planet = function () {};
-lp_planet.earth = undefined;
-lp_planet.planets = {};
-lp_planet.planet_data = {};
-lp_planet.measure = undefined;
-lp_planet.measure_title = undefined;
-lp_planet.measure_source_id = undefined;
-lp_planet.measure_target_id = undefined;
-lp_planet.flight_counter = undefined;
+
+lp_planet.vars = function() {
+
+    lp_planet.earth = undefined;
+    lp_planet.planets = {};
+    lp_planet.planet_data = {};
+    lp_planet.measure = undefined;
+    lp_planet.measure_title = undefined;
+    lp_planet.measure_source_id = undefined;
+    lp_planet.measure_target_id = undefined;
+    lp_planet.flight_counter = undefined;
+
+};
 
 /**
  * Create standard planet based data
