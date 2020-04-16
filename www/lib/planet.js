@@ -207,7 +207,7 @@ lp_planet._send_rename = function(new_name, planet_id) {
 
     var json_from_server =  $.ajax({
           url: 'map/setposition',
-          async: false,
+          async: true,
           data: json_to_server,
           dataType: 'json'
       }).responseJSON;
