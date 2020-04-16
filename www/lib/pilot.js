@@ -777,13 +777,21 @@ lp_pilot.create_flight_json = function() {
  */
 lp_pilot.is_system_for_live_support_ok = function() {
 
-    var actual_date = new Date();
-    // TODO server request 5
-    // question with day in iso
-    var json_answer = {"day": actual_date.toISOString(), "status": true, percentage: 70};
+    var yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    var json_to_server = {'time': yesterday.toISOString()};
 
-    if (!json_answer.status && json_answer.day === actual_date.toISOString()) {
-        lp_space.messagebox("Systém podpory života byl včera aktivní jen na "+json_answer.percentage+"%. Požadováno je nejméně 70%. Klikněte pro detaily.", lp_action.go_to_live_support_system);
+    var json_answer = $.ajax({
+        url: 'map/lifesupport',
+        async: false,
+        data: json_to_server,
+        dataType: 'json'
+    }).responseJSON;
+
+    //{"day": actual_date.toISOString(), "status": true, percentage: 70};
+
+    if (!json_answer.status) {
+        lp_space.messagebox("Systém podpory života byl včera aktivní jen na "+json_answer.percentage+"%. Nezbytné je nejméně 70%. Klikni pro detaily.", lp_action.go_to_live_support_system);
         return false;
     }
     return true;
