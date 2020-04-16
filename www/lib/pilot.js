@@ -29,18 +29,20 @@ lp_img_stop.src = 'assets/stop.png';
 
 var lp_pilot = function () {};
 
-lp_pilot._avatar_layer = undefined;
-lp_pilot.data = undefined;
-lp_pilot.avatar = undefined;
-lp_pilot.tooltip = undefined;
-lp_pilot._flight = undefined;
-lp_pilot.flight_tooltip = undefined;
-lp_pilot.dialog = undefined;
-lp_pilot.counter = 10000;
-lp_pilot._start_button = undefined;
-lp_pilot._stop = false;
-lp_pilot.counter_title = undefined;
-lp_pilot._internal_blur = 5;
+lp_pilot.vars = function() {
+    lp_pilot._avatar_layer = undefined;
+    lp_pilot.data = undefined;
+    lp_pilot.avatar = undefined;
+    lp_pilot.tooltip = undefined;
+    lp_pilot._flight = undefined;
+    lp_pilot.flight_tooltip = undefined;
+    lp_pilot.dialog = undefined;
+    lp_pilot.counter = 10000;
+    lp_pilot._start_button = undefined;
+    lp_pilot._stop = false;
+    lp_pilot.counter_title = undefined;
+    lp_pilot._internal_blur = 5;
+};
 
 /**
  * Loading pilot data to main plan
@@ -455,13 +457,13 @@ lp_pilot.start_flight = function() {
     var result = lp_planet.get_distance_from_measure();
 
     var target_planet = lp_planet.planet_data[lp_planet.measure_target_id].object;
-    var dialog_x = (lp_space.screen_width/2)-(186*lp_space.scale_width);
+    var dialog_x = (lp_space.screen_width/2)-((450/2)*lp_space.scale_width);
 
     var dialog_y;
     if (lp_planet.planet_data[lp_planet.measure_target_id].y>=lp_space.basic_height/2) {
         dialog_y = (0);
     } else {
-        dialog_y = (lp_space.screen_height)-(186*lp_space.scale_height);
+        dialog_y = ((lp_space.screen_height)-(186*lp_space.scale_height))-(80*lp_space.scale_height);
     }
 
     // Main dialog group
@@ -470,6 +472,7 @@ lp_pilot.start_flight = function() {
         y: dialog_y,
         width: 450*lp_space.scale_width,
         height: 186*lp_space.scale_height,
+        draggable: true,
     });
 
     var dialog_box = new Konva.Image({

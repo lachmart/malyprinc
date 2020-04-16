@@ -26,35 +26,42 @@ lp_close.src = 'assets/close.png';
 var lp_space = function () {};
 
 // Global array
-lp_space.stage = undefined;
-lp_space._layer = undefined;
-lp_space._dialog_layer = undefined;
-lp_space._area = undefined;
-lp_space._earth = undefined;
-lp_space._activity_dialog = undefined;
-lp_space._messagebox = undefined;
-lp_space._cover = undefined;
-lp_space._text_object = undefined;
+lp_space.vars = function() {
+    lp_space.stage = undefined;
+    lp_space._layer = undefined;
+    lp_space._dialog_layer = undefined;
+    lp_space._area = undefined;
+    lp_space._earth = undefined;
+    lp_space._activity_dialog = undefined;
+    lp_space._messagebox = undefined;
+    lp_space._cover = undefined;
+    lp_space._text_object = undefined;
 
-lp_space.div_space_id = "lp_space";
+    lp_space.div_space_id = "lp_space";
 
-// dimensions
-lp_space.basic_width = undefined;
-lp_space.basic_height = undefined;
-lp_space.screen_width = undefined;
-lp_space.screen_height = undefined;
-lp_space.scale_width = undefined;
-lp_space.scale_height = undefined;
+    // dimensions
+    lp_space.basic_width = undefined;
+    lp_space.basic_height = undefined;
+    lp_space.screen_width = undefined;
+    lp_space.screen_height = undefined;
+    lp_space.scale_width = undefined;
+    lp_space.scale_height = undefined;
 
-lp_space.header_font = 20;
-lp_space.basic_font = 16;
+    lp_space.header_font = 20;
+    lp_space.basic_font = 16;
+    lp_space._show_screen_position = false;
+};
+
 
 /* initialization of space for little prince */
 lp_space.init = function()
 {
+    lp_space.vars();
+    lp_pilot.vars();
+    lp_planet.vars();
+
     lp_space.create_space();
     lp_pilot.init();
-    // TODO load frineds 6
 };
 
 /**
@@ -83,11 +90,11 @@ lp_space.add_button_effect = function(button, direction, color, layer) {
 lp_space.create_space = function() {
     lp_space.basic_width = 1440;
     lp_space.basic_height = 810;
-    lp_space.screen_width = window.innerWidth;
 
+    lp_space.screen_width = screen.width;
 
     // preserve 16:9 format
-    lp_space.screen_height = 9/16*lp_space.screen_width;
+    lp_space.screen_height = Math.round(9/16*lp_space.screen_width);
 
     console.log("Space area: "+lp_space.screen_width+"x"+lp_space.screen_height);
 
@@ -122,8 +129,16 @@ lp_space._createStage = function() {
         height: lp_space.stage.height(),
     });
 
-    lp_space._area.on("click", lp_action.openFullscreen);
-    lp_space._area.on("tap", lp_action.openFullscreen);
+    lp_space._area.on("click tap", function() {
+        // debug variant
+        if (lp_space._show_screen_position) {
+            position = lp_space.stage.getPointerPosition();
+            alert(lp_space.screen_width+"x"+lp_space.screen_height+" x:"+position.x+ "y:"+position.y);
+        } else {
+            lp_action.openFullscreen();
+        }
+    });
+
 
     var logo = new Konva.Image({
         x:5*lp_space.scale_width,
