@@ -81,6 +81,7 @@ class DenikPresenter extends BasePresenter
       $planetsVisitedToTemplate[$visited->planetId]['activityType'] = 0;
       if($this->planetManager->getActivity($visited->planetId))
         $planetsVisitedToTemplate[$visited->planetId]['activityType'] = $this->planetManager->getActivity($visited->planetId)->type;
+        $planetsVisitedToTemplate[$visited->planetId]['activity'] = $this->planetManager->getActivity($visited->planetId);
       }
     $this->template->planetsVisited = $planetsVisitedToTemplate;
 

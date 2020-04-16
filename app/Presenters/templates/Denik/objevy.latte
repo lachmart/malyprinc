@@ -3,6 +3,13 @@
 
 		{foreach $planetsVisited as $key => $planet}
 			Planeta číslo {$key} ({$planet['planet']->custom_name ? $planet['planet']->custom_name : $planet['planet']->name}) <br>
+			{ifset $planet['activity']}
+				{$planet['activity']->name}<br>
+				{$planet['activity']->description}<br>
+
+			{/ifset}
+
+
 			{switch $planet['activityType']}
 				{case 1}
 					Zadej obrázek
