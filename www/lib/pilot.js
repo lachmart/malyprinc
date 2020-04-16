@@ -575,7 +575,10 @@ lp_pilot._activate_flight = function() {
                 this.stop();
             }
 
-            lp_pilot.counter_title.text(lp_pilot.counter/1000);
+            var display_counter = lp_pilot.counter/1000;
+            display_counter = display_counter.toFixed(3);
+
+            lp_pilot.counter_title.text(display_counter);
 
             if (lp_pilot.counter <= 0) {
                 console.log("Flight counter finished...");
