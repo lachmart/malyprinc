@@ -1,8 +1,21 @@
 {block content}
 	<h1 n:block="title">Navštívené planety</h1>
 
-		{foreach $navstevy as $navsteva}
-			{$navsteva->planetId}
+		{foreach $planetsVisited as $key => $planet}
+			{$key} => <br>
+			{$planet['planet']->custom_name ? $planet['planet']->custom_name : $planet['planet']->name} <br>
+		 {$planet['activityType']}<br> 	{*generovat příslušný formulář *}
+		{/foreach}
+
+	<h1>Splněné planety</h1>
+
+		{foreach $planetsDone as $key => $planet}
+			{$key} => <br>
+			{$planet['planet']->custom_name ? $planet['planet']->custom_name : $planet['planet']->name} <br>
+			{$planet['activityType']}<br>{*generovat příslušný výstup *}
+			{foreach $planet['data'] as $link}
+				{$link->activityLink} <br>
+			{/foreach}
 		{/foreach}
 
 {/block}

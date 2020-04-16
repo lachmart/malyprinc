@@ -50,7 +50,7 @@ class MapPresenter extends BasePresenter
 
       foreach($planets as $planet){
         $planet = $planet->toArray();
-        $planet["visited"] = $this->planetManager->activityDone($this->user->getId(), $planet['id']);
+        $planet["visited"] = $this->planetManager->getJsonVisited($this->user->getId(), $planet['id']);
         array_push($data,$planet);
       }
       $data = ["planet"=>$data];

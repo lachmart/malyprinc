@@ -72,8 +72,22 @@ class DenikPresenter extends BasePresenter
   }
   public function renderObjevy()
 	{
-    $this->template->navstevy = $this->planetManager->getVisited($this->user->getId());
+    $planetsVisited = $this->planetManager->getVisited($this->user->getId());
+    $planetsVisitedToTemplate = [];
+    foreach ($planetsVisited as $activityDone) {
+      $planetsVisitedToTemplate[$activityDone->planetId]['planet'] = $this->planetManager->getPlanetbyId($activityDone->planetId);
+      $planetsVisitedToTemplate[$activityDone->planetId]['activityType'] = $this->planetManager->getActivity($activityDone->planetId)->type;
+      }
+    $this->template->planetsVisited = $planetsVisitedToTemplate;
 
+    $planetsActivityDone = $this->planetManager->getActivitiesDone($this->user->getId());
+    $allActivityToTemplate=[];
+    foreach ($planetsActivityDone as $activityDone) {
+      $allActivityToTemplate[$activityDone->planetId]['planet'] = $this->planetManager->getPlanetbyId($activityDone->planetId);
+      $allActivityToTemplate[$activityDone->planetId]['activityType'] = $this->planetManager->getActivity($activityDone->planetId)->type;
+      $allActivityToTemplate[$activityDone->planetId]['data'] = $this->planetManager->getPlanetActivitiesDone($activityDone->planetId)->fetchAll();
+    }
+    $this->template->planetsDone = $allActivityToTemplate;
   }
 
   public function actionStartsharingto($receivingUserId)

@@ -43,7 +43,7 @@ class PlanetManager
 
 	public function getVisited($userId)
 	{
-			return $this->database->table('userplanet')->where('userId', $userId)->fetchAll();
+			return $this->database->table('userplanet')->where('userId', $userId)->where('activityLink IS NULL')->fetchAll();
 	}
 
 	public function wasVisited($userId, $planetId)
@@ -53,15 +53,29 @@ class PlanetManager
 		return false;
 	}
 
-	public function activityDone($userId, $planetId)
+	public function getJsonVisited($userId, $planetId)
 	{
 		if( $this->database->table('userplanet')
 		->where('userId', $userId)
 		->where('planetId', $planetId)
-		->where('activityDone', 1)
+		->where('activityLink IS NOT NULL')
 		->fetch())
 			return true;
 		return false;
+	}
+
+	public function getActivitiesDone($userId)
+	{
+		return $this->database->table('userplanet')
+		->where('userId', $userId)
+		->where('activityLink IS NOT NULL');
+	}
+
+	public function getPlanetActivitiesDone($planetId)
+	{
+		return $this->database->table('userplanet')
+		->where('planetId', $planetId)
+		->where('activityLink IS NOT NULL');
 	}
 
 	public function getActivity($id)
