@@ -187,7 +187,7 @@ class MapPresenter extends BasePresenter
       $this->terminate();
     }
     if($newName)
-      $this->PlanetManager->setNewName($newPosition, $newName);
+      $this->planetManager->setNewName($newPosition, $newName);
 
     $this->setPosition($newPosition);
 	  $this->sendJson(true);
