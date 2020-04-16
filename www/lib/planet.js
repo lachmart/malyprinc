@@ -205,12 +205,14 @@ lp_planet._send_rename = function(new_name, planet_id) {
         "new_name": new_name,
     };
 
-    // TODO 8 send rename planet
-    /*var json_from_server =  $.ajax({
+    var json_from_server =  $.ajax({
           url: 'map/pilot',
           async: false,
+          data: json_to_server,
           dataType: 'json'
-      }).responseJSON;*/
+      }).responseJSON;
+
+    console.log(new_name);
 
     // Set name to planet
     lp_planet.planet_data[planet_id].custom_name = new_name;
