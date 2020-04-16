@@ -5,12 +5,12 @@ var lp_action = function () {};
  */
 lp_action.go_to_deck_logbook = function() {
     if (!lp_space.is_displayed_activity()) {
-        location.href = "http://www.malyprincolomouc.cz.neuron.blueboard.cz/denik/";
+        location.href = "https://malyprincolomouc.cz/denik/";
     }
 };
 
 lp_action.go_to_live_support_system = function() {
-    location.href = "http://www.malyprincolomouc.cz.neuron.blueboard.cz/denik/zivot";
+    location.href = "https://malyprincolomouc.cz/denik/zivot";
 };
 
 
