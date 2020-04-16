@@ -53,6 +53,17 @@ class PlanetManager
 		return false;
 	}
 
+	public function activityDone($userId, $planetId)
+	{
+		if( $this->database->table('userplanet')
+		->where('userId', $userId)
+		->where('planetId', $planetId)
+		->where('activityDone', 1)
+		->fetch())
+			return true;
+		return false;
+	}
+
 	public function getActivity($id)
 	{
 		return $this->database->table('activity')->get($id);

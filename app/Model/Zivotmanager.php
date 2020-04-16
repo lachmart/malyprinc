@@ -56,7 +56,7 @@ class ZivotManager
 	{
 		return $this->database->table('specialuser')
 		->where('userId',$userId)
-		//->where('date', date('Y-m-d'))
+		->where('date', date('Y-m-d'))
 		->update(['done'=>1]);
 	}
 	public function generateSpecial($userId)

@@ -50,7 +50,7 @@ class MapPresenter extends BasePresenter
 
       foreach($planets as $planet){
         $planet = $planet->toArray();
-        $planet["visited"] = $this->planetManager->wasVisited($this->user->getId(), $planet['id']);
+        $planet["visited"] = $this->planetManager->activityDone($this->user->getId(), $planet['id']);
         array_push($data,$planet);
       }
       $data = ["planet"=>$data];
@@ -202,6 +202,24 @@ class MapPresenter extends BasePresenter
     else {
       $this->sendJson(null);
     }
+    $this->terminate();
+  }
+  public function actionLifesupport(): void
+  {
+
+    $day = date('Y-m-d',strtotime($_GET['time']));
+    $percentage = $this->zivotManager->getTotal($this->user->getId(), $day);
+    $status = false;
+
+    if($percentage >=70 || $this->userManager->getUserById($this->user->getId())->position === 1)
+      $status = true;
+
+    $this->sendJson([
+                    "day"=>$day,
+                    "status"=>$status,
+                    "percentage"=>$percentage,
+                 ]);
+
     $this->terminate();
   }
 }
