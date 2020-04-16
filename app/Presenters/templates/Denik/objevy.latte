@@ -2,9 +2,24 @@
 	<h1 n:block="title">Navštívené planety</h1>
 
 		{foreach $planetsVisited as $key => $planet}
-			{$key} => <br>
-			{$planet['planet']->custom_name ? $planet['planet']->custom_name : $planet['planet']->name} <br>
-		 {$planet['activityType']}<br> 	{*generovat příslušný formulář *}
+			Planeta číslo {$key} ({$planet['planet']->custom_name ? $planet['planet']->custom_name : $planet['planet']->name}) <br>
+			{switch $planet['activityType']}
+				{case 1}
+					Zadej obrázek
+										{control pictureForm-$key}
+																				{control linkForm-$key}
+				{case 2}
+					Zadej zvuk mp3
+										{control soundForm-$key}
+
+				{case 3}
+					Zadej link
+										{control linkForm-$key}
+				{default}
+						<p>Na této planetě tě nečeká žádný úkol<p>
+			{/switch}
+
+
 		{/foreach}
 
 	<h1>Splněné planety</h1>

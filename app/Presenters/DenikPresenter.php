@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace App\Presenters;
 
 use Nette;
-use App\Components;
+use App\Forms\FileFormFactory;
 use App\Model\UserManager;
 use App\Model\ZivotManager;
 use App\Model\ShareManager;
 use App\Model\PlanetManager;
 use Nette\Application\UI\Form;
+use Nette\Application\UI\Multiplier;
 use Nette\Utils\Html;
 use Nette\Mail\Message;
 use Nette\Mail\IMailer;
+use Nette\Utils\Image;
 
 class DenikPresenter extends BasePresenter
 {
@@ -74,9 +76,11 @@ class DenikPresenter extends BasePresenter
 	{
     $planetsVisited = $this->planetManager->getVisited($this->user->getId());
     $planetsVisitedToTemplate = [];
-    foreach ($planetsVisited as $activityDone) {
-      $planetsVisitedToTemplate[$activityDone->planetId]['planet'] = $this->planetManager->getPlanetbyId($activityDone->planetId);
-      $planetsVisitedToTemplate[$activityDone->planetId]['activityType'] = $this->planetManager->getActivity($activityDone->planetId)->type;
+    foreach ($planetsVisited as $visited) {
+      $planetsVisitedToTemplate[$visited->planetId]['planet'] = $this->planetManager->getPlanetbyId($visited->planetId);
+      $planetsVisitedToTemplate[$visited->planetId]['activityType'] = 0;
+      if($this->planetManager->getActivity($visited->planetId))
+        $planetsVisitedToTemplate[$visited->planetId]['activityType'] = $this->planetManager->getActivity($visited->planetId)->type;
       }
     $this->template->planetsVisited = $planetsVisitedToTemplate;
 
@@ -88,6 +92,85 @@ class DenikPresenter extends BasePresenter
       $allActivityToTemplate[$activityDone->planetId]['data'] = $this->planetManager->getPlanetActivitiesDone($activityDone->planetId)->fetchAll();
     }
     $this->template->planetsDone = $allActivityToTemplate;
+  }
+
+  protected function createComponentPictureForm(): Multiplier
+  {
+    return new Multiplier(function ($planetId) {
+      $form = new Nette\Application\UI\Form;
+      $form->addHidden('planetId', $planetId);
+      $form->addUpload('ukol', 'Obrázek: ')
+        ->addRule(Form::IMAGE, 'Obrázek musí být JPEG, PNG nebo GIF.')
+        ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 3 mB.', 3 * 1024 * 1024 /* v bytech */)
+        	->setRequired();
+      $form->addSubmit('send', 'nahrát splněný úkol!');
+      $form->onSuccess[] = [$this, 'pictureFormSucceded'];
+      $this->makeBootstrap4($form);
+      return $form;
+    });
+  }
+
+  public function pictureFormSucceded($form, $values)
+  {
+    if($values->ukol->hasFile()) {
+      //$avatar->resize(300, 300, Image::EXACT);
+      $link = 'upload/'.$values->planetId.'/'.$this->user->getId().'.jpg';
+      $values->ukol->toImage()->save($link, 80, Image::JPEG);
+      $this->planetManager->setActivityDone($this->user->getId(), $values->planetId, $link);
+      $this->flashMessage('Právě jsi nahrál úkol!', 'alert alert-success');
+    }
+    $this->redirect("Denik:objevy");
+  }
+  protected function createComponentSoundForm(): Multiplier
+  {
+    return new Multiplier(function ($planetId) {
+      $form = new Nette\Application\UI\Form;
+      $form->addHidden('planetId', $planetId);
+      $form->addUpload('ukol', 'Zvuk: ')
+        //->addRule(Form::MIME_TYPE, "teď máš vložit zvukovou nahrávku", 'audio')
+      ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 8 mB.', 8 * 1024 * 1024 /* v bytech */)
+      ->setRequired();
+      $form->addSubmit('send', 'nahrát splněný úkol!');
+      $form->onSuccess[] = [$this, 'soundFormSucceded'];
+      $this->makeBootstrap4($form);
+      return $form;
+    });
+  }
+
+  public function soundFormSucceded($form, $values)
+  {
+    if($values->ukol->hasFile()) {
+      //$avatar->resize(300, 300, Image::EXACT);
+      $link = 'upload/'.$values->planetId.'/'.$this->user->getId().'.mp3';
+      $values->ukol->move($link);
+      $this->planetManager->setActivityDone($this->user->getId(), $values->planetId, $link);
+      $this->flashMessage('Právě jsi nahrál úkol!', 'alert alert-success');
+    }
+    $this->redirect("Denik:objevy");
+  }
+  protected function createComponentLinkForm(): Multiplier
+  {
+    return new Multiplier(function ($planetId) {
+      $form = new Nette\Application\UI\Form;
+      $form->addHidden('planetId', $planetId);
+      $form->addText('ukol', 'Link: ')
+        ->addRule(Form::URL	, "Potřebujeme url.")
+        	->setRequired();
+      $form->addSubmit('send', 'nahrát splněný úkol!');
+      $form->onSuccess[] = [$this, 'linkFormSucceded'];
+      $this->makeBootstrap4($form);
+      return $form;
+    });
+  }
+
+  public function linkFormSucceded($form, $values)
+  {
+
+    $link = $values->ukol;
+    $this->planetManager->setActivityDone($this->user->getId(), $values->planetId, $link);
+    $this->flashMessage('Právě jsi nahrál úkol!', 'alert alert-success');
+
+    $this->redirect("Denik:objevy");
   }
 
   public function actionStartsharingto($receivingUserId)
@@ -125,7 +208,7 @@ class DenikPresenter extends BasePresenter
   protected function createComponentZivotForm()
   {
     $form = new Form;
-    $this->makeBootstrap4($form);
+
     $zivotDone =  $this->zivotManager->getDoneToday($this->user->id)->fetchAll();
     foreach ($this->zivotManager->getAll() as $id => $row){
       if(array_search($id, array_column($zivotDone, 'zivotId'))===false){
@@ -138,6 +221,7 @@ class DenikPresenter extends BasePresenter
 
     $form->addSubmit('send', 'Uložit postup');
     $form->onSuccess[] = [$this, 'zivotFormSucceded'];
+    $this->makeBootstrap4($form);
     return $form;
   }
 
@@ -153,10 +237,9 @@ class DenikPresenter extends BasePresenter
   protected function createComponentSpecialForm()
   {
     $form = new Form;
-    $this->makeBootstrap4($form);
-
     $form->addSubmit('send', 'Splnil jsem speciální úkol!');
     $form->onSuccess[] = [$this, 'specialFormSucceded'];
+    $this->makeBootstrap4($form);
     return $form;
   }
 
@@ -170,11 +253,12 @@ class DenikPresenter extends BasePresenter
   protected function createComponentInviteForm()
   {
     $form = new Form;
-    $this->makeBootstrap4($form);
+
 
     $form->addEmail('email', 'E-mail');
     $form->addSubmit('send', 'Pozvat přítele');
     $form->onSuccess[] = [$this, 'inviteFormSucceded'];
+    $this->makeBootstrap4($form);
     return $form;
   }
 
@@ -210,11 +294,12 @@ class DenikPresenter extends BasePresenter
   protected function createComponentShareForm()
   {
     $form = new Form;
-    $this->makeBootstrap4($form);
+
 
     $form->addEmail('email', 'E-mail');
     $form->addSubmit('send', 'Sdílet polohu');
     $form->onSuccess[] = [$this, 'shareFormSucceded'];
+    $this->makeBootstrap4($form);
     return $form;
   }
 

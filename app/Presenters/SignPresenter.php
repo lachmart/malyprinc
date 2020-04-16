@@ -54,11 +54,11 @@ class SignPresenter extends Nette\Application\UI\Presenter
   protected function createComponentRegisterForm()
 	{
     $form = new Form;
-    $this->makeBootstrap4($form);
+
     $form->addEmail('email', 'Tvůj E-mail:')->setRequired('Zadej prosím email');
     $form->addSubmit('send', 'Registrovat');
     $form->onSuccess[] = [$this, 'registerFormSucceded'];
-
+    $this->makeBootstrap4($form);
     return $form;
 	}
 
@@ -132,7 +132,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
   private function createRegister2Form()
 	{
     $form = new Form;
-    $this->makeBootstrap4($form);
+
     // mohu použít $this->database
     $form->addHidden('email', 'email');
     $form->addText('nickname', 'Přezdívka')->setRequired("Zadej prosím přezdívku, ať vím jak ti říkat");
@@ -152,6 +152,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
 
 
     $form->setDefaults(['email'=>$this->email]);
+
     return $form;
 	}
 
@@ -167,6 +168,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
     $form->addText('oddil', 'Oddíl')->setRequired("Jak si vede tvůj oddíl?");
     $form->addSubmit('send', 'Registrovat');
     $form->onSuccess[] = [$this, 'register2FormSucceded'];
+    $this->makeBootstrap4($form);
     return $form;
 	}
 
@@ -185,6 +187,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
     $form->setDefaults(['invitedBy'=>$this->invitedBy]);
     $form->addSubmit('send', 'Registrovat');
     $form->onSuccess[] = [$this, 'register2FormSucceded'];
+    $this->makeBootstrap4($form);
     return $form;
 	}
 
@@ -236,7 +239,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
   protected function createComponentChangeForm()
   {
     $form = new Form;
-    $this->makeBootstrap4($form);
+
     // mohu použít $this->database
     $form->addHidden('email', 'email');
     $form->addText('nickname', 'Přezdívka')->setRequired("Zadej prosím přezdívku, ať vím jak ti říkat");
@@ -263,6 +266,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
 
     $form->addSubmit('send', 'Změnit údaje');
     $form->onSuccess[] = [$this, 'changeFormSucceded'];
+    $this->makeBootstrap4($form);
     return $form;
   }
 
@@ -303,12 +307,13 @@ class SignPresenter extends Nette\Application\UI\Presenter
   protected function createComponentSignForm()
 	{
     $form = new Form;
-    $this->makeBootstrap4($form);
+
     $form->addEmail('email', 'Email');
     $form->addPassword('password', 'Heslo');
     $form->addSubmit('send', 'Přihlásit');
     $form->onSuccess[] = array($this, 'signInFormSucceeded');
     $form->setDefaults(['email'=>$this->email]);
+    $this->makeBootstrap4($form);
 		return $form;
 	}
 
@@ -330,11 +335,11 @@ class SignPresenter extends Nette\Application\UI\Presenter
   protected function createComponentForgotForm()
 	{
     $form = new Form;
-    $this->makeBootstrap4($form);
     $form->addEmail('email', 'email')->setRequired('Zadejte prosím email');
     $form->addSubmit('send', 'Zapomenout');
     $form->onSuccess[] = [$this, 'forgotsFormSucceeded'];
 
+    $this->makeBootstrap4($form);
 		return $form;
 	}
 
@@ -368,7 +373,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
     $this->mailer->send($mail);
   }
 
-  public function saveAvatar(Image $avatar, $userId)
+  private function saveAvatar(Image $avatar, $userId)
   {
     $avatar->resize(300, 300, Image::EXACT);
     $avatar->save('upload/avatars/'.$userId.'.jpg', 80, Image::JPEG);

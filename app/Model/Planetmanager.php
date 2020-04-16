@@ -63,7 +63,13 @@ class PlanetManager
 			return true;
 		return false;
 	}
-
+	public function setActivityDone($userId, $planetId, $link)
+	{
+		return $this->database->table('userplanet')
+		->where('userId', $userId)
+		->where('planetId', $planetId)
+		->update(['activityLink'=>$link]);
+	}
 	public function getActivitiesDone($userId)
 	{
 		return $this->database->table('userplanet')
