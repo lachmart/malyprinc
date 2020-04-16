@@ -1,16 +1,17 @@
 var lp_action = function () {};
 
+lp_action.url = "https://malyprincolomouc.cz";
 /*
     Main action to open logbook
  */
 lp_action.go_to_deck_logbook = function() {
     if (!lp_space.is_displayed_activity()) {
-        location.href = "https://malyprincolomouc.cz/denik/";
+        location.href = lp_action.url+"/denik/";
     }
 };
 
 lp_action.go_to_live_support_system = function() {
-    location.href = "https://malyprincolomouc.cz/denik/zivot";
+    location.href = lp_action.url+"/denik/zivot";
 };
 
 /**

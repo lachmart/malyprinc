@@ -304,55 +304,71 @@ lp_pilot.pilot_details = function() {
 
          // protection
          var x;
-         if ((lp_pilot.avatar.x()+lp_pilot.avatar.width()+(350*lp_space.scale_width)) > lp_space.screen_width) {
-             x = lp_pilot.avatar.x()-(380*lp_space.scale_width);
+         if ((lp_pilot.avatar.x() + lp_pilot.avatar.width() + (350 * lp_space.scale_width)) > lp_space.screen_width) {
+             x = lp_pilot.avatar.x() - (380 * lp_space.scale_width);
          } else {
-             x = lp_pilot.avatar.x()+lp_pilot.avatar.width();
+             x = lp_pilot.avatar.x() + lp_pilot.avatar.width();
          }
 
          // Main relative group
          lp_pilot.tooltip = new Konva.Group({
              x: x,
              y: lp_pilot.avatar.y(),
-             height: 142*lp_space.scale_height,
-             width: 380*lp_space.scale_width,
+             height: 142 * lp_space.scale_height,
+             width: 380 * lp_space.scale_width,
          });
 
          // Pictures
          var tooltip_picture = new Konva.Image({
-              x: 0,
-              y: 0,
-              height: lp_pilot.tooltip.height(),
-              width: lp_pilot.tooltip.width(),
-              image: lp_img_tooltip,
-              opacity: 1,
-              shadowColor: 'black',
-              shadowBlur: 20,
-              shadowOffset: { x: 10, y: 10 },
+             x: 0,
+             y: 0,
+             height: lp_pilot.tooltip.height(),
+             width: lp_pilot.tooltip.width(),
+             image: lp_img_tooltip,
+             opacity: 1,
+             shadowColor: 'black',
+             shadowBlur: 20,
+             shadowOffset: {x: 10, y: 10},
          });
 
          lp_pilot.tooltip.add(tooltip_picture);
 
-         var header_size = Math.round(lp_space.header_font*lp_space.scale_width);
-         var basic_size = Math.round(lp_space.basic_font*lp_space.scale_width);
+         var header_size = Math.round(lp_space.header_font * lp_space.scale_width);
+         var basic_size = Math.round(lp_space.basic_font * lp_space.scale_width);
 
-         // Buttons
          // button photo
-         // TODO change pilot photo
-         var button1 = new Konva.Image({
-              x: lp_pilot.tooltip.width()-((83*lp_space.scale_width)+15),
-              y: 15*lp_space.scale_height,
-              height: 108*lp_space.scale_width,
-              width: 83*lp_space.scale_height,
-              image: lp_img_photo,
-              opacity: 1,
-         });
+         if (lp_pilot.data.photo === "/upload/avatars/placeholder.jpg") {
+             var button1 = new Konva.Image({
+                 x: lp_pilot.tooltip.width() - ((83 * lp_space.scale_width) + 15),
+                 y: 15 * lp_space.scale_height,
+                 height: 108 * lp_space.scale_height,
+                 width: 83 * lp_space.scale_width,
+                 image: lp_img_photo,
+                 opacity: 1,
+             });
+             button1.on("mouseenter", function() {lp_space.add_button_effect(button1,true, "#B3C6C6",lp_space._layer)});
+             button1.on("mouseleave", function() {lp_space.add_button_effect(button1,false, null, lp_space._layer)});
+             button1.on("click", function() {lp_action.go_to_deck_logbook()});
+             button1.on("tap", function() {lp_action.go_to_deck_logbook()});
+             lp_pilot.tooltip.add(button1);
+         } else {
+             console.log("pilot photo: "+lp_pilot.data.photo);
+             Konva.Image.fromURL(lp_action.url+lp_pilot.data.photo, (image) => {
+                 lp_pilot.tooltip.add(image);
 
-         lp_pilot.tooltip.add(button1);
-         button1.on("mouseenter", function() {lp_space.add_button_effect(button1,true, "#B3C6C6",lp_space._layer)});
-         button1.on("mouseleave", function() {lp_space.add_button_effect(button1,false, null, lp_space._layer)});
-         button1.on("click", function() {lp_action.go_to_deck_logbook()});
-         button1.on("tap", function() {lp_action.go_to_deck_logbook()});
+                 image.x(lp_pilot.tooltip.width() - ((90 * lp_space.scale_width) + 20));
+                 image.y(15 * lp_space.scale_height);
+
+                 image.width(90 * lp_space.scale_width);
+                 image.height(108 * lp_space.scale_width);
+
+                 image.on("mouseenter", function() {lp_space.add_button_effect(image,true, "#B3C6C6",lp_space._layer)});
+                 image.on("mouseleave", function() {lp_space.add_button_effect(image,false, null, lp_space._layer)});
+                 image.on("click", function() {lp_action.go_to_deck_logbook()});
+                 image.on("tap", function() {lp_action.go_to_deck_logbook()});
+                 lp_pilot.tooltip.draw();
+             });
+         }
 
          // button activity
          var button2 = new Konva.Image({
