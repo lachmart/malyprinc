@@ -72,6 +72,14 @@ lp_pilot._server_load_pilot_data = function() {
         json_from_server.actual_flight.target_id = lp_planet.add_planet_prefix(json_from_server.actual_flight.target_id);
     }
 
+    // Save pilot rank to check
+    if (typeof(Storage) !== "undefined") {
+        // Code for localStorage/sessionStorage.
+        if (localStorage.getItem(json_from_server.id+"rank" === undefined)) {
+            localStorage.setItem(json_from_server.id+"rank", json_from_server.rank_id);
+        }
+    }
+
     console.log("Pilot data loaded.");
     return json_from_server;
 };
@@ -216,6 +224,14 @@ lp_pilot._add_avatar = function(avatar_type, id, json_flight) {
     lp_pilot._avatar_layer.add(lp_pilot.avatar);
     lp_pilot._avatar_layer.draw();
 
+    // Display cograts
+    if (typeof(Storage) !== "undefined") {
+        var saved = localStorage.getItem(lp_pilot.data.id + "rank");
+        if (parseInt(saved) !== lp_pilot.data.rank_id) {
+            localStorage.setItem(lp_pilot.data.id+"rank", lp_pilot.data.rank_id);
+            lp_space.messagebox("Gratulujeme, právě jsi získal hodnost "+lp_pilot.data.rank_name+"!");
+        }
+    }
 };
 
 /**
@@ -777,13 +793,21 @@ lp_pilot.create_flight_json = function() {
  */
 lp_pilot.is_system_for_live_support_ok = function() {
 
-    var actual_date = new Date();
-    // TODO server request 5
-    // question with day in iso
-    var json_answer = {"day": actual_date.toISOString(), "status": true, percentage: 70};
+    /*var yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    var json_to_server = {'time': yesterday.toISOString()};*/
+    // data: json_to_server,
 
-    if (!json_answer.status && json_answer.day === actual_date.toISOString()) {
-        lp_space.messagebox("Systém podpory života byl včera aktivní jen na "+json_answer.percentage+"%. Požadováno je nejméně 70%. Klikněte pro detaily.", lp_action.go_to_live_support_system);
+    var json_answer = $.ajax({
+        url: 'map/lifesupport',
+        async: false,
+        dataType: 'json'
+    }).responseJSON;
+
+    //{"day": actual_date.toISOString(), "status": true, percentage: 70};
+
+    if (!json_answer.status) {
+        lp_space.messagebox("Systém podpory života byl včera aktivní jen na "+json_answer.percentage+"%. Nezbytné je nejméně 70%. Klikni pro detaily.", lp_action.go_to_live_support_system);
         return false;
     }
     return true;

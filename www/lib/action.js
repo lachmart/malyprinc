@@ -80,6 +80,6 @@ window.addEventListener("load", function(){
     lp_space.init();
 });
 
-window.addEventListener("resize", function(){
+/*window.addEventListener("resize", function(){
     lp_action.on_resize();
-});
+});*/

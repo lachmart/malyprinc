@@ -22,3 +22,5 @@ www/upload/
 www/assets/source/
 
 app/config/local.neon
+
+www/activity/
