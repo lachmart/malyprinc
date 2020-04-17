@@ -60,11 +60,6 @@ class MapPresenter extends BasePresenter
 
   public function actionPilot(): void
   {
-    //  var_dump($_GET);
-  		//$this->payload->message = 'Success';
-      //$this->sendPayload();
-    //  $data = ['one' => $_GET['id'],'two' => $_GET['time'],'three' => 'hello'];
-
     $user = $this->userManager->getUserById($this->user->getId());
 
     $photoPath = '';
@@ -89,9 +84,13 @@ class MapPresenter extends BasePresenter
     else {
       $lastFlight = $this->flightManager->getlastFinishedFlight($user->id);
       if($lastFlight){
-        if($lastFlight->targetPlanetId != $user->position){
-          $this->setPosition($lastFlight->targetPlanetId);
-          $actualPosition = $lastFlight->targetPlanetId;
+        $target = $lastFlight->targetPlanetId;
+        if($lastFlight->targetPlanet->end)
+          $target = $lastFlight->targetPlanet->end;
+
+        if($target != $user->position){
+          $this->setPosition($target);
+          $actualPosition = $target;
         }
         else {
           $actualPosition = $user->position;

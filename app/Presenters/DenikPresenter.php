@@ -77,6 +77,8 @@ class DenikPresenter extends BasePresenter
     $planetsVisited = $this->planetManager->getVisited($this->user->getId());
     $planetsVisitedToTemplate = [];
     foreach ($planetsVisited as $visited) {
+      if($this->planetManager->getPlanetbyId($visited->planetId)->type == 'worm_hole')
+        continue;
       $planetsVisitedToTemplate[$visited->planetId]['planet'] = $this->planetManager->getPlanetbyId($visited->planetId);
       $planetsVisitedToTemplate[$visited->planetId]['activityType'] = 0;
       if($this->planetManager->getActivity($visited->planetId))
@@ -88,6 +90,8 @@ class DenikPresenter extends BasePresenter
     $planetsActivityDone = $this->planetManager->getActivitiesDone($this->user->getId());
     $allActivityToTemplate=[];
     foreach ($planetsActivityDone as $activityDone) {
+      if($this->planetManager->getPlanetbyId($visited->planetId)->type == 'worm_hole')
+        continue;
       $allActivityToTemplate[$activityDone->planetId]['planet'] = $this->planetManager->getPlanetbyId($activityDone->planetId);
       $allActivityToTemplate[$activityDone->planetId]['activityType'] = $this->planetManager->getActivity($activityDone->planetId)->type;
       $allActivityToTemplate[$activityDone->planetId]['data'] = $this->planetManager->getPlanetActivitiesDone($activityDone->planetId)->fetchAll();
