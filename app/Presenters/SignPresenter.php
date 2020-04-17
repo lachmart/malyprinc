@@ -71,7 +71,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
   {
     $this->user->logout();
     $this->flashMessage('Byl jsi odhlášen', 'alert alert-success');
-    $this->redirect('Map:default');
+    $this->redirect('Sign:in');
   }
 
   public function actionResetpassword($email, $token)
@@ -84,7 +84,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
       else {
           $this->flashMessage('Něco se pokazilo, kontaktuj podporu', 'alert alert-danger');
       }
-      $this->redirect('Map:default');
+      $this->redirect('Sign:in');
 
    }
 
@@ -105,7 +105,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
       else {
           $this->flashMessage('Email je již potvrzen, nebo máš špatný odkaz. POkud se ti něco nezdá, kontaktuj podporu', 'alert alert-danger');
       }
-      $this->redirect('Map:default');
+      $this->redirect('Denik:');
 
    }
 
@@ -374,7 +374,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
     $mail = $this->generateMailMessage($email);
     $mail->setSubject('Potvrzení registrace malyprinc');
   //  ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
-    $mail->setHtmlBody('<b>Sample HTML</b> <a href="url/sign/resetPassword?email='.$email.'&token='.$token.'">odkaz</a>');
+    $mail->setHtmlBody('<b>Sample HTML</b> <a href="https://malyprincolomouc.cz/url/sign/resetpassword?email='.$email.'&token='.$token.'">odkaz</a>');
 
     $this->mailer->send($mail);
   }

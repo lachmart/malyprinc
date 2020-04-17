@@ -207,7 +207,7 @@ class MapPresenter extends BasePresenter
   public function actionLifesupport(): void
   {
 
-    $day = date('Y-m-d',strtotime($_GET['time']));
+    $day = date('Y-m-d', time()-24*3600);// date('Y-m-d',strtotime($_GET['time']));
     $percentage = $this->zivotManager->getTotal($this->user->getId(), $day);
     $status = false;
 
