@@ -44,16 +44,17 @@
       <a n:href="Sign:out"><button class="menu__btn">Odhlásit se</button></a>
       <a n:href="Map:default" class="menu__signOut"><img src="https://malyprincolomouc.cz/assets/close.png"></a>
     {else}
-      <a n:href="Sign:in">přihlásit se</a>
-      <a n:href="Sign:register">registrovat</a>
-      <a n:href="Sign:forgot">zapomenuté heslo</a>
+      <a n:href="Sign:in"><button class="menu__btn">Přihlásit se</button></a>
+      <a n:href="Sign:register"><button class="menu__btn">Registrovat</button></a>
+      <a n:href="Sign:forgot"><button class="menu__btn">Zapomenuté heslo</button></a>
+      <div class="logo"><img src="https://malyprincolomouc.cz/assets/logo--inverted.png"></div>
     {/if}
-
-
   </div>
+
+
   <div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
   {/if}
-	{include content}
+  {include content}
 
 
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

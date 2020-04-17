@@ -75,7 +75,7 @@ lp_pilot._server_load_pilot_data = function() {
     // Save pilot rank to check
     if (typeof(Storage) !== "undefined") {
         // Code for localStorage/sessionStorage.
-        if (localStorage.getItem(json_from_server.id+"rank" === undefined)) {
+        if (localStorage.getItem(json_from_server.id+"rank" === null)) {
             localStorage.setItem(json_from_server.id+"rank", json_from_server.rank_id);
         }
     }
