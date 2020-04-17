@@ -10,15 +10,17 @@ hr {
 }
 
 .menu {
-  position: absolute;
-  left: 100px;
-  top: 100px;
-  right: 100px;
+  @media screen and (min-width: 1200px) {
+    position: absolute;
+    left: 100px;
+    top: 100px;
+    right: 100px;
+  }
 
-  a[active] {
-    .menu__btn:hover:before {
-      border-width: 9px;
-    }
+  @media screen and (max-width: 1199px) {
+    position: relative;
+    padding-right: 50px;
+    margin: 10px;
   }
 }
 
@@ -38,6 +40,12 @@ hr {
   &:active,
   &:focus {
     outline: 0;
+  }
+
+  @media screen and (max-width: 1199px) {
+    font-size: 14px;
+    padding: 5px 15px 7px;
+    margin: 0 2px 5px;
   }
 }
 
@@ -62,12 +70,24 @@ hr {
 
 .menu__btn:hover:before {
   border-width: 9px;
+
+  @media screen and (max-width: 1199px) {
+    border-width: 6px;
+  }
 }
 
 .menu__signOut {
+  position: absolute;
+  right: 0;
+  top: 0;
+
   img {
     float: right;
     width: 80px;
+
+    @media screen and (max-width: 1199px) {
+      width: 35px;
+    }
   }
 }
 
@@ -111,6 +131,13 @@ hr {
     text-align: center;
     margin-bottom: 30px;
   }
+
+  @media screen and (max-width: 1199px) {
+    width: calc(100% - 20px);
+    margin: 10px auto;
+    padding: 30px 15px 50px;
+    border: 10px solid transparent;
+  }
 }
 
 .userLogin {
@@ -124,6 +151,13 @@ hr {
   form {
     max-width: 580px;
     margin: 80px auto 30px;
+  }
+}
+
+.userDisc {
+  img {
+    max-width: 100%;
+    height: auto;
   }
 }
 
@@ -144,10 +178,16 @@ hr {
 }
 
 .userCard__rank {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  max-width: 120px;
+  @media screen and (min-width: 751px) {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    max-width: 120px;
+  }
+
+  @media screen and (max-width: 750px) {
+    margin: 20px auto;
+  }
 }
 
 .form__fullWidth {
@@ -222,6 +262,10 @@ hr {
 .profile-row {
   display: flex;
   position: relative;
+
+  @media screen and (max-width: 750px) {
+    flex-wrap: wrap
+  }
 }
 
 .profile-row .dp {
@@ -229,6 +273,11 @@ hr {
   position: relative;
   margin: 24px 55px 24px 24px;
   align-self: center;
+
+  @media screen and (max-width: 750px) {
+    flex-basis: 100%;
+    margin: 0 auto;
+  }
 }
 
 .profile-row .desc {
@@ -240,6 +289,10 @@ hr {
   border-radius: 50%;
   display: block;
   box-shadow: 0px 0px 4px 3px #12a0a0;
+
+  @media screen and (max-width: 750px) {
+    margin: 30px auto;
+  }
 }
 
 .profile-row .desc {
