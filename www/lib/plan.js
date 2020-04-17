@@ -91,7 +91,7 @@ lp_space.create_space = function() {
     lp_space.basic_width = 1440;
     lp_space.basic_height = 810;
 
-    lp_space.screen_width = screen.width;
+    lp_space.screen_width = window.innerWidth;
 
     // preserve 16:9 format
     lp_space.screen_height = Math.round(9/16*lp_space.screen_width);
@@ -166,7 +166,6 @@ lp_space._createStage = function() {
  * redraw main layer of space
  */
 lp_space.draw = function() {
-    console.log("Rendering space.");
     lp_space._layer.draw();
 };
 
@@ -333,7 +332,7 @@ lp_space.get_activity = function(planet_id) {
          }
          html += "<div class='category'>Věkové kategorie: "+response_json.category+"</div>";
          html += "<div class='accessories'>Potřeby: "+response_json.accessories+"</div>";
-         html += "<div class='output'>Splnění: "+response_json.output+"</div>";
+         html += "<div class='output'>Splnění: "+response_json.output+" <a href='"+lp_action.url+"/denik/objevy'>(nahrávej sem)</a></div>";
          html += "<h2>Popis</h2>";
          html += "<div class='description'>"+response_json.description+"</div>";
          if (response_json.notes !== null && response_json.notes !== "") {

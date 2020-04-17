@@ -777,14 +777,14 @@ lp_pilot.create_flight_json = function() {
  */
 lp_pilot.is_system_for_live_support_ok = function() {
 
-    var yesterday = new Date();
+    /*var yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    var json_to_server = {'time': yesterday.toISOString()};
+    var json_to_server = {'time': yesterday.toISOString()};*/
+    // data: json_to_server,
 
     var json_answer = $.ajax({
         url: 'map/lifesupport',
         async: false,
-        data: json_to_server,
         dataType: 'json'
     }).responseJSON;
 
