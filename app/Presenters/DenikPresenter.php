@@ -90,7 +90,7 @@ class DenikPresenter extends BasePresenter
     $planetsActivityDone = $this->planetManager->getActivitiesDone($this->user->getId());
     $allActivityToTemplate=[];
     foreach ($planetsActivityDone as $activityDone) {
-      if($this->planetManager->getPlanetbyId($visited->planetId)->type == 'worm_hole')
+      if($this->planetManager->getPlanetbyId( $activityDone->planetId)->type == 'worm_hole')
         continue;
       $allActivityToTemplate[$activityDone->planetId]['planet'] = $this->planetManager->getPlanetbyId($activityDone->planetId);
       $allActivityToTemplate[$activityDone->planetId]['activityType'] = $this->planetManager->getActivity($activityDone->planetId)->type;
