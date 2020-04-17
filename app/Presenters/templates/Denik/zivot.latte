@@ -13,16 +13,24 @@
         <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="{$totalZivotYesterday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotYesterday}%">
         </div>
       </div>
-			<div class="alert alert-danger" role="alert">TO je méně, než 70%! Dnes nemáš sílu na cestování a musíš stabilizovat podporu života na lodi.</div>
+			<div class="alert alert-danger mt-3" role="alert">TO je méně, než 70%! Dnes nemáš sílu na cestování a musíš stabilizovat podporu života na lodi.</div>
 		{/if}
   <br>
   <br>
 
   <p class="userSubtitle">Systémy běží na {$totalZivotToday}%</p>
+  {if $totalZivotToday >= 70 }
   <div class="progress" style="height: 30px;">
     <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="{$totalZivotToday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotToday}%">
     </div>
   </div>
+  {/if}
+  {if $totalZivotToday < 70 }
+  <div class="progress" style="height: 30px;">
+    <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="{$totalZivotToday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotToday}%">
+    </div>
+  </div>
+  {/if}
 
   <p class="userSubtitle mt-5">Dnes splněno:</p>
   <ul>
