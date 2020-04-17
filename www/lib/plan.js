@@ -327,17 +327,24 @@ lp_space.get_activity = function(planet_id) {
          html = "<div>Tato planeta nemá žádnou aktivitu :(.</div>";
      } else {
          html = "<h2>"+response_json.name+"</h2>";
-         if (response_json.author !== null && response_json.author !== "") {
-            html += "<div class='author'>Author: "+response_json.author+"</div>";
-         }
-         html += "<div class='category'>Věkové kategorie: "+response_json.category+"</div>";
-         html += "<div class='accessories'>Potřeby: "+response_json.accessories+"</div>";
-         html += "<div class='output'>Splnění: "+response_json.output+" <a href='"+lp_action.url+"/denik/objevy'>(nahrávej sem)</a></div>";
-         html += "<h2>Popis</h2>";
-         html += "<div class='description'>"+response_json.description+"</div>";
+
+         html += "<div class='accessories mp_block'><span class='block_title'>Potřeby:</span><div>"+response_json.accessories+"</div></div>";
+         html += "<div class='output mp_block'><span class='block_title'>Splnění:</span><div>"+response_json.output+" <a href='"+lp_action.url+"/denik/objevy'>(nahrávej sem)</a></div></div>";
+
+         html += "<div class='mp_block'><span class='block_title'>Popis aktivity:</span>";
+         html += "<div class='main_description'>"+response_json.description+"</div>";
+         html += "</div>";
+
+         html += "<div class='category mp_block'><span class='block_title'>Věkové kategorie:</span><div>"+response_json.category+"</div></div>";
+
          if (response_json.notes !== null && response_json.notes !== "") {
-             html += "<h2>Poznámky</h2>";
-             html += "<div>"+response_json.notes+"<div>";
+             html += "<div class='notes mp_block'><span class='block_title'>Poznámky:</span>";
+             html += "<div>"+response_json.notes+"</div>";
+             html += "</div>";
+         }
+
+         if (response_json.author !== null && response_json.author !== "") {
+            html += "<div class='author mp_block'><span class='block_title'>Author:</span><div>"+response_json.author+"</div></div>";
          }
      }
      return html;
