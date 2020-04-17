@@ -74,6 +74,7 @@ class DenikPresenter extends BasePresenter
   }
   public function renderObjevy()
 	{
+    $this->CheckRank(); //nemá dojít k povýšení?
     $planetsVisited = $this->planetManager->getVisited($this->user->getId());
     $planetsVisitedToTemplate = [];
     foreach ($planetsVisited as $visited) {
@@ -99,6 +100,25 @@ class DenikPresenter extends BasePresenter
     $this->template->planetsDone = $allActivityToTemplate;
   }
 
+  private function checkRank()
+  {
+    $user = $this->userManager->getUserById($this->user->getId());
+    $activityDoneSum = $this->planetManager->getActivitiesDone($user->id)->count('*');
+    $rankEnum = $this->userManager->getRankEnum();
+    $rank = 1;
+    foreach ($rankEnum as $key => $value){
+      if ($value !== null && $value <=  $activityDoneSum)
+        $rank = $key;
+    }
+
+    if($user->rankId != $rank){
+      $this->flashMessage('Byl jsi povýšen!', 'alert alert-success');
+      $this->userManager->updateRank($user->id, $rank);
+    }
+
+
+  }
+
   protected function createComponentPictureForm(): Multiplier
   {
     return new Multiplier(function ($planetId) {
@@ -120,7 +140,9 @@ class DenikPresenter extends BasePresenter
     if($values->ukol->hasFile()) {
       //$avatar->resize(300, 300, Image::EXACT);
       $link = 'upload/'.$values->planetId.'/'.$this->user->getId().'.jpg';
-      $values->ukol->toImage()->save($link, 80, Image::JPEG);
+      $image = $values->ukol->toImage();
+      $image->save($link, 80, Image::JPEG);
+
       $this->planetManager->setActivityDone($this->user->getId(), $values->planetId, $link);
       $this->flashMessage('Právě jsi nahrál úkol!', 'alert alert-success');
     }

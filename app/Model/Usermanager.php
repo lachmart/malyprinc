@@ -34,6 +34,10 @@ class UserManager
 	{
 			return $this->database->table($this->table)->where('id', $values->id)->update($values);
 	}
+	public function updateRank($userId, $rank)
+	{
+			return $this->database->table($this->table)->where('id', $userId)->update(['rankId' => $rank]);
+	}
 	public function confirmEmail($email, $token)
 	{
 			return $this->database->table($this->table)->where('email', $email)->where('token', $token)->update(['emailConfirmed'=>1]);
@@ -49,6 +53,10 @@ class UserManager
 	public function setPosition($id, $planetId)
 	{
 			return $this->database->table($this->table)->where('id', $id)->update(['position'=>$planetId]);
+	}
+	public function getRankEnum()
+	{
+			return $this->database->table('rankenum')->fetchPairs('id', 'discoveriesNeeded');
 	}
 
 }
