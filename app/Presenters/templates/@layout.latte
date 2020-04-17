@@ -33,13 +33,13 @@
 	{if !$presenter->isLinkCurrent('Map:*')}
 <div id='menu'>
 	{if $user->loggedIn}
-	<a n:href="Map:default">mapa</a>
-	<a n:href="Denik:">průkaz</a>
-	<a n:href="Denik:zivot">systém podpory života</a>
-	<a n:href="Denik:objevy">objevy</a>
+	<a n:href="Map:default" {$presenter->isLinkCurrent('Map:*') ? active}>mapa</a>
+	<a n:href="Denik:" {$presenter->isLinkCurrent('Denik:') ? active}>průkaz</a>
+	<a n:href="Denik:zivot" {$presenter->isLinkCurrent('Denik:zivot') ? active}>systém podpory života</a>
+	<a n:href="Denik:objevy" {$presenter->isLinkCurrent('Denik:objevy') ? active}>objevy</a>
 	{* <a n:href="Denik:navigace">Navigace</a> *}
 	{* <a n:href="Denik:denni">denní zápis</a> *}
-	<a n:href="Denik:pratele">přátelé</a>
+	<a n:href="Denik:pratele" {$presenter->isLinkCurrent('Denik:pratele') ? active}>přátelé</a>
 	<a n:href="Sign:out">odhlásit se</a>
 	{else}
 	<a n:href="Sign:in">přihlásit se</a>
