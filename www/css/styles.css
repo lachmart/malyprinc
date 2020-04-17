@@ -1,4 +1,7 @@
-hr {
+body {
+	 background-color: #000;
+}
+ hr {
 	 margin-top: 3rem;
 	 margin-bottom: 3rem;
 	 border: 0;
@@ -58,7 +61,16 @@ hr {
 	 background-size: cover;
 	 height: 100%;
 }
- .userCard, .userSystem, .userDisc, .userFriends {
+ .flash {
+	 margin: 30px 60px;
+}
+ .logo {
+	 float: right;
+}
+ .logo img {
+	 max-width: 100px;
+}
+ .userCard, .userSystem, .userDisc, .userFriends, .userLogin, .userChange {
 	 width: calc(100% - 100px);
 	 margin: 50px auto;
 	 padding: 100px 50px 50px;
@@ -71,9 +83,17 @@ hr {
 	 box-shadow: 0 0 3px 2px #000;
 	 color: #fff;
 }
- .userCard > h1, .userSystem > h1, .userDisc > h1, .userFriends > h1 {
+ .userCard > h1, .userSystem > h1, .userDisc > h1, .userFriends > h1, .userLogin > h1, .userChange > h1 {
 	 text-align: center;
 	 margin-bottom: 30px;
+}
+ .userLogin form {
+	 max-width: 420px;
+	 margin: 80px auto 30px;
+}
+ .userLogin form {
+	 max-width: 580px;
+	 margin: 80px auto 30px;
 }
  .userCard p {
 	 text-align: left;
@@ -174,9 +194,7 @@ hr {
 	 padding: 1em;
 }
  .profile-row .desc {
-	 font-family: 'Orbitron', sans-serif;
 	 color: #ecfcfb;
 	 text-shadow: 0px 0px 4px #12a0a0;
 	 letter-spacing: 1px;
 }
- 

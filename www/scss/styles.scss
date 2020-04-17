@@ -1,3 +1,7 @@
+body {
+  background-color: #000000;
+}
+
 hr {
     margin-top: 3rem;
     margin-bottom: 3rem;
@@ -73,10 +77,24 @@ hr {
   height: 100%;
 }
 
+.flash {
+  margin: 30px 60px;
+}
+
+.logo {
+  float: right;
+
+  img {
+    max-width: 100px;
+  }
+}
+
 .userCard,
 .userSystem,
 .userDisc,
-.userFriends {
+.userFriends,
+.userLogin,
+.userChange {
   width: calc(100% - 100px);
   margin: 50px auto;
   padding: 100px 50px 50px;
@@ -92,6 +110,20 @@ hr {
   > h1 {
     text-align: center;
     margin-bottom: 30px;
+  }
+}
+
+.userLogin {
+  form {
+    max-width: 420px;
+    margin: 80px auto 30px;
+  }
+}
+
+.userLogin {
+  form {
+    max-width: 580px;
+    margin: 80px auto 30px;
   }
 }
 
@@ -215,7 +247,6 @@ hr {
 }
 
 .profile-row .desc {
-  font-family: 'Orbitron', sans-serif;
   color: #ecfcfb;
   text-shadow: 0px 0px 4px #12a0a0;
   letter-spacing: 1px;
