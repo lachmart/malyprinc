@@ -46,7 +46,7 @@ class MapPresenter extends BasePresenter
   {
 
       $data = array();
-      $planets = $this->planetManager->getAll();
+      $planets = $this->planetManager->getAll($this->userManager->getUserById($this->user->getId())->rank);
 
       foreach($planets as $planet){
         $planet = $planet->toArray();

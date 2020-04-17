@@ -18,9 +18,9 @@ class PlanetManager
 	}
 
 
-	public function getAll()
+	public function getAll($rank)
 	{
-		return $this->database->table($this->table)->fetchAll();
+		return $this->database->table($this->table)->where('visible_at_rank <=', $rank)->fetchAll();
 	}
 	public function getPlanetById($id)
 	{
