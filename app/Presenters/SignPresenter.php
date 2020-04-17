@@ -9,6 +9,7 @@ use App\Components;
 use Nette\Application\UI\Form;
 use App\Model\UserManager;
 use App\Model\ZivotManager;
+use App\Model\PlanetManager;
 use Nette\Utils\Image;
 use Nette\Mail\Message;
 use Nette\Mail\IMailer;
@@ -27,16 +28,20 @@ class SignPresenter extends Nette\Application\UI\Presenter
   /** @var ZivotManager */
   protected $zivotManager;
 
+  /** @var PlanetManager */
+  protected $planetManager;
+
 /** @persistent */
   public $email;
 /** @persistent */
   public $invitedBy;
 
 
-  public function __construct( UserManager $userManager, ZivotManager $zivotManager, Nette\Security\Passwords $passwords)
+  public function __construct( UserManager $userManager, PlanetManager $planetManager, ZivotManager $zivotManager, Nette\Security\Passwords $passwords)
 	{
     $this->userManager = $userManager;
     $this->zivotManager = $zivotManager;
+    $this->planetManager = $planetManager;
     $this->passwords = $passwords;
     if(!isset($this->invitedBy))
       $this->invitedBy = 0;
@@ -115,11 +120,11 @@ class SignPresenter extends Nette\Application\UI\Presenter
       $this->email = $values->email;
       $invitation = $this->userManager->isInvited($values->email);
       if(isset($invitation->InvitedBy)) {
-          $this->flashMessage('Pozvaný člověk, který se chce registrovat', 'alert alert-success');
+          $this->flashMessage('Máš dobré kamarády, jeden z nich tě k nám pozval. Pomoz nám doplnit zbytek informací a můžeme jít na to!', 'alert alert-success');
           $this->invitedBy = $invitation->invitedBy;
         }
         else {
-          $this->flashMessage('Nový člověk, kterýmusí být skaut', 'alert alert-success');
+          $this->flashMessage('Pomoz nám doplnit zbytek informací a můžeme jít na to!', 'alert alert-success');
       }
       $this->redirect('Sign:register2');
   }
@@ -220,6 +225,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
         $this->saveAvatar($image, $id);
       }
       $this->zivotManager->generateSpecial($id);
+      $this->planetManager->setPosition($id, 1);
       $this->sendMailRegistered($token, $values->email);
       $this->flashMessage('Registrace proběhla úspěšně, na mail jsme ti poslali odkaz pro ověření, že jde o tvoji emailovou adresu.', 'alert alert-success');
       $this->redirect('Sign:in');
