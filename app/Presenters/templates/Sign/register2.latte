@@ -1,9 +1,13 @@
 {block content}
-      {if $invitedBy}
-        Pozvaný
-        {control registerInvitedForm }
-      {else}
-        Skaut
-        {control registerSkautForm }
-      {/if}
+  {if $invitedBy}
+    <div class="userLogin">
+      Pozvaný
+      {control registerInvitedForm }
+    </div>
+  {else}
+    <div class="userLogin">
+      Skaut
+      {control registerSkautForm }
+    </div>
+  {/if}
 {/block}

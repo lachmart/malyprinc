@@ -104,8 +104,19 @@ hr {
 .logo {
   float: right;
 
+   @media screen and (max-width: 1199px) {
+     float: right;
+     position: absolute;
+     right: 0;
+     top: -7px;
+   }
+
   img {
     max-width: 100px;
+
+    @media screen and (max-width: 1199px) {
+     max-width: 50px;
+   }
   }
 }
 
