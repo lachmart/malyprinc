@@ -1,4 +1,10 @@
-.menu {
+hr {
+	 margin-top: 3rem;
+	 margin-bottom: 3rem;
+	 border: 0;
+	 border-top: 1px solid #fff;
+}
+ .menu {
 	 position: absolute;
 	 left: 100px;
 	 top: 100px;
@@ -80,6 +86,12 @@
 	 display: inline-block;
 	 width: 120px;
 }
+ .userCard__rank {
+	 position: absolute;
+	 bottom: 10px;
+	 right: 10px;
+	 max-width: 120px;
+}
  .form__fullWidth .col-sm-3 {
 	 display: none;
 }
@@ -141,6 +153,7 @@
 }
  .profile-row {
 	 display: flex;
+	 position: relative;
 }
  .profile-row .dp {
 	 flex-basis: 33.3%;
@@ -166,3 +179,4 @@
 	 text-shadow: 0px 0px 4px #12a0a0;
 	 letter-spacing: 1px;
 }
+ 
