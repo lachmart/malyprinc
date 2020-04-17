@@ -1,4 +1,5 @@
 {block content}
+ <div class="userDisc">
 	<h1 n:block="title">Navštívené planety</h1>
 
 		{foreach $planetsVisited as $key => $planet}
@@ -38,5 +39,5 @@
 				{$link->activityLink} <br>
 			{/foreach}
 		{/foreach}
-
+  </div>
 {/block}

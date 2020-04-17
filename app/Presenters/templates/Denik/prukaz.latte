@@ -2,22 +2,28 @@
   <div class="userCard">
     <h1 n:block="title">Průkaz</h1>
 
-    {if $pilotInfo->avatar}
-      <img src="{$basePath}/upload/avatars/{$user->id}.jpg">
-    {else}
-      <img src="{$basePath}/upload/avatars/placeholder.jpg">
-    {/if}<br><br>
-
-    Přezdívka:{$pilotInfo->nickname}<br>
-    email: {$pilotInfo->email}<br>
-    Jméno: {$pilotInfo->name}<br>
-    Je skaut?:{$pilotInfo->isSkaut}<br>
-    středisko: {$pilotInfo->stredisko}<br>
-    oddíl:{$pilotInfo->oddil}<br>
-    pozvaný:{$pilotInfo->invitedBy}<br>
-    rank:<img src="{$basePath}/upload/hodnosti/{$pilotInfo->rank}.png"><br>
-
-
-    <a n:href="Sign:change">Změnit údaje</a>
+    <div class="id-card-wrapper">
+      <div class="id-card">
+        <div class="profile-row">
+          <div class="dp">
+            {if $pilotInfo->avatar}
+              <img src="{$basePath}/upload/avatars/{$user->id}.jpg">
+            {else}
+              <img src="{$basePath}/upload/avatars/placeholder.jpg">
+            {/if}
+          </div>
+          <div class="desc">
+            <h1>{$pilotInfo->nickname}</h1>
+            <p><span>Email:</span>{$pilotInfo->email}</p>
+            <p><span>Jméno:</span>{$pilotInfo->name}</p>
+            <p><span>Je skaut?:</span>{$pilotInfo->isSkaut}</p>
+            <p><span>Středisko:</span>{$pilotInfo->stredisko}</p>
+            <p><span>Oddíl:</span>{$pilotInfo->oddil}</p>
+            <p><span>Pozvaný:</span>{$pilotInfo->invitedBy}</p>
+            <p><a n:href="Sign:change">Změnit údaje</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 {/block}

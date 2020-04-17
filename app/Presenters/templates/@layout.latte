@@ -7,7 +7,7 @@
 	<title>{ifset title}{include title|stripHtml} | {/ifset}Putování za Malých princem</title>
 
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-	<link rel="stylesheet" href="{$basePath}/css/styles.css"></script>
+	<link rel="stylesheet" href="{$basePath}/css/styles.css">
 		{block scripts}
 			<script src="{$basePath}/js/jquery-3.4.1.min.js"></script>
 			<script src="{$basePath}/js/netteForms.min.js"></script>
@@ -35,14 +35,14 @@
 	{if !$presenter->isLinkCurrent('Map:*')}
   <div id='menu' class="menu">
     {if $user->loggedIn}
-      <a n:href="Map:default" {$presenter->isLinkCurrent('Map:*') ? active}><button class="menu__btn"> mapa</button></a>
-      <a n:href="Denik:" {$presenter->isLinkCurrent('Denik:') ? active}><button class="menu__btn">průkaz</button></a>
-      <a n:href="Denik:zivot" {$presenter->isLinkCurrent('Denik:zivot') ? active} ><button class="menu__btn">systém podpory života</button></a>
-      <a n:href="Denik:objevy" {$presenter->isLinkCurrent('Denik:objevy') ? active} ><button class="menu__btn">objevy</button></a>
+      <a n:href="Denik:" {$presenter->isLinkCurrent('Denik:') ? active}><button class="menu__btn">Průkaz</button></a>
+      <a n:href="Denik:zivot" {$presenter->isLinkCurrent('Denik:zivot') ? active} ><button class="menu__btn">Systém podpory života</button></a>
+      <a n:href="Denik:objevy" {$presenter->isLinkCurrent('Denik:objevy') ? active} ><button class="menu__btn">Objevy</button></a>
       {* <a n:href="Denik:navigace">Navigace</a> *}
       {* <a n:href="Denik:denni">denní zápis</a> *}
-      <a n:href="Denik:pratele" {$presenter->isLinkCurrent('Denik:pratele') ? active} ><button class="menu__btn">přátelé</button></a>
-      <a n:href="Sign:out"><button class="menu__btn">odhlásit se</button></a>
+      <a n:href="Denik:pratele" {$presenter->isLinkCurrent('Denik:pratele') ? active} ><button class="menu__btn">Přátelé</button></a>
+      <a n:href="Sign:out"><button class="menu__btn">Odhlásit se</button></a>
+      <a n:href="Map:default" class="menu__signOut"><img src="https://malyprincolomouc.cz/assets/close.png"></a>
     {else}
       <a n:href="Sign:in">přihlásit se</a>
       <a n:href="Sign:register">registrovat</a>

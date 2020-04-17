@@ -1,0 +1,207 @@
+.menu {
+  position: absolute;
+  left: 100px;
+  top: 100px;
+  right: 100px;
+
+  a[active] {
+    .menu__btn:hover:before {
+      border-width: 9px;
+    }
+  }
+}
+
+.menu__btn {
+  font-size: 20px;
+  font-weight: bold;
+  color: #212529;
+  background: linear-gradient(90deg, rgba(252, 254, 255, 1) 0%, rgba(232, 233, 234, 1) 100%);
+  border: none;
+  position: relative;
+  padding: 10px 25px 12px;
+  margin: 0 5px 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  transition: border-radius 0s;
+
+  &:active,
+  &:focus {
+    outline: 0;
+  }
+}
+
+.menu__btn:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-style: solid;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
+  width: 0;
+  border-width: 0;
+  border-color: #1a1a1a rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) #1a1a1a;
+  border-radius: 0 0 5px 0;
+  transition: border-width 0.2s;
+}
+
+.menu__btn:hover {
+  border-radius: 5px;
+  transition-delay: 0.1s;
+}
+
+.menu__btn:hover:before {
+  border-width: 9px;
+}
+
+.menu__signOut {
+  img {
+    float: right;
+    width: 80px;
+  }
+}
+
+.journal {
+  background: url(https://malyprincolomouc.cz/assets/space.jpg) no-repeat center center fixed;
+  background-size: cover;
+  height: 100%;
+}
+
+.userCard,
+.userSystem,
+.userDisc,
+.userFriends {
+  width: calc(100% - 100px);
+  margin: 50px auto;
+  padding: 100px 50px 50px;
+  box-sizing: border-box;
+  border: 30px solid transparent;
+  border-radius: 20px;
+  background-clip: padding-box, border-box;
+  background-origin: padding-box, border-box;
+  background-image: linear-gradient(#1a1a1a, #1a1a1a), linear-gradient(135deg, #d7d9da, #5d5d5e);
+  box-shadow: 0 0 3px 2px #000;
+  color: #fff;
+
+  > h1 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+}
+
+.userCard {
+  p {
+    text-align: left;
+    margin-bottom: 0;
+
+    &:last-of-type {
+      margin-top: 30px;
+    }
+
+    span {
+      display: inline-block;
+      width: 120px;
+    }
+  }
+}
+
+.form__fullWidth {
+  .col-sm-3 {
+    display: none;
+  }
+
+  .col-sm-9 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+.userSubtitle {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.specialTask {
+  display: inline-block;
+  width: 70px;
+  font-weight: 700;
+}
+
+/* https://www.smashingmagazine.com/2018/06/avengers-id-card-html-css/ */
+.id-card-wrapper {
+  display: flex;
+  position: relative;
+  margin-top: 100px;
+}
+
+.id-card {
+  flex-basis: 100%;
+  max-width: 50em;
+  border: 1px solid #61f5f5;
+  margin: auto;
+  color: #fff;
+  padding: 1em;
+  background-color: #0a2129;
+  box-shadow: 0px 0px 3px 1px #12a0a0, inset 0px 0px 3px 1px #12a0a0;
+
+  &:before {
+    position: absolute;
+    z-index: 2;
+    content: '';
+    left: 50%;
+    top: -70px;
+    margin: 0 0 0 -40px;
+    height: 100px;
+    width: 80px;
+    background: rgba(255, 255, 255, .2);
+    background-image: linear-gradient(left, rgba(255,255,255, .4) 0%, rgba(255,255,255, .1) 50%,rgba(255,255,255, .4) 100%), linear-gradient(bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 40%), linear-gradient(top, rgba(255, 255, 255, .8) 0%, rgba(255, 255, 255, 0) 40%);
+    border-radius: 6px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .8);
+    opacity: .5;
+  }
+
+  &:after {
+    position: absolute;
+    content: '';
+    z-index: 2;
+    height: 20px;
+    width: 20px;
+    top: -55px;
+    left: 50%;
+    margin: 0 0 0 -10px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 5px rgba(255, 255, 255, .6), 0 0 10px rgba(0, 0, 0, .7), inset 2px 2px 2px rgba(0, 0, 0, .5);
+  }
+}
+
+.profile-row {
+  display: flex;
+}
+
+.profile-row .dp {
+  flex-basis: 33.3%;
+  position: relative;
+  margin: 24px 55px 24px 24px;
+  align-self: center;
+}
+
+.profile-row .desc {
+  flex-basis: 66.6%;
+}
+
+.profile-row .dp img {
+  max-width: 100%;
+  border-radius: 50%;
+  display: block;
+  box-shadow: 0px 0px 4px 3px #12a0a0;
+}
+
+.profile-row .desc {
+  padding: 1em;
+}
+
+.profile-row .desc {
+  font-family: 'Orbitron', sans-serif;
+  color: #ecfcfb;
+  text-shadow: 0px 0px 4px #12a0a0;
+  letter-spacing: 1px;
+}

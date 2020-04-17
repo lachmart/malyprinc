@@ -1,30 +1,54 @@
 {block content}
+<div class="userSystem">
 	<h1 n:block="title">Systém podpory života</h1>
-		Včera běžely systémy na {$totalZivotYesterday}%
+		<p class="userSubtitle">Včera běžely systémy na {$totalZivotYesterday}%</p>
+    <div class="progress" style="height: 30px;">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="{$totalZivotYesterday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotYesterday}%">
+
+      </div>
+    </div>
 		{if $totalZivotYesterday < 70 }
-			TO je méně, než 70%! Dnes nemáš sílu na cestování a musíš stabilizovat podporu života na lodi.
+			<div class="alert alert-danger" role="alert">TO je méně, než 70%! Dnes nemáš sílu na cestování a musíš stabilizovat podporu života na lodi.</div>
 		{/if}
-<br>
-<br>
+  <br>
+  <br>
 
-		Systémy běží na {$totalZivotToday}%<br>
-Dnes splněno:
-<p n:foreach="$zivotDone as $item">{$item->zivot->name}</p>
-	{if $specialDone}
-Dnes jsi splnil i specilání úkol {$specialDone->special->name}<br><br>
-{/if}
-	CO jsem splnil?<br>
-	{if $allDone}
-	Tady už jsi všechno splnil! Gratuluji.
-	{else}
-		{control zivotForm}
-	{/if}
+  <p class="userSubtitle">Systémy běží na {$totalZivotToday}%</p>
+  <div class="progress" style="height: 30px;">
+    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="{$totalZivotToday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotToday}%">
 
-{if $specialToDo}
-	Dnes mám pro tebe i speciální úkol!
-	{$specialToDo->special->name}
-	{$specialToDo->special->description1}
-	{$specialToDo->special->description2}
-	 {control specialForm}
-{/if}
+    </div>
+  </div>
+
+  <p class="userSubtitle mt-5">Dnes splněno:</p>
+  <ul>
+  <li n:foreach="$zivotDone as $item">{$item->zivot->name}</li>
+  </ul>
+    {if $specialDone}
+  Dnes jsi splnil i specilání úkol: <strong>{$specialDone->special->name}</strong><br><br>
+  {/if}
+  <p class="userSubtitle mt-5">Co jsem ještě nesplnil?<p>
+  {if $allDone}
+  <div class="alert alert-success" role="alert">
+    Tady už jsi všechno splnil! Gratuluji.
+  </div>
+
+
+  {else}
+    <div class="form__fullWidth">
+      {control zivotForm}
+    </div>
+  {/if}
+
+
+  {if $specialToDo}
+    <p class="userSubtitle mt-5">Dnes mám pro tebe i speciální úkol!</p>
+    <div><span class="specialTask">Název:</span>{$specialToDo->special->name}</div>
+    <div><span class="specialTask">Typ:</span>{$specialToDo->special->description1}</div>
+    <div><span class="specialTask">Popis:</span>{$specialToDo->special->description2}</div>
+    <div class="form__fullWidth mt-3">
+     {control specialForm}
+    </div>
+  {/if}
+</div>
 {/block}
