@@ -276,6 +276,14 @@ lp_planet.click = function(planet_id) {
         console.log("Invalid planet "+planet_id+".");
         return false;
     }
+
+    var pilot_planet_position = lp_pilot.get_pilot_position();
+    if (lp_planet.planet_data[pilot_planet_position].type==='earth' && !lp_planet.planet_data[pilot_planet_position].visited ){
+        // cannot flight
+        lp_space.messagebox("Nemůžeš opustit Zemi, dokud nesplníš startovní aktivitu. Klikni na pilota a na kulaté tlačítko pro více informací.");
+        return;
+    }
+
     var planet_data = lp_planet.planet_data[planet_id];
 
     if (lp_pilot.get_pilot_position() === planet_id && !lp_pilot.is_in_flight()) {
