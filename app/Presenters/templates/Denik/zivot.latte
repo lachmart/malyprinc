@@ -2,12 +2,17 @@
 <div class="userSystem">
 	<h1 n:block="title">Systém podpory života</h1>
 		<p class="userSubtitle">Včera běžely systémy na {$totalZivotYesterday}%</p>
+		{if $totalZivotYesterday >= 70 }
     <div class="progress" style="height: 30px;">
-      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="{$totalZivotYesterday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotYesterday}%">
-
+      <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="{$totalZivotYesterday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotYesterday}%">
       </div>
     </div>
+    {/if}
 		{if $totalZivotYesterday < 70 }
+      <div class="progress" style="height: 30px;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="{$totalZivotYesterday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotYesterday}%">
+        </div>
+      </div>
 			<div class="alert alert-danger" role="alert">TO je méně, než 70%! Dnes nemáš sílu na cestování a musíš stabilizovat podporu života na lodi.</div>
 		{/if}
   <br>
@@ -15,8 +20,7 @@
 
   <p class="userSubtitle">Systémy běží na {$totalZivotToday}%</p>
   <div class="progress" style="height: 30px;">
-    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="{$totalZivotToday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotToday}%">
-
+    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="{$totalZivotToday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotToday}%">
     </div>
   </div>
 
