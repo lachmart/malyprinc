@@ -3,7 +3,7 @@
 	<h1 n:block="title">Navštívené planety</h1>
 
 		{foreach $planetsVisited as $key => $planet}
-			<p class="userSubtitle">Planeta číslo {$key} ({$planet['planet']->custom_name ? $planet['planet']->custom_name : $planet['planet']->name})</p>
+			<p class="userSubtitle">Planeta číslo {$key} {$planet['planet']->custom_name ? $planet['planet']->custom_name : $planet['planet']->name}</p>
 			{ifset $planet['activity']}
 				<div><span class="specialTask">Název:</span>{$planet['activity']->name}</div>
 				<div><span class="specialTask">Popis:</span>{$planet['activity']->description|noescape}</div>
