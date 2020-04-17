@@ -7,6 +7,7 @@
 	<title>{ifset title}{include title|stripHtml} | {/ifset}Nette Web</title>
 
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link rel="stylesheet" href="{$basePath}/css/styles.css"></script>
 		{block scripts}
 			<script src="{$basePath}/js/jquery-3.4.1.min.js"></script>
 			<script src="{$basePath}/js/netteForms.min.js"></script>
@@ -29,28 +30,28 @@
 		</script>
 </head>
 
-<body>
+<body n:class="!$presenter->isLinkCurrent('Map:*') ? journal">
 	{if !$presenter->isLinkCurrent('Map:*')}
-<div id='menu'>
-	{if $user->loggedIn}
-	<a n:href="Map:default" {$presenter->isLinkCurrent('Map:*') ? active}>mapa</a>
-	<a n:href="Denik:" {$presenter->isLinkCurrent('Denik:') ? active}>průkaz</a>
-	<a n:href="Denik:zivot" {$presenter->isLinkCurrent('Denik:zivot') ? active}>systém podpory života</a>
-	<a n:href="Denik:objevy" {$presenter->isLinkCurrent('Denik:objevy') ? active}>objevy</a>
-	{* <a n:href="Denik:navigace">Navigace</a> *}
-	{* <a n:href="Denik:denni">denní zápis</a> *}
-	<a n:href="Denik:pratele" {$presenter->isLinkCurrent('Denik:pratele') ? active}>přátelé</a>
-	<a n:href="Sign:out">odhlásit se</a>
-	{else}
-	<a n:href="Sign:in">přihlásit se</a>
-	<a n:href="Sign:register">registrovat</a>
-	<a n:href="Sign:forgot">zapomenuté heslo</a>
-	{/if}
+  <div id='menu' class="menu">
+    {if $user->loggedIn}
+      <a n:href="Map:default" {$presenter->isLinkCurrent('Map:*') ? active}><button class="menu__btn"> mapa</button></a>
+      <a n:href="Denik:" {$presenter->isLinkCurrent('Denik:') ? active}><button class="menu__btn">průkaz</button></a>
+      <a n:href="Denik:zivot" {$presenter->isLinkCurrent('Denik:zivot') ? active}><button class="menu__btn">systém podpory života</button></a>
+      <a n:href="Denik:objevy"{$presenter->isLinkCurrent('Denik:objevy') ? active}><button class="menu__btn">objevy</button></a>
+      {* <a n:href="Denik:navigace">Navigace</a> *}
+      {* <a n:href="Denik:denni">denní zápis</a> *}
+      <a n:href="Denik:pratele"{$presenter->isLinkCurrent('Denik:pratele') ? active}><button class="menu__btn">přátelé</button></a>
+      <a n:href="Sign:out"><button class="menu__btn">odhlásit se</button></a>
+    {else}
+      <a n:href="Sign:in">přihlásit se</a>
+      <a n:href="Sign:register">registrovat</a>
+      <a n:href="Sign:forgot">zapomenuté heslo</a>
+    {/if}
 
 
-</div>
-		<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
-{/if}
+  </div>
+  <div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
+  {/if}
 	{include content}
 
 
