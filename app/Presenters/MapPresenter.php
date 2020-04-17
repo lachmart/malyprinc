@@ -44,7 +44,6 @@ class MapPresenter extends BasePresenter
 
   public function actionPlanets(): void
   {
-
       $data = array();
       $planets = $this->planetManager->getAll($this->userManager->getUserById($this->user->getId())->rank);
 
@@ -60,7 +59,20 @@ class MapPresenter extends BasePresenter
 
   public function actionPilot(): void
   {
-    $user = $this->userManager->getUserById($this->user->getId());
+    $mydata = $this->getPilotData($this->user->getId());
+    $friends = [];
+    foreach($this->shareManager->getReceivedActive($this->user->getId()) as $friend){
+      $friends[$friend->sharingUser] = $this->getPilotData($friend->sharingUser);
+    }
+
+    $mydata['friends'] = $friends;
+
+	  $this->sendJson($mydata);
+  	$this->terminate();
+  }
+
+  private function getPilotData($pilotId){
+    $user = $this->userManager->getUserById($pilotId);
 
     $photoPath = '';
     if($user->avatar){
@@ -107,13 +119,14 @@ class MapPresenter extends BasePresenter
           "rank_id"=>$user->rankId,
           "rank_name"=>$user->rank->rankName,
           "category_id"=>$user->age,
-          "category_name"=>"skauti/skautky od 6 do 9 třídy",
+          "category_name"=>"",
           "actual_position"=> $actualPosition,
           "actual_flight"=>$actualFlight,
           "photo"=> $photoPath
       ];
-	    $this->sendJson($data);
-  	  $this->terminate();
+
+    return $data;
+
   }
 
   public function actionFlight(): void
