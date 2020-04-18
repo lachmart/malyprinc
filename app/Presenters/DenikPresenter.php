@@ -314,9 +314,12 @@ class DenikPresenter extends BasePresenter
   }
   private function sendMailInvited($email){
     $mail = $this->generateMailMessage($email);
-    $mail->setSubject('SPozvánka malyprinc');
+    $mail->setSubject('Pozvánka do hry Putování za Malým princem');
   //  ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
-    $mail->setHtmlBody('<b>Sample HTML</b> Uživatel '.$this->user->getIdentity()->email.'stě pozval do skautské online hry malyprinc. Můžeš se registrovat na adrese....');
+    $mail->setHtmlBody('<div>Hráč '.$this->user->getIdentity()->email.' tě pozval do skautské etapové hry Putování za Malým princem.</div> 
+                              <div>Můžeš se <a href="https://malyprincolomouc.cz">registrovat zde</a></div><br>
+                              <div>Důležité je, aby ses registroval tímto email.</div>
+                              <div>Tým Malého prince</div>');
 
     $this->mailer->send($mail);
   }
@@ -353,16 +356,15 @@ class DenikPresenter extends BasePresenter
 
   private function sendMailShared($email){
     $mail = $this->generateMailMessage($email);
-    $mail->setSubject('Sdilení polohy malyprinc');
+    $mail->setSubject('Sdilení polohy ve hře Putování za Malým princem');
   //  ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
-    $mail->setHtmlBody('<b>Sample HTML</b> Uživatel '.$this->user->getIdentity()->email.'s tebou právě začal sdílet polohu. V nastavení si můžeš jeho zobrazování kdykoliv vypnout.');
-
+    $mail->setBody('Uživatel '.$this->user->getIdentity()->email.' s tebou právě začal sdílet svoji polohu. V nastavení si můžeš jeho zobrazování kdykoliv vypnout. Měj se, tým Malého prince');
     $this->mailer->send($mail);
   }
 
   private function generateMailMessage($to){
     $mail = new Message;
-    $mail->setFrom('Malyprinc <noreply@localhost.local>');
+    $mail->setFrom('Malyprinc <noreply@malyprincolomouc.cz>');
     $mail->addTo($to);
     return $mail;
   }

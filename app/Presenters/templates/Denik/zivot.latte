@@ -1,6 +1,8 @@
 {block content}
 <div class="userSystem">
 	<h1 n:block="title">Systém podpory života</h1>
+	<div>Bez systému pro podporu života nelze používat raketu k meziplanetárním letům. Abys mohl zítra letět za dobrodružstvím, je třeba splnit v součtu nejméně 70% z níže uvedených úkolů. Nezbytné rutinní úkoly je třeba začít plnit již první den a pokud se ti některý den nepodaří nevadí, prostě si budeš muset dát pauzu. Občas dostaneš i speciální úkol a je na tobě, zda jej splníš.</div>
+	<br>
 		<p class="userSubtitle">Včera běžely systémy na {$totalZivotYesterday}%</p>
 		{if $totalZivotYesterday >= 70 }
     <div class="progress" style="height: 30px;">
@@ -16,8 +18,6 @@
 			<div class="alert alert-danger mt-3" role="alert">TO je méně, než 70%! Dnes nemáš sílu na cestování a musíš stabilizovat podporu života na lodi.</div>
 		{/if}
   <br>
-  <br>
-
   <p class="userSubtitle">Systémy běží na {$totalZivotToday}%</p>
   {if $totalZivotToday >= 70 }
   <div class="progress" style="height: 30px;">

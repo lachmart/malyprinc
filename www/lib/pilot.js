@@ -691,8 +691,8 @@ lp_pilot.flight_progress = function() {
         lp_pilot.avatar.y(position.y);
 
         // Change title
-        var hour_to = Math.round(position.remain_time/60);
-        var min_to = Math.round(position.remain_time%60);
+        var hour_to = Math.floor(position.remain_time/60);
+        var min_to = position.remain_time%60;
 
         lp_planet.measure_title.text(hour_to+"h "+min_to+"min");
         lp_space.draw();

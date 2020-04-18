@@ -17,11 +17,9 @@
             <p><span>Email:</span>{$pilotInfo->email}</p>
             <p><span>Jméno:</span>{$pilotInfo->name}</p>
             {if $pilotInfo->isSkaut != 0}
-            <p><span>Je skaut?:</span>{$pilotInfo->isSkaut}</p>
             <p><span>Středisko:</span>{$pilotInfo->stredisko}</p>
             <p><span>Oddíl:</span>{$pilotInfo->oddil}</p>
             {/if}
-            <p><span>Pozvaný:</span>{$pilotInfo->invitedBy}</p>
             <p><a n:href="Sign:change">Změnit údaje</a></p>
           </div>
           <img class="userCard__rank" src="{$basePath}/upload/hodnosti/{$pilotInfo->rank}.png">

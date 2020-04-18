@@ -90,10 +90,10 @@ class SignPresenter extends Nette\Application\UI\Presenter
 
    private function sendMailReset($token, $email){
      $mail = $this->generateMailMessage($email);
-     $mail->setSubject('Heslo bylo resetovano malyprinc');
+     $mail->setSubject('Heslo do hry Putování za Malým princem bylo resetováno');
     // ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
 
-      $mail->setHtmlBody('Vytvořili jsme ti nové heslo: '.$token.'<br>S tímto heslem se můžeš přihlašovat, ale co nejdříve si jej změň v nastavení.');
+      $mail->setBody('Vytvořili jsme ti nové heslo: '.$token.'<br>S tímto heslem se můžeš přihlašovat, ale co nejdříve si jej změň v palubním deníku. Měj se, tým Malého prince.');
       $this->mailer->send($mail);
    }
 
@@ -234,10 +234,15 @@ class SignPresenter extends Nette\Application\UI\Presenter
 
   private function sendMailRegistered($token, $email){
     $mail = $this->generateMailMessage($email);
-	  $mail->setSubject('Potvrzení registrace malyprinc');
+	  $mail->setSubject('Potvrzení registrace do hry Putování za Malým princem');
 	  // ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
 
-    $mail->setHtmlBody('<b>Sample HTML</b> <a href="url/sign/confirmEmail?email='.$email.'&token='.$token.'">odkaz</a>');
+    $mail->setHtmlBody('Vítej kamaráde!<br><div>Hra Putování za Malým princem je připravena a po potvrzení 
+                             <a href="url/sign/confirmEmail?email='.$email.'&token='.$token.'">odkazu</a> můžeš začít hrát.</div><br>
+                             <div>Ještě by se ti mohl hodit tento <a href="https://malyprincolomouc.cz/download/pruvodce-hrou-maly-princ.pdf">průvodce hrou</a>.</div>
+                             <div>Hodně zábavy</div><br>
+                             <div>Tým Malého prince</div>');
+
      $this->mailer->send($mail);
   }
 
@@ -302,10 +307,10 @@ class SignPresenter extends Nette\Application\UI\Presenter
 
   private function sendMailChanged($email){
     $mail = $this->generateMailMessage($email);
-	  $mail->setSubject('Změne údajů malyprinc');
+	  $mail->setSubject('Změne údajů do hry Putování za Malým princem');
 	  // ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
 
-    $mail->setHtmlBody('<b>Sample HTML</b> Údaje ve tvém účtu byly změněny. Nebyl jsi to ty? Dej nám o tom prosím vědět.');
+    $mail->setBody('Údaje ve tvém účtu byly změněny. Nebyl jsi to ty? Dej nám o tom prosím vědět. Měj se, tým Malého prince');
     $this->mailer->send($mail);
   }
 
@@ -372,9 +377,10 @@ class SignPresenter extends Nette\Application\UI\Presenter
 
   private function sendMailForgot($token, $email){
     $mail = $this->generateMailMessage($email);
-    $mail->setSubject('Potvrzení registrace malyprinc');
-  //  ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
-    $mail->setHtmlBody('<b>Sample HTML</b> <a href="https://malyprincolomouc.cz/url/sign/resetpassword?email='.$email.'&token='.$token.'">odkaz</a>');
+    $mail->setSubject('Zapomenuté heslo do hry Putování za Malým princem');
+    $mail->setHtmlBody('<div>Nic si z toho nedělej, to se stává i v lepších rodinách :-). Heslo si změň zde: <a href="https://malyprincolomouc.cz/url/sign/resetpassword?email='.$email.'&token='.$token.'">odkaz</a>
+                        </div><br>
+                        <div>Tým Malého prince</div>');
 
     $this->mailer->send($mail);
   }
@@ -390,7 +396,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
   }
   private function generateMailMessage($to){
     $mail = new Message;
-    $mail->setFrom('Malyprinc <noreply@localhost.local>');
+    $mail->setFrom('Malyprinc <noreply@malyprincolomouc.cz>');
     $mail->addTo($to);
     return $mail;
   }
