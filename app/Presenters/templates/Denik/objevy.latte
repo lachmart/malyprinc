@@ -44,9 +44,10 @@
 
 					<div class="row" id="gallery" data-toggle="modal" data-target="#Modal{$key}">
 						{foreach $planet['data'] as $image}
-							<div class="col-12 col-sm-6 col-lg-3">
-								<img class="w-100" src="{$basePath}/{$image->activityLink}" alt="First slide" data-target="#carousel{$key}" data-slide-to="{$iterator->counter-1}">
-							</div>
+							<div class="col-12 col-sm-6 col-lg-3 col-xl-2">
+								<img class="w-100 img-thumbnail" src="{$basePath}/{$image->activityLink}-thumb.jpg" alt="First slide" data-target="#carousel{$key}" data-slide-to="{$iterator->counter-1}">
+                <figcaption class="text-center">{$image->user->nickname}</figcaption>
+              </div>
 						{/foreach}
 
 					</div>
@@ -69,8 +70,11 @@
 									<div class="carousel-inner">
 										{foreach $planet['data'] as $image}
 										<div class="carousel-item {if $iterator->first}active{/if}">
-												<img class="d-block w-100" src="{$basePath}/{$image->activityLink}" >
-											</div>
+												<img class="d-block w-100" src="{$basePath}/{$image->activityLink}.jpg" >
+                        <div class="carousel-caption d-none d-md-block " style="background: rgba(0, 0, 0, 0.6)">
+                          <h2>{$image->user->nickname}</h2>
+                        </div>
+                    	</div>
 										{/foreach}
 									</div>
 									<a class="carousel-control-prev" href="#carousel{$key}" role="button" data-slide="prev">
@@ -98,7 +102,7 @@
 				{case 3}
 				{foreach $planet['data'] as $link}
 					<div class="col-12 col-sm-6 col-lg-3">
-						<a href="{$link->activityLink}" target="_blank">{$link->activityLink}</a>
+						<a href="{$link->activityLink}" target="_blank">{$link->uset->nickname}</a>
 					</div>
 				{/foreach}
 				{default}

@@ -77,6 +77,7 @@ class DenikPresenter extends BasePresenter
     $this->CheckRank(); //nemá dojít k povýšení?
     $planetsVisited = $this->planetManager->getVisited($this->user->getId());
     $planetsVisitedToTemplate = [];
+    //navstivene planety (aktivity)
     foreach ($planetsVisited as $visited) {
       if($this->planetManager->getPlanetbyId($visited->planetId)->type == 'worm_hole')
         continue;
@@ -87,7 +88,7 @@ class DenikPresenter extends BasePresenter
         $planetsVisitedToTemplate[$visited->planetId]['activity'] = $this->planetManager->getActivity($visited->planetId);
       }
     $this->template->planetsVisited = $planetsVisitedToTemplate;
-
+    //splnene planety (aktivity)
     $planetsActivityDone = $this->planetManager->getActivitiesDone($this->user->getId());
     $allActivityToTemplate=[];
     foreach ($planetsActivityDone as $activityDone) {
@@ -95,7 +96,7 @@ class DenikPresenter extends BasePresenter
         continue;
       $allActivityToTemplate[$activityDone->planetId]['planet'] = $this->planetManager->getPlanetbyId($activityDone->planetId);
       $allActivityToTemplate[$activityDone->planetId]['activityType'] = $this->planetManager->getActivity($activityDone->planetId)->type;
-      $allActivityToTemplate[$activityDone->planetId]['data'] = $this->planetManager->getPlanetActivitiesDone($activityDone->planetId)->fetchAll();
+      $allActivityToTemplate[$activityDone->planetId]['data'] = $this->planetManager->getPlanetActivitiesDone($activityDone->planetId);
     }
     $this->template->planetsDone = $allActivityToTemplate;
   }
@@ -139,9 +140,11 @@ class DenikPresenter extends BasePresenter
   {
     if($values->ukol->hasFile()) {
       //$avatar->resize(300, 300, Image::EXACT);
-      $link = 'upload/'.$values->planetId.'/'.$this->user->getId().'.jpg';
+      $link = 'upload/'.$values->planetId.'/'.$this->user->getId();
       $image = $values->ukol->toImage();
-      $image->save($link, 80, Image::JPEG);
+      $image->save($link.'.jpg', 80, Image::JPEG);
+      $image->resize(400 , 400, Image::EXACT);
+      $image->save($link.'-thumb.jpg', 80, Image::JPEG);
 
       $this->planetManager->setActivityDone($this->user->getId(), $values->planetId, $link);
       $this->flashMessage('Právě jsi nahrál úkol!', 'alert alert-success');
