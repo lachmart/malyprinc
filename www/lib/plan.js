@@ -442,7 +442,7 @@ lp_space.messagebox = function(message, action_to_click) {
         y: 50*lp_space.scale_height,
         width: 280*lp_space.scale_width,
         text: message,
-        fontSize: Math.round(25*lp_space.scale_width),
+        fontSize: Math.round(20*lp_space.scale_width),
         fontFamily: 'Calibri',
         fill: 'white'
     });
