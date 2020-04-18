@@ -75,7 +75,7 @@ lp_pilot._server_load_pilot_data = function() {
     // Save pilot rank to check
     if (typeof(Storage) !== "undefined") {
         // Code for localStorage/sessionStorage.
-        if (localStorage.getItem(json_from_server.id+"rank" === null)) {
+        if (localStorage.getItem(json_from_server.id+"rank") === null) {
             localStorage.setItem(json_from_server.id+"rank", json_from_server.rank_id);
         }
     }
@@ -372,7 +372,7 @@ lp_pilot.pilot_details = function() {
              Konva.Image.fromURL(lp_action.url+lp_pilot.data.photo, (image) => {
                  lp_pilot.tooltip.add(image);
 
-                 image.x(lp_pilot.tooltip.width() - ((90 * lp_space.scale_width) + 20));
+                 image.x(lp_pilot.tooltip.width() - ((90 * lp_space.scale_width) + (15*lp_space.scale_width)));
                  image.y(15 * lp_space.scale_height);
 
                  image.width(90 * lp_space.scale_width);
@@ -544,10 +544,10 @@ lp_pilot.start_flight = function() {
                   "Cíl "+lp_planet.get_planet_name(lp_planet.measure_target_id), header_size);
 
     var parameters = lp_pilot._get_text(flight.x(), flight.y()+flight.height(),
-                "Parametry letu: "+result.distance/1000+"K au, letový úhel: "+result.angle, basic_size);
+                "Parametry letu: "+result.distance/1000+"K MaPr, letový úhel: "+result.angle, basic_size);
 
      var time = lp_pilot._get_text(flight.x(), parameters.y()+parameters.height(),
-                "Přílet na: "+lp_planet.get_planet_name(lp_planet.measure_target_id)+" za "+result["time_to_fligh"]+" hodin.", basic_size);
+                "Přílet: "+lp_planet.get_planet_name(lp_planet.measure_target_id)+" za "+result["time_to_fligh"]+" hodin.", basic_size);
 
      // Time to end
      var actual_time = new Date();
@@ -555,7 +555,7 @@ lp_pilot.start_flight = function() {
      time_to_end.setTime(actual_time.getTime()+(result["time_to_fligh"]*60*60*1000));
      var display_time = time_to_end.getDate()+"."+(time_to_end.getMonth()+1)+"."+time_to_end.getFullYear()+" "+time_to_end.getHours()+":"+time_to_end.getMinutes();
 
-     var time2 = lp_pilot._get_text(flight.x(), time.y()+time.height(), "Čas doletu: "+display_time, basic_size);
+     var time2 = lp_pilot._get_text(flight.x(), time.y()+time.height(), "Čas příletu: "+display_time, basic_size);
      lp_pilot.counter_title = lp_pilot._get_text(150*lp_space.scale_width, lp_pilot.dialog.height()-(40*lp_space.scale_height), "", header_size);
 
      lp_pilot.dialog.add(flight);
@@ -691,7 +691,10 @@ lp_pilot.flight_progress = function() {
         lp_pilot.avatar.y(position.y);
 
         // Change title
-        lp_planet.measure_title.text("Cíl:"+Math.round(position.remain_time)+" min.");
+        var hour_to = Math.round(position.remain_time/60);
+        var min_to = Math.round(position.remain_time%60);
+
+        lp_planet.measure_title.text(hour_to+"h "+min_to+"min");
         lp_space.draw();
 
         // Animation of flare

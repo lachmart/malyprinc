@@ -237,9 +237,9 @@ lp_space.display_activity = function(planet_id) {
 
     // Main dialog group
     lp_space._activity_dialog = new Konva.Group({
-        x: (lp_space.screen_width/2)-((600*lp_space.scale_width)/2),
+        x: (lp_space.screen_width/2)-((874*lp_space.scale_width)/2),
         y: (lp_space.screen_height/2)-((625*lp_space.scale_height)/2),
-        width: 600*lp_space.scale_width,
+        width: 874*lp_space.scale_width,
         height: 625*lp_space.scale_height,
     });
 

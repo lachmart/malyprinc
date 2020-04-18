@@ -153,7 +153,7 @@ lp_planet._rename_planet = function(planet_id) {
         lp_space._text_object.style.left = (dialog_position.x + parts.text_message.x()) + 'px';
         lp_space._text_object.style.width = (parts.text_message.width()-(20*lp_space.scale_width))+"px";
         lp_space._text_object.style.height = (40*lp_space.scale_height)+"px";
-        lp_space._text_object.maxLength = "25";
+        lp_space._text_object.maxLength = "15";
         lp_space._text_object.style.fontSize = Math.round(25*lp_space.scale_height)+"px";
         lp_space._text_object.focus();
 
@@ -416,7 +416,7 @@ lp_planet._add_text_measure = function(source, target) {
     lp_planet.measure_title = new Konva.Text({
         x: x1,
         y: y1,
-        text: measured_distance["distance"]+" au",
+        text: measured_distance["distance"]+" MaPr",
         rotation: multiplier*(measured_distance["angle"]),
         fontSize: Math.round(14*lp_space.scale_width),
         fontFamily: 'Calibri',

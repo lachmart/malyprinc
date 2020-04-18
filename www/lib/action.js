@@ -6,6 +6,13 @@ lp_action.url = "https://malyprincolomouc.cz";
  */
 lp_action.go_to_deck_logbook = function() {
     if (!lp_space.is_displayed_activity()) {
+        if (typeof(Storage) !== "undefined") {
+            if (localStorage.getItem(lp_pilot.data.id+"help") === null) {
+                lp_space.messagebox("Než koukneš do deníku. Klikni na pilota a prozkoumej aktivitu (složka) na planetě. Jinde ji nenajdeš!");
+                localStorage.setItem(lp_pilot.data.id+"help", "1");
+                return;
+            }
+        }
         location.href = lp_action.url+"/denik/";
     }
 };
