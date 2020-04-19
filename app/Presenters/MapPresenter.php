@@ -87,7 +87,6 @@ class MapPresenter extends BasePresenter
     $actualPosition = null;
     if($actualFlight){
       $actualFlight= [
-         //"userId"=>$this->user->getId(),
          "source_id"=>$actualFlight->sourcePlanetId,
          "target_id"=>$actualFlight->targetPlanetId,
          "start_at"=>$actualFlight->start,
@@ -102,7 +101,7 @@ class MapPresenter extends BasePresenter
           $target = $lastFlight->targetPlanet->end;
 
         if($target != $user->position){
-          $this->setPosition($target);
+          $this->setPosition($user->id, $target);
           $actualPosition = $target;
         }
         else {
@@ -186,9 +185,9 @@ class MapPresenter extends BasePresenter
 
     return false;
   }
-  private function setPosition($newPosition){
-    $this->planetManager->setPosition($this->user->getId(), $newPosition);
-    $this->userManager->setPosition($this->user->getId(), $newPosition);
+  private function setPosition($userId, $newPosition){
+    $this->planetManager->setPosition($userId, $newPosition);
+    $this->userManager->setPosition($userId, $newPosition);
   }
 
   public function actionSetposition(): void
@@ -202,7 +201,7 @@ class MapPresenter extends BasePresenter
     if($newName)
       $this->planetManager->setNewName($newPosition, $newName);
 
-    $this->setPosition($newPosition);
+    $this->setPosition($this->user->getId(), $newPosition);
 	  $this->sendJson(true);
     $this->terminate();
   }
