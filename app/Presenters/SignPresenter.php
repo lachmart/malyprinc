@@ -93,7 +93,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
      $mail->setSubject('Heslo do hry Putování za Malým princem bylo resetováno');
     // ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
 
-      $mail->setBody('Vytvořili jsme ti nové heslo: '.$token.'\n S tímto heslem se můžeš přihlašovat, ale co nejdříve si jej změň v palubním deníku. Měj se, tým Malého prince.');
+      $mail->setBody('Vytvořili jsme ti nové heslo: '.$token.' S tímto heslem se můžeš přihlašovat, ale co nejdříve si jej změň v palubním deníku. Měj se, tým Malého prince.');
       $this->mailer->send($mail);
    }
 
