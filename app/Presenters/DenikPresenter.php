@@ -317,7 +317,7 @@ class DenikPresenter extends BasePresenter
     $mail->setSubject('Pozvánka do hry Putování za Malým princem');
   //  ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
     $mail->setHtmlBody('<div>Hráč '.$this->user->getIdentity()->email.' tě pozval do skautské etapové hry Putování za Malým princem.</div>
-                              <div>Můžeš se <a href="https://malyprincolomouc.cz/sign/register2?email='.$email.'&invitedBy='.$this->user->getId().'>registrovat zde</a></div><br>
+                              <div>Můžeš se <a href="https://malyprincolomouc.cz/sign/register2?email='.$email.'&invitedBy='.$this->user->getId().'">registrovat zde</a></div><br>
                               <div>Důležité je, aby ses registroval tímto email.</div>
                               <div>Tým Malého prince</div>');
 
