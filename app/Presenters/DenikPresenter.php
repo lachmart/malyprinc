@@ -75,7 +75,7 @@ class DenikPresenter extends BasePresenter
   public function renderObjevy()
 	{
     $this->CheckRank(); //nemá dojít k povýšení?
-    $planetsVisited = $this->planetManager->getVisited($this->user->getId());
+    $planetsVisited = $this->planetManager->getVisitedNotDone($this->user->getId());
     $planetsVisitedToTemplate = [];
     //navstivene planety (aktivity)
     foreach ($planetsVisited as $visited) {
@@ -89,7 +89,7 @@ class DenikPresenter extends BasePresenter
       }
     $this->template->planetsVisited = $planetsVisitedToTemplate;
     //splnene planety (aktivity)
-    $planetsActivityDone = $this->planetManager->getActivitiesDone($this->user->getId());
+    $planetsActivityDone = $this->planetManager->getVisited($this->user->getId());
     $allActivityToTemplate=[];
     foreach ($planetsActivityDone as $activityDone) {
       if($this->planetManager->getPlanetbyId( $activityDone->planetId)->type == 'worm_hole')

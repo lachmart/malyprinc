@@ -3,11 +3,8 @@
 	<h1 n:block="title">Planety k objevení (navštívené, nesplněné)</h1>
 
 		{foreach $planetsVisited as $key => $planet}
-      <a class="btn text-white" data-toggle="collapse" href="#collapse{$key}" role="button" aria-expanded="false" aria-controls="collapse{$key}">
-        <h2>{$key} {$planet['planet']->custom_name ? $planet['planet']->custom_name : $planet['planet']->name} </h2>
-      </a>
+      <h2>{$key} {$planet['planet']->custom_name ? $planet['planet']->custom_name : $planet['planet']->name} </h2>
       <br>
-      <div class="collapse" id="collapse{$key}">
 			{ifset $planet['activity']}
 				<div><span class="specialTask">Název:</span>{$planet['activity']->name}</div>
 				{* <div><span class="specialTask">Popis:</span>{$planet['activity']->description|noescape}</div> *}
@@ -31,7 +28,6 @@
           </div>
   			{/switch}
       {/ifset}
-    </div>
 		{/foreach}
     {if !$planetsVisited}
       <h5>Na každé navšívené planetě jsi splnil zadaný úkol. Vydej se na další cestu!</h5>
@@ -42,16 +38,14 @@
 
 		{foreach $planetsDone as $key => $planet}
 
-      <a class="btn text-white" data-toggle="collapse" href="#collapse{$key}" role="button" aria-expanded="false" aria-controls="collapse{$key}">
-        <h2>{$key} {$planet['planet']->custom_name ? $planet['planet']->custom_name : $planet['planet']->name} </h2>
-      </a>
+      <h2>{$key} {$planet['planet']->custom_name ? $planet['planet']->custom_name : $planet['planet']->name} </h2>
       <br>
 
 			{switch $planet['activityType']}
 				{case 1} <!-- planeta s obrazkem jako ukol -->
 				<!-- Gallery css-tricks.com/creating-a-modal-image-gallery-with-bootstrap-components/-->
 
-					<div class="row collapse" id="collapse{$key}" data-toggle="modal" data-target="#Modal{$key}">
+					<div class="row" id="collapse{$key}" data-toggle="modal" data-target="#Modal{$key}">
 						{foreach $planet['data'] as $image}
 							<div class="col-6 col-sm-4 col-lg-2 col-xl-1">
 								<img class="w-100 img-thumbnail" src="{$basePath}/{$image->activityLink}-thumb.jpg" alt="First slide" data-target="#carousel{$key}" data-slide-to="{$iterator->counter-1}">

@@ -41,9 +41,13 @@ class PlanetManager
 			$this->database->table('userplanet')->insert(['userId'=>$userId, 'planetId'=>$planetId]);
 	}
 
+	public function getVisitedNotDone($userId)
+	{
+			return $this->database->table('userplanet')->where('userId', $userId)->where('activityLink IS NULL')->order('id DESC')->fetchAll();
+	}
 	public function getVisited($userId)
 	{
-			return $this->database->table('userplanet')->where('userId', $userId)->where('activityLink IS NULL')->fetchAll();
+			return $this->database->table('userplanet')->where('userId', $userId)->order('id DESC')->fetchAll();
 	}
 
 	public function wasVisited($userId, $planetId)
