@@ -127,7 +127,7 @@ class DenikPresenter extends BasePresenter
       $form->addHidden('planetId', $planetId);
       $form->addUpload('ukol', 'Obrázek: ')
         ->addRule(Form::IMAGE, 'Obrázek musí být JPEG, PNG nebo GIF.')
-        ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 3 mB.', 3 * 1024 * 1024 /* v bytech */)
+        ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 10 mB.', 10 * 1024 * 1024 /* v bytech */)
         	->setRequired();
       $form->addSubmit('send', 'nahrát splněný úkol!');
       $form->onSuccess[] = [$this, 'pictureFormSucceded'];
@@ -139,11 +139,11 @@ class DenikPresenter extends BasePresenter
   public function pictureFormSucceded($form, $values)
   {
     if($values->ukol->hasFile()) {
-      //$avatar->resize(300, 300, Image::EXACT);
       $link = 'upload/'.$values->planetId.'/'.$this->user->getId();
       $image = $values->ukol->toImage();
+      $image->resize(2048 , null, Image::SHRINK_ONLY | Image::FIT);
       $image->save($link.'.jpg', 80, Image::JPEG);
-      $image->resize(400 , 400, Image::EXACT);
+      $image->resize(300 , 300, Image::EXACT);
       $image->save($link.'-thumb.jpg', 80, Image::JPEG);
 
       $this->planetManager->setActivityDone($this->user->getId(), $values->planetId, $link);
@@ -316,7 +316,7 @@ class DenikPresenter extends BasePresenter
     $mail = $this->generateMailMessage($email);
     $mail->setSubject('Pozvánka do hry Putování za Malým princem');
   //  ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
-    $mail->setHtmlBody('<div>Hráč '.$this->user->getIdentity()->email.' tě pozval do skautské etapové hry Putování za Malým princem.</div> 
+    $mail->setHtmlBody('<div>Hráč '.$this->user->getIdentity()->email.' tě pozval do skautské etapové hry Putování za Malým princem.</div>
                               <div>Můžeš se <a href="https://malyprincolomouc.cz">registrovat zde</a></div><br>
                               <div>Důležité je, aby ses registroval tímto email.</div>
                               <div>Tým Malého prince</div>');

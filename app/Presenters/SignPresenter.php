@@ -93,7 +93,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
      $mail->setSubject('Heslo do hry Putování za Malým princem bylo resetováno');
     // ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
 
-      $mail->setBody('Vytvořili jsme ti nové heslo: '.$token.'<br>S tímto heslem se můžeš přihlašovat, ale co nejdříve si jej změň v palubním deníku. Měj se, tým Malého prince.');
+      $mail->setBody('Vytvořili jsme ti nové heslo: '.$token.'\n S tímto heslem se můžeš přihlašovat, ale co nejdříve si jej změň v palubním deníku. Měj se, tým Malého prince.');
       $this->mailer->send($mail);
    }
 
@@ -166,7 +166,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
     $form = $this->createRegister2Form();
     $form->addUpload('avatar', 'Foto:')
       ->addRule(Form::IMAGE, 'Avatar musí být JPEG, PNG nebo GIF.')
-    ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 3 mB.', 3 * 1024 * 1024 /* v bytech */);
+    ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 10 mB.', 10 * 1024 * 1024 /* v bytech */);
     $form->addCheckbox('isSkaut', 'Jsem skaut')->setRequired("Tady se mohou registrovat pouze skauti. Chceš i tak hrát? Zařiď si pozvánku od kamaráda, který už hraje ;)");
     $form->addText('stredisko', 'Středisko')->setRequired("Jsi z toho nejlepšího střediska?")
     ->addRule(Form::INTEGER, 'Zadej prosím pouze číslo, například 4.');
@@ -182,7 +182,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
     $form = $this->createRegister2Form();
     $form->addUpload('avatar', 'Foto:')
       ->addRule(Form::IMAGE, 'Avatar musí být JPEG, PNG nebo GIF.')
-    ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 3 mB.', 3 * 1024 * 1024 /* v bytech */);
+    ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 10 mB.', 10 * 1024 * 1024 /* v bytech */);
 
     $form->addCheckbox('isSkaut', 'Jsem skaut');
     $form->addText('stredisko', 'Středisko')
@@ -259,7 +259,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
     $form->addPassword('password', 'heslo');
     $form->addUpload('avatar', 'Foto:')
       ->addRule(Form::IMAGE, 'Avatar musí být JPEG, PNG nebo GIF.')
-    ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 3 mB.', 3 * 1024 * 1024 /* v bytech */);
+    ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 10 mB.', 10 * 1024 * 1024 /* v bytech */);
   //  ->addCondition(!$form::FILLED)
     //->addFilter(function () {return null;});
 
