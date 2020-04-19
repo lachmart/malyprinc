@@ -36,6 +36,7 @@ lp_space.vars = function() {
     lp_space._messagebox = undefined;
     lp_space._cover = undefined;
     lp_space._text_object = undefined;
+    lp_space.logo = undefined;
 
     lp_space.div_space_id = "lp_space";
 
@@ -139,8 +140,7 @@ lp_space._createStage = function() {
         }
     });
 
-
-    var logo = new Konva.Image({
+    lp_space.logo = new Konva.Image({
         x:5*lp_space.scale_width,
         y:5*lp_space.scale_width,
         opacity: 1,
@@ -150,14 +150,16 @@ lp_space._createStage = function() {
         height: 70*lp_space.scale_width,
     });
 
-    logo.on("mouseenter", function() {lp_space.add_button_effect(logo,true, "#B3C6C6",lp_space._layer)});
-    logo.on("mouseleave", function() {lp_space.add_button_effect(logo,false, null, lp_space._layer)});
-    logo.on("click", function() {lp_action.go_to_deck_logbook()});
-    logo.on("tap", function() {lp_action.go_to_deck_logbook()});
+
+
+    lp_space.logo.on("mouseenter", function() {lp_space.add_button_effect(lp_space.logo,true, "#B3C6C6",lp_space._layer)});
+    lp_space.logo.on("mouseleave", function() {lp_space.add_button_effect(lp_space.logo,false, null, lp_space._layer)});
+    lp_space.logo.on("click", function() {lp_action.go_to_deck_logbook()});
+    lp_space.logo.on("tap", function() {lp_action.go_to_deck_logbook()});
 
     lp_space.stage.add(lp_space._layer);
     lp_space.add_to_space(lp_space._area);
-    lp_space.add_to_space(logo);
+    lp_space.add_to_space(lp_space.logo);
     lp_space._add_plannets();
     lp_space.draw();
 };
@@ -329,13 +331,14 @@ lp_space.get_activity = function(planet_id) {
          html = "<h2>"+response_json.name+"</h2>";
 
          html += "<div class='accessories mp_block'><span class='block_title'>Potřeby:</span><div>"+response_json.accessories+"</div></div>";
-         html += "<div class='output mp_block'><span class='block_title'>Splnění:</span><div>"+response_json.output+" <a href='"+lp_action.url+"/denik/objevy'>(nahrávej sem)</a></div></div>";
 
          html += "<div class='mp_block'><span class='block_title'>Popis aktivity:</span>";
          html += "<div class='main_description'>"+response_json.description+"</div>";
          html += "</div>";
 
          html += "<div class='category mp_block'><span class='block_title'>Věkové kategorie:</span><div>"+response_json.category+"</div></div>";
+
+         html += "<div class='output mp_block'><span class='block_title'>Splnění:</span><div>"+response_json.output+" <a href='"+lp_action.url+"/denik/objevy'>(nahrávej sem)</a></div></div>";
 
          if (response_json.notes !== null && response_json.notes !== "") {
              html += "<div class='notes mp_block'><span class='block_title'>Poznámky:</span>";

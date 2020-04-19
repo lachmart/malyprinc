@@ -6,11 +6,19 @@
 var lp_img_lp = new Image();
 lp_img_lp.src = 'assets/lp.png';
 
+var lp_img_friend = new Image();
+lp_img_friend.src = 'assets/friend.png';
+
 var lp_img_tooltip = new Image();
 lp_img_tooltip.src = 'assets/tooltip.png';
 
 var lp_img_rocket = new Image();
 lp_img_rocket.src = 'assets/rocket.png';
+
+var lp_img_friends = new Image();
+lp_img_friends.src = 'assets/friends.png';
+var lp_img_friends2 = new Image();
+lp_img_friends2.src = 'assets/friends2.png';
 
 var lp_img_mision = new Image();
 lp_img_mision.src = 'assets/mise.png';
@@ -42,6 +50,8 @@ lp_pilot.vars = function() {
     lp_pilot._stop = false;
     lp_pilot.counter_title = undefined;
     lp_pilot._internal_blur = 5;
+    lp_pilot._friend_box = undefined;
+    lp_pilot._friends_htmlobject = undefined;
 };
 
 /**
@@ -49,9 +59,13 @@ lp_pilot.vars = function() {
  */
 lp_pilot.init = function() {
     lp_pilot.data = lp_pilot._server_load_pilot_data();
+
     if (!lp_pilot._add_pilot_position()) {
         return false;
     }
+
+    lp_pilot._render_friends_box();
+
 };
 
 /**
@@ -139,8 +153,142 @@ lp_pilot._add_pilot_position = function() {
     } else
     {
         lp_pilot.flight_progress();
+        return true;
     }
     return false;
+};
+
+/**
+ * return if has friends
+ * @returns {boolean|boolean}
+ */
+lp_pilot.count_of_friends = function() {
+    var count = 0;
+    var friend_index;
+    for (friend_index in lp_pilot.data.friends) {
+        count++;
+    }
+    return count;
+};
+
+/**
+ * Add position of friend to plan
+ * @private
+ */
+lp_pilot._render_friends_box = function() {
+    // Prepare main box
+    var count_of_friends = lp_pilot.count_of_friends();
+    if (count_of_friends===0) {
+        return;
+    }
+    // Create box for friends
+    // 600x252
+    var box_height = 600;
+    var dialog_image = lp_img_friends;
+    if (count_of_friends <= 2) {
+        box_height = box_height/2;
+        dialog_image = lp_img_friends2;
+    }
+
+    lp_pilot._friend_box = new Konva.Group({
+        x: 0,
+        y: lp_space.logo.height()+ (10*lp_space.scale_height),
+        width: 252*lp_space.scale_width,
+        height: box_height*lp_space.scale_height,
+        draggable: true,
+        opacity: 0.5,
+    });
+
+    var dialog6 = new Konva.Image({
+        x: 0,
+        y: 0,
+        width: lp_pilot._friend_box.width(),
+        height: lp_pilot._friend_box.height(),
+        image: dialog_image,
+    });
+
+    var info_text = lp_pilot._get_text(30*lp_space.scale_width,30*lp_space.scale_height, "Přátelé",
+        Math.round(15*lp_space.scale_width));
+    var info_text2 = lp_pilot._get_text(info_text.x(),info_text.y()+info_text.height()+(5*lp_space.scale_height), "" +
+        "Boxem lze pohybovat po obrazovce, Pokud jej nechcete, vypněte všechny sdílení v palubním deníku v sekci přátelé.",
+        Math.round(10*lp_space.scale_width), (252*lp_space.scale_width)-(80*lp_space.scale_width));
+
+    /*
+    var dialog_position = lp_pilot._friend_box.getAbsolutePosition();
+
+    lp_pilot._friends_htmlobject = document.createElement('div');
+    document.body.appendChild(lp_pilot._friends_htmlobject);
+
+    lp_pilot._friends_htmlobject.classList.add("friends_container");
+    lp_pilot._friends_htmlobject.style.position = 'absolute';
+    lp_pilot._friends_htmlobject.style.top = (dialog_position.y + info_text2.y() + info_text2.height() +10*lp_space.scale_height) + 'px';
+    lp_pilot._friends_htmlobject.style.left = (dialog_position.x + info_text.x()) + 'px';
+    lp_pilot._friends_htmlobject.style.color = "white";
+    lp_pilot._friends_htmlobject.style.width = (lp_pilot._friend_box.width()-info_text.x()-(40*lp_space.scale_width))+"px";
+    lp_pilot._friends_htmlobject.style.height = (lp_pilot._friend_box.height()- (info_text2.y() + info_text2.height())-(80*lp_space.scale_height))+"px";
+    lp_pilot._friends_htmlobject.style.overflowY = "auto";
+
+    // Load description from server
+    lp_pilot._friends_htmlobject.innerHTML = "jas hdajs jdhajshd jahsjdh jahsjdha jshdjha jshdjah jsdhja hsdjha jshdjash jdhsajkhd jsahkjd hakjdshkjahs kjdhsa jdhkjsadh";
+    */
+
+    lp_pilot._friend_box.add(dialog6);
+    lp_pilot._friend_box.add(info_text);
+    lp_pilot._friend_box.add(info_text2);
+    lp_space.add_to_space(lp_pilot._friend_box);
+
+
+    var friend_index;
+    var top = info_text2.y()+info_text2.height()+(10*lp_space.scale_width);
+
+    for (friend_index in lp_pilot.data.friends) {
+        var friend = lp_pilot.data.friends[friend_index];
+        var friend_text = lp_pilot._friend_text(friend);
+        var info_text_object = lp_pilot._get_text(info_text.x(), top, friend_text, Math.round(14*lp_space.scale_width), info_text2.width());
+        lp_pilot._friend_box.add(info_text_object);
+        top += info_text_object.height()+(10*lp_space.scale_width);
+    }
+
+    lp_space.draw();
+};
+
+/**
+ * @private
+ */
+lp_pilot._friend_text = function(friend_json) {
+
+    var friend_name = friend_json.name+" ("+friend_json.rank_name.toLowerCase()+")";
+    if (friend_json.actual_flight !== null) {
+        var source_planet = lp_planet.get_planet_name(friend_json.actual_flight.source_id);
+        var target_planet = lp_planet.get_planet_name(friend_json.actual_flight.target_id);
+        var actual_date = new Date();
+        var to_target = new Date(Date.parse(friend_json.actual_flight.finish_at));
+
+        var minute_difference = Math.round((to_target.getTime()-actual_date.getTime())/60000);
+        if (minute_difference < 0) {
+            // already on planet, but seems to be this branch unused due correct server response
+            friend_json.actual_position = friend_json.actual_flight.target_id;
+            friend_json.actual_flight = null;
+        } else {
+            // on the way
+            var hour = Math.floor(minute_difference/60);
+            var minute = Math.round(minute_difference%60);
+            return friend_name+" letí z planety "+source_planet+" na "+target_planet+" a bude tam za "+hour+"h "+minute+"min";
+        }
+    }
+
+    if (friend_json.actual_position !== null) {
+        if (friend_json.visited) {
+            return friend_json.name+ " učinil objev a je na planetě "+lp_planet.get_planet_name(friend_json.actual_position)
+        } else {
+            if (!lp_pilot.is_in_flight() &&  friend_json.actual_position === lp_planet.remove_planet_prefix(lp_pilot.get_pilot_position())) {
+                return friend_name+ " je na stejné planetě jako ty.";
+            } else {
+                return friend_name+ " je na planetě "+lp_planet.get_planet_name(friend_json.actual_position);
+            }
+        }
+    }
+    return friend_name+" je neznámo kde";
 };
 
 /**
@@ -229,7 +377,7 @@ lp_pilot._add_avatar = function(avatar_type, id, json_flight) {
         var saved = localStorage.getItem(lp_pilot.data.id + "rank");
         if (parseInt(saved) !== lp_pilot.data.rank_id) {
             localStorage.setItem(lp_pilot.data.id+"rank", lp_pilot.data.rank_id);
-            lp_space.messagebox("Gratulujeme, právě jsi získal hodnost "+lp_pilot.data.rank_name+"!");
+            lp_space.messagebox("Gratulujeme, právě jsi získal hodnost "+lp_pilot.data.rank_name.toLowerCase()+"!");
         }
     }
 };
@@ -415,7 +563,7 @@ lp_pilot.pilot_details = function() {
                          basic_size);
 
          var rank_name = lp_pilot._get_text(planet.x(), pilot_name.y()+pilot_name.height(),
-                        "Hodnost : "+lp_pilot.data.rank_name,
+                        "Hodnost : "+lp_pilot.data.rank_name.toLowerCase(),
                          basic_size, 140*lp_space.scale_width);
 
          lp_pilot.tooltip.add(pilot_name);
@@ -692,7 +840,7 @@ lp_pilot.flight_progress = function() {
 
         // Change title
         var hour_to = Math.floor(position.remain_time/60);
-        var min_to = position.remain_time%60;
+        var min_to = Math.round(position.remain_time%60);
 
         lp_planet.measure_title.text(hour_to+"h "+min_to+"min");
         lp_space.draw();
@@ -748,7 +896,6 @@ lp_pilot.set_planet_position = function(target_id) {
         "target_id": lp_planet.remove_planet_prefix(target_id),
         "new_name": null,
     }
-    // TODO json to server 4, zdá se, že to funguje. i bez odeslání.
 };
 
 /**
