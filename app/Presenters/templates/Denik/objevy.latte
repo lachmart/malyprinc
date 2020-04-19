@@ -3,31 +3,37 @@
 	<h1 n:block="title">Planety k objevení (navštívené, nesplněné)</h1>
 
 		{foreach $planetsVisited as $key => $planet}
+
       <h2>{$key} {$planet['planet']->custom_name ? $planet['planet']->custom_name : $planet['planet']->name} </h2>
       <br>
+      <div class="" style="padding:20px">
 			{ifset $planet['activity']}
-				<div><span class="specialTask">Název:</span>{$planet['activity']->name}</div>
-				{* <div><span class="specialTask">Popis:</span>{$planet['activity']->description|noescape}</div> *}
-				<div><span class="specialTask">Výstup:</span>{$planet['activity']->output|noescape}</div>
-  			{switch $planet['activityType']}
-  				{case 1}
-  					<p class="userSubtitle mt-5">Zadej obrázek</p>
-            <div class="form__fullWidth">
-              {control pictureForm-$key}
-            </div>
-  				{case 2}
-  					<p class="userSubtitle mt-5">Zadej zvuk mp3</p>
-  										{control soundForm-$key}
 
-  				{case 3}
-  					<p class="userSubtitle mt-5">Zadej link</p>
-  										{control linkForm-$key}
-  				{default}
-  				<div class="alert alert-warning" role="alert">
-            Na této planetě tě nečeká žádný úkol
-          </div>
-  			{/switch}
+  				<div><span class="specialTask">Úkol:</span>{$planet['activity']->name}</div>
+  				{* <div><span class="specialTask">Popis:</span>{$planet['activity']->description|noescape}</div> *}
+  				<div><span class="specialTask">Výstup:</span>{$planet['activity']->output|noescape}</div>
+    			{switch $planet['activityType']}
+    				{case 1}
+    					<p class="userSubtitle mt-5">Zadej obrázek</p>
+              <div class="form__fullWidth">
+                {control pictureForm-$key}
+              </div>
+    				{case 2}
+    					<p class="userSubtitle mt-5">Zadej zvuk mp3</p>
+    										{control soundForm-$key}
+
+    				{case 3}
+    					<p class="userSubtitle mt-5">Zadej link</p>
+    										{control linkForm-$key}
+    				{default}
+    				<div class="alert alert-warning" role="alert">
+              Na této planetě tě nečeká žádný úkol
+            </div>
+    			{/switch}
+
       {/ifset}
+    </div>
+
 		{/foreach}
     {if !$planetsVisited}
       <h5>Na každé navšívené planetě jsi splnil zadaný úkol. Vydej se na další cestu!</h5>
@@ -40,7 +46,7 @@
 
       <h2>{$key} {$planet['planet']->custom_name ? $planet['planet']->custom_name : $planet['planet']->name} </h2>
       <br>
-
+      <div class="" style="padding:20px">
 			{switch $planet['activityType']}
 				{case 1} <!-- planeta s obrazkem jako ukol -->
 				<!-- Gallery css-tricks.com/creating-a-modal-image-gallery-with-bootstrap-components/-->
@@ -110,7 +116,7 @@
 				{default}
 						<p>Tohle bys neměl vidět<p>
 			{/switch}
-
+</div>
 		{/foreach}
   </div>
 {/block}
