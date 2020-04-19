@@ -211,7 +211,7 @@ lp_pilot._render_friends_box = function() {
         Math.round(15*lp_space.scale_width));
     var info_text2 = lp_pilot._get_text(info_text.x(),info_text.y()+info_text.height()+(5*lp_space.scale_height), "" +
         "Boxem lze pohybovat po obrazovce, Pokud jej nechcete, vypněte všechny sdílení v palubním deníku v sekci přátelé.",
-        Math.round(10*lp_space.scale_width), (252*lp_space.scale_width)-(80*lp_space.scale_width));
+        Math.round(10*lp_space.scale_width), (252*lp_space.scale_width)-(100*lp_space.scale_width));
 
     /*
     var dialog_position = lp_pilot._friend_box.getAbsolutePosition();
@@ -237,7 +237,6 @@ lp_pilot._render_friends_box = function() {
     lp_pilot._friend_box.add(info_text2);
     lp_space.add_to_space(lp_pilot._friend_box);
 
-
     var friend_index;
     var top = info_text2.y()+info_text2.height()+(10*lp_space.scale_width);
 
@@ -246,10 +245,30 @@ lp_pilot._render_friends_box = function() {
         var friend_text = lp_pilot._friend_text(friend);
         var info_text_object = lp_pilot._get_text(info_text.x(), top, friend_text, Math.round(14*lp_space.scale_width), info_text2.width());
         lp_pilot._friend_box.add(info_text_object);
-        top += info_text_object.height()+(10*lp_space.scale_width);
+
+        lp_pilot.add_rank_image(top, friend.rank_id, info_text2);
+
+        top += info_text_object.height()+(15*lp_space.scale_width);
     }
 
     lp_space.draw();
+};
+
+/**
+ * Added image to rank
+ * @param top
+ * @param rank_id
+ * @param object
+ */
+lp_pilot.add_rank_image = function(top, rank_id, object) {
+    Konva.Image.fromURL(lp_action.url+"/upload/hodnosti/"+rank_id+".png", (rank) => {
+        rank.x(object.x()+object.width());
+        rank.y(top);
+        rank.width(40*lp_space.scale_width);
+        rank.height(40*lp_space.scale_width);
+        lp_pilot._friend_box.add(rank);
+        lp_space.draw();
+    });
 };
 
 /**
