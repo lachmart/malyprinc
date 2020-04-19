@@ -307,7 +307,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
 
   private function sendMailChanged($email){
     $mail = $this->generateMailMessage($email);
-	  $mail->setSubject('Změne údajů do hry Putování za Malým princem');
+	  $mail->setSubject('Změna údajů ve hře Putování za Malým princem');
 	  // ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
 
     $mail->setBody('Údaje ve tvém účtu byly změněny. Nebyl jsi to ty? Dej nám o tom prosím vědět. Měj se, tým Malého prince');
