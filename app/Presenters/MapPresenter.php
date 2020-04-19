@@ -62,7 +62,8 @@ class MapPresenter extends BasePresenter
     $mydata = $this->getPilotData($this->user->getId());
     $friends = [];
     foreach($this->shareManager->getReceivedActive($this->user->getId()) as $friend){
-      $friends[$friend->sharingUser] = $this->getPilotData($friend->sharingUser);
+      if($friend->receivingActive)
+        $friends[$friend->sharingUser] = $this->getPilotData($friend->sharingUser);
     }
 
     $mydata['friends'] = $friends;
