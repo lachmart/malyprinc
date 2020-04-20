@@ -340,14 +340,14 @@ lp_space.get_activity = function(planet_id) {
 
          html += "<div class='output mp_block'><span class='block_title'>Splnění:</span><div>"+response_json.output+" <a href='"+lp_action.url+"/denik/objevy'>(nahrávej sem)</a></div></div>";
 
-         if (response_json.notes !== null && response_json.notes !== "") {
-             html += "<div class='notes mp_block'><span class='block_title'>Poznámky:</span>";
-             html += "<div>"+response_json.notes+"</div>";
-             html += "</div>";
+         if (response_json.author !== null && response_json.author !== "") {
+             html += "<div class='author mp_block'><span class='block_title'>Autor:</span><div>"+response_json.author+"</div></div>";
          }
 
-         if (response_json.author !== null && response_json.author !== "") {
-            html += "<div class='author mp_block'><span class='block_title'>Author:</span><div>"+response_json.author+"</div></div>";
+         if (response_json.notes !== null && response_json.notes !== "") {
+             html += "<div class='notes mp_block'><span class='block_title'>Poznámky:</span>";
+             html += "<div>" + response_json.notes + "</div>";
+             html += "</div>";
          }
      }
      return html;
