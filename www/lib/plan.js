@@ -281,7 +281,7 @@ lp_space.display_activity = function(planet_id) {
     close_button.on("click", function() {lp_space.hide_displayed_activity()});
     close_button.on("tap", function() {lp_space.hide_displayed_activity()});
 
-    var title = lp_pilot._get_text(100*lp_space.scale_width,40*lp_space.scale_height, "Planeta "+ lp_planet.get_planet_name(lp_pilot.get_pilot_position()), Math.round(30* lp_space.scale_width), 300*lp_space.scale_width);
+    var title = lp_pilot._get_text(100*lp_space.scale_width,40*lp_space.scale_height, "Planeta "+ lp_planet.get_planet_name(planet_id), Math.round(30* lp_space.scale_width), 300*lp_space.scale_width);
 
     lp_space._dialog_layer.add(lp_space._cover);
     lp_space._activity_dialog.add(dialog_box);
