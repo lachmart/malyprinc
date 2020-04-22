@@ -16,15 +16,15 @@
     				{case 1}
     					<p class="userSubtitle mt-5">Zadej obrázek</p>
               <div class="form__fullWidth">
-                {control pictureForm-$key}
+              {control pictureForm-$key}
               </div>
     				{case 2}
     					<p class="userSubtitle mt-5">Zadej zvuk mp3</p>
-    										{control soundForm-$key}
+    					{control soundForm-$key}
 
     				{case 3}
     					<p class="userSubtitle mt-5">Zadej link</p>
-    										{control linkForm-$key}
+    					{control linkForm-$key}
     				{default}
     				<div class="alert alert-warning" role="alert">
               Na této planetě tě nečeká žádný úkol
@@ -100,16 +100,24 @@
 					</div>
 					</div>
 				{case 2}
-        <div class="row collapse" id="collapse{$key}" data-toggle="modal" data-target="#Modal{$key}">
+        <div class="row">
           {foreach $planet['data'] as $sound}
-            zvukový úkol
+            <div class="col-12 col-xl-6">
+              <div class="w-25 d-inline-block" style="vertical-align: top;">
+                <h2><big>{$sound->user->nickname}:</big></h2>
+              </div>
+              <audio controls >
+                <source src="{$basePath}/{$sound->activityLink}">
+                <a href="{$basePath}/{$sound->activityLink}"> nahrávka </a>
+              </audio>
+            </div>
           {/foreach}
         </div>
 				{case 3}
         <div class="row collapse" id="collapse{$key}" data-toggle="modal" data-target="#Modal{$key}">
   				{foreach $planet['data'] as $link}
   					<div class="col-12 col-sm-6 col-lg-3">
-  						<a href="{$link->activityLink}" target="_blank">{$link->uset->nickname}</a>
+  						<a href="{$link->activityLink}" target="_blank">{$link->user->nickname}</a>
   					</div>
   				{/foreach}
         </div>

@@ -85,7 +85,8 @@ class PlanetManager
 	{
 		return $this->database->table('userplanet')
 		->where('planetId', $planetId)
-		->where('activityLink IS NOT NULL');
+		->where('activityLink IS NOT NULL')
+		->order('id DESC');
 	}
 
 	public function getActivity($id)

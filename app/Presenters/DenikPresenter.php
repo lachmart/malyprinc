@@ -151,14 +151,16 @@ class DenikPresenter extends BasePresenter
     }
     $this->redirect("Denik:objevy");
   }
+
   protected function createComponentSoundForm(): Multiplier
   {
     return new Multiplier(function ($planetId) {
       $form = new Nette\Application\UI\Form;
       $form->addHidden('planetId', $planetId);
       $form->addUpload('ukol', 'Zvuk: ')
-        //->addRule(Form::MIME_TYPE, "teď máš vložit zvukovou nahrávku", 'audio')
+        ->addRule(Form::MIME_TYPE, "Tady musíš vložit zvukovou nahrávku", 'audio/*')
       ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 8 mB.', 8 * 1024 * 1024 /* v bytech */)
+      ->setHtmlAttribute('capture')
       ->setRequired();
       $form->addSubmit('send', 'nahrát splněný úkol!');
       $form->onSuccess[] = [$this, 'soundFormSucceded'];
@@ -171,7 +173,7 @@ class DenikPresenter extends BasePresenter
   {
     if($values->ukol->hasFile()) {
       //$avatar->resize(300, 300, Image::EXACT);
-      $link = 'upload/'.$values->planetId.'/'.$this->user->getId().'.mp3';
+      $link = 'upload/'.$values->planetId.'/'.$this->user->getId().$values->ukol->getSanitizedName();
       $values->ukol->move($link);
       $this->planetManager->setActivityDone($this->user->getId(), $values->planetId, $link);
       $this->flashMessage('Právě jsi nahrál úkol!', 'alert alert-success');
