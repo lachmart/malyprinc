@@ -318,7 +318,7 @@ lp_planet.get_planet_name = function(planet_id) {
     planet_id = lp_planet.add_planet_prefix(planet_id);
 
     if (lp_planet.planet_data[planet_id] === undefined) {
-        return "Neznámá "+lp_planet.remove_planet_prefix(lp_planet.planet_data[planet_id]);
+        return "Neznámá "+lp_planet.remove_planet_prefix(planet_id);
     }
 
     var planet_data = lp_planet.planet_data[planet_id];
