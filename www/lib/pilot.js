@@ -121,7 +121,11 @@ lp_pilot.get_pilot_position = function () {
         return false;
     }
 
-    return lp_planet.add_planet_prefix(lp_pilot.data.actual_position);
+    if (!lp_pilot.is_in_flight()) {
+        return lp_planet.add_planet_prefix(lp_pilot.data.actual_position);
+    } else {
+        return null;
+    }
 };
 
 /**
@@ -213,25 +217,6 @@ lp_pilot._render_friends_box = function() {
         "Boxem lze pohybovat po obrazovce, Pokud jej nechcete, vypněte všechny sdílení v palubním deníku v sekci přátelé.",
         Math.round(10*lp_space.scale_width), (252*lp_space.scale_width)-(100*lp_space.scale_width));
 
-    /*
-    var dialog_position = lp_pilot._friend_box.getAbsolutePosition();
-
-    lp_pilot._friends_htmlobject = document.createElement('div');
-    document.body.appendChild(lp_pilot._friends_htmlobject);
-
-    lp_pilot._friends_htmlobject.classList.add("friends_container");
-    lp_pilot._friends_htmlobject.style.position = 'absolute';
-    lp_pilot._friends_htmlobject.style.top = (dialog_position.y + info_text2.y() + info_text2.height() +10*lp_space.scale_height) + 'px';
-    lp_pilot._friends_htmlobject.style.left = (dialog_position.x + info_text.x()) + 'px';
-    lp_pilot._friends_htmlobject.style.color = "white";
-    lp_pilot._friends_htmlobject.style.width = (lp_pilot._friend_box.width()-info_text.x()-(40*lp_space.scale_width))+"px";
-    lp_pilot._friends_htmlobject.style.height = (lp_pilot._friend_box.height()- (info_text2.y() + info_text2.height())-(80*lp_space.scale_height))+"px";
-    lp_pilot._friends_htmlobject.style.overflowY = "auto";
-
-    // Load description from server
-    lp_pilot._friends_htmlobject.innerHTML = "jas hdajs jdhajshd jahsjdh jahsjdha jshdjha jshdjah jsdhja hsdjha jshdjash jdhsajkhd jsahkjd hakjdshkjahs kjdhsa jdhkjsadh";
-    */
-
     lp_pilot._friend_box.add(dialog6);
     lp_pilot._friend_box.add(info_text);
     lp_pilot._friend_box.add(info_text2);
@@ -246,16 +231,73 @@ lp_pilot._render_friends_box = function() {
         var info_text_object = lp_pilot._get_text(info_text.x(), top, friend_text, Math.round(14*lp_space.scale_width), info_text2.width());
         lp_pilot._friend_box.add(info_text_object);
 
-        info_text_object.on("click tap", function () {
-            // TODO
-        });
+        lp_pilot.add_action_to_friends(info_text_object, friend);
 
         lp_pilot.add_rank_image(top, friend.rank_id, info_text2);
-
         top += info_text_object.height()+(15*lp_space.scale_width);
     }
 
     lp_space.draw();
+};
+
+/**
+ * Add action to friend
+ * @param info_text_object
+ * @param friend
+ */
+lp_pilot.add_action_to_friends = function(info_text_object, friend) {
+    // enter over friend
+    info_text_object.on("mouseenter", function () {
+        if (friend === undefined) {
+            return;
+        }
+
+        if (friend.actual_flight === null) {
+            var planet_id = lp_planet.add_planet_prefix(friend.actual_position);
+            if (lp_planet.planet_data[planet_id]!== undefined && planet_id !== lp_pilot.get_pilot_position()) {
+                // planet is in your dimension
+                var planet_data = lp_planet.planet_data[planet_id];
+                friend.avatar = new Konva.Image({
+                    x: planet_data.actual_x-(30*lp_space.scale_height),
+                    y: planet_data.actual_y-(68*lp_space.scale_width),
+                    height: 70*lp_space.scale_width,
+                    width: 59*lp_space.scale_height,
+                    image: lp_img_friend,
+                    shadowColor: 'white',
+                    shadowBlur: 35,
+                    shadowOffset: { x: 4, y: 4 },
+                });
+                lp_space.add_to_space(friend.avatar);
+                lp_space.draw();
+            }
+        }  else {
+            var target_planet = lp_planet.add_planet_prefix(friend.actual_flight.target_id);
+
+            if (lp_planet.planet_data[target_planet]!== undefined) {
+                var source_planet = lp_planet.add_planet_prefix(friend.actual_flight.source_id);
+                var source_planet_data = lp_planet.planet_data[source_planet];
+                var target_planet_data = lp_planet.planet_data[target_planet];
+
+                friend.avatar = new Konva.Line({
+                    points: [source_planet_data.actual_x, source_planet_data.actual_y, target_planet_data.actual_x, target_planet_data.actual_y],
+                    stroke: 'yellow',
+                    tension: 1,
+                    dash: [2, 5]
+                });
+                lp_space.add_to_space(friend.avatar);
+                lp_space.draw();
+            }
+        }
+    });
+
+    // leave friend
+    info_text_object.on("mouseleave", function () {
+        if (friend.avatar !== undefined) {
+            friend.avatar.destroy();
+            friend.avatar = undefined;
+            lp_space.draw();
+        }
+    });
 };
 
 /**
