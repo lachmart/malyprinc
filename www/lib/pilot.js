@@ -246,6 +246,10 @@ lp_pilot._render_friends_box = function() {
         var info_text_object = lp_pilot._get_text(info_text.x(), top, friend_text, Math.round(14*lp_space.scale_width), info_text2.width());
         lp_pilot._friend_box.add(info_text_object);
 
+        info_text_object.on("click tap", function () {
+            // TODO
+        });
+
         lp_pilot.add_rank_image(top, friend.rank_id, info_text2);
 
         top += info_text_object.height()+(15*lp_space.scale_width);
@@ -531,8 +535,8 @@ lp_pilot.pilot_details = function() {
              });
              button1.on("mouseenter", function() {lp_space.add_button_effect(button1,true, "#B3C6C6",lp_space._layer)});
              button1.on("mouseleave", function() {lp_space.add_button_effect(button1,false, null, lp_space._layer)});
-             button1.on("click", function() {lp_action.go_to_deck_logbook()});
-             button1.on("tap", function() {lp_action.go_to_deck_logbook()});
+             button1.on("click tap", function() {lp_action.go_to_deck_logbook()});
+
              lp_pilot.tooltip.add(button1);
          } else {
              console.log("pilot photo: "+lp_pilot.data.photo);
@@ -547,8 +551,7 @@ lp_pilot.pilot_details = function() {
 
                  image.on("mouseenter", function() {lp_space.add_button_effect(image,true, "#B3C6C6",lp_space._layer)});
                  image.on("mouseleave", function() {lp_space.add_button_effect(image,false, null, lp_space._layer)});
-                 image.on("click", function() {lp_action.go_to_deck_logbook()});
-                 image.on("tap", function() {lp_action.go_to_deck_logbook()});
+                 image.on("click tap", function() {lp_action.go_to_deck_logbook()});
                  lp_pilot.tooltip.draw();
              });
          }

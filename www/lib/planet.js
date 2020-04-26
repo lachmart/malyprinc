@@ -99,15 +99,18 @@ lp_planet.create_planet = function (planet_data, picture_obj) {
     lp_planet.planet_data[planet_key].actual_y = lp_planet.planets[planet_key].y()+((planet_data.size*lp_space.scale_width)/2);
 
     // register events
-    lp_planet.planets[planet_key].on('click', function () {lp_planet.click(planet_key);});
-    lp_planet.planets[planet_key].on('tap', function () {lp_planet.click(planet_key);});
+    lp_planet.planets[planet_key].on('click tap', function () {lp_planet.click(planet_key);});
 
     lp_planet.planets[planet_key].on("mouseenter", function () {
-        if (!lp_pilot.is_in_flight() && !lp_space.is_displayed_activity()) {
-            lp_space.stage.container().style.cursor = 'pointer';}
-        }
+       if (!lp_pilot.is_in_flight() && !lp_space.is_displayed_activity()) {
+            lp_space.stage.container().style.cursor = 'pointer';
+       }
 
-    );
+       if (lp_pilot.is_in_flight() && !lp_space.is_displayed_activity() && planet_key==lp_pilot.data.actual_flight.source_id) {
+            lp_space.stage.container().style.cursor = 'pointer';
+        }
+    });
+
     lp_planet.planets[planet_key].on("mouseleave", function () {lp_space.stage.container().style.cursor = 'default';});
 
     if (planet_data.type !== "worm_hole") {
@@ -277,11 +280,13 @@ lp_planet.click = function(planet_id) {
         return false;
     }
 
-    var pilot_planet_position = lp_pilot.get_pilot_position();
-    if (lp_planet.planet_data[pilot_planet_position].type==='earth' && !lp_planet.planet_data[pilot_planet_position].visited ){
-        // cannot flight
-        lp_space.messagebox("Nemůžeš opustit Zemi, dokud nesplníš startovní aktivitu. Klikni na pilota a na kulaté tlačítko pro více informací.");
-        return;
+    if (!lp_pilot.is_in_flight()) {
+        var pilot_planet_position = lp_pilot.get_pilot_position();
+        if (lp_planet.planet_data[pilot_planet_position].type==='earth' && !lp_planet.planet_data[pilot_planet_position].visited ){
+            // cannot flight
+            lp_space.messagebox("Nemůžeš opustit Zemi, dokud nesplníš startovní aktivitu. Klikni na pilota a na kulaté tlačítko pro více informací.");
+            return;
+        }
     }
 
     var planet_data = lp_planet.planet_data[planet_id];
@@ -305,6 +310,10 @@ lp_planet.click = function(planet_id) {
 
         } else {
             console.log("Pilot cannot navigate, because is on the way.");
+        }
+    } else {
+        if (planet_id === lp_pilot.data.actual_flight.source_id) {
+            lp_space.display_activity(lp_pilot.data.actual_flight.source_id);
         }
     }
 };
@@ -345,6 +354,9 @@ lp_planet.get_planet_name = function(planet_id) {
  * @returns {string}
  */
 lp_planet.add_planet_prefix = function(planet_id) {
+    if (planet_id === null) {
+        return null;
+    }
     var id_string = planet_id.toString();
     if (id_string.substring(0,2) !== "pl") {
         return "pl_"+id_string;
