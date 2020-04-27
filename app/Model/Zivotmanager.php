@@ -30,6 +30,12 @@ class ZivotManager
 		->where('userId',$userId)
 		->where('date',date('Y-m-d'));
 	}
+	public function getDoneDate($userId, $date)
+	{
+		return $this->database->table('zivotuser')
+		->where('userId',$userId)
+		->where('date',date('Y-m-d', $date));
+	}
 	public function addUserZivot($userId, $zivotId)
 	{
 		$values= [

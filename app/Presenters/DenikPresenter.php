@@ -10,6 +10,7 @@ use App\Model\UserManager;
 use App\Model\ZivotManager;
 use App\Model\ShareManager;
 use App\Model\PlanetManager;
+use App\Model\FlightManager;
 use Nette\Application\UI\Form;
 use Nette\Application\UI\Multiplier;
 use Nette\Utils\Html;
@@ -34,13 +35,17 @@ class DenikPresenter extends BasePresenter
   /** @var PlanetManager */
   protected $planetManager;
 
+  /** @var FlightManager */
+  protected $flightManager;
 
-  public function __construct(UserManager $userManager, ZivotManager $zivotManager, ShareManager $shareManager, PlanetManager $planetManager)
+
+  public function __construct(UserManager $userManager, ZivotManager $zivotManager, ShareManager $shareManager, PlanetManager $planetManager, FlightManager $flightManager)
 	{
     $this->userManager = $userManager;
     $this->zivotManager = $zivotManager;
     $this->shareManager = $shareManager;
     $this->planetManager = $planetManager;
+    $this->flightManager = $flightManager;
 	}
 
 
@@ -386,6 +391,29 @@ class DenikPresenter extends BasePresenter
     return $mail;
   }
 
+  public function renderZapisky()
+	{
+    $user = $this->userManager->getUserById($this->user->id);
+    //$this->template->userManager = $user;
+    $allInfo = [];
+    $this->template->dateCreated = date('d. m. Y',$user->created->getTimestamp());
+    $this->template->lifeSupportActive = $user->lifeSupportActive;
+    $this->template->activities = $this->planetManager->getActivitiesDone($this->user->id);
+    for($i = $user->created; $i <= date('Y-m-d'); $i->modify('+1 day')){
+      $info = [];
+      $info["date"] = date('d. m. Y',$i->getTimestamp());
+      $info["daystart"] = date('Y-m-d 00:00:00.00000',$i->getTimestamp());
+      $info["dayfinish"] = date('Y-m-d 23:59:59.00000',$i->getTimestamp());
+      $info["zivotDone"] = $this->zivotManager->getDoneDate($this->user->id, $i->getTimestamp());
+      $info["zivotDonePercentage"] = $this->zivotManager->getTotal($this->user->id, date('Y-m-d',$i->getTimestamp()));
+      $info["specialDone"] = $this->zivotManager->getSpecial($this->user->id,$i->getTimestamp(), true);
+      $info["flights"] = $this->flightManager->getDateFlights($user->id,$i->getTimestamp());
+      //$info["arivals"] = $this->flightManager->getDateFinishFlight($user->id,$i->getTimestamp());
+      array_push($allInfo, $info);
+    }
+    $this->template->allInfo = $allInfo;
+
+  }
 
 
 }

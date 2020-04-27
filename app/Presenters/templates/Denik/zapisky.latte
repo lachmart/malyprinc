@@ -1,0 +1,46 @@
+{block content}
+<div class="userSystem">
+	<h1 n:block="title">Zápisník</h1>
+Do hry jsem se zapojil/a {$dateCreated}. Po tom, co jsem udělal/a úkol na Zemi, jsem se vydal/a na cestu vesmírem.<br>
+{foreach $allInfo as $info}
+	<h2>{$info["date"]} </h2>
+
+{foreach $info['flights'] as $flight}
+	{if $flight->start >=  $info["daystart"]}
+		<span>Odlétám na {$flight->targetPlanetId}.</span>
+	{/if}
+	{if $flight->finish <=  $info["dayfinish"]}
+		<span>Přilétám na  {$flight->targetPlanetId} - {$flight->targetPlanet->name}{$flight->targetPlanet->custom_name}.</span>
+			{foreach $activities as $activity}
+				{if $activity->planetId == $flight->targetPlanetId}
+		  Na této planetě jsem splnil <a href="{$activity->activityLink}">úkol</a>. 
+
+
+			<br>
+		{/if}
+	{/foreach}
+
+	{/if}
+
+
+{/foreach}
+
+
+		 <br>
+
+	{if $info["zivotDonePercentage"] > 0}
+ 		Dneska jsem zvládl/a úkol <span n:foreach="$info['zivotDone'] as $item">  {$item->zivot->name|lower}{if $iterator->last}.{else},{/if}</span>
+	 <br>
+	{/if}
+
+	{if $lifeSupportActive}
+	 Systémy podpory života jsem splnil/a na {$info["zivotDonePercentage"]}%. <br>
+ {/if}
+	{if $info["specialDone"]}
+		Splnil jsem i specilání úkol {$info["specialDone"]->special->name}.<br>
+	{/if}
+	<br>
+{/foreach}
+
+
+{/block}

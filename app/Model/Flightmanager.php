@@ -44,4 +44,20 @@ class FlightManager
 		->limit(1)
 		->fetch();
 	}
+	public function getDateFlights($userId, $date)
+	{
+		return $this->database->table($this->table)
+		->where('userId', $userId)
+		->where('(start BETWEEN "'. date('Y-m-d 00:00:00', $date).'" AND "'. date('Y-m-d 23:59:59', $date).'") OR (finish BETWEEN "'. date('Y-m-d 00:00:00', $date).'" AND "'. date('Y-m-d 23:59:59', $date).'")');
+		//->where('start <', date('Y-m-d\T23:59:59', $date));
+	}
+	public function getDateFinishFlight($userId, $date)
+	{
+		return $this->database->table($this->table)
+		->where('userId', $userId)
+		->where('finish >', date('Y-m-d\T00:00:00', $date))
+		->where('finish <', date('Y-m-d\T23:59:59', $date));
+	}
+
+
 }
