@@ -219,17 +219,18 @@ class MapPresenter extends BasePresenter
   public function actionLifesupport(): void
   {
 
-    $day = date('Y-m-d', time()-24*3600);// date('Y-m-d',strtotime($_GET['time']));
-    $percentage = $this->zivotManager->getTotal($this->user->getId(), $day);
+    $yesterday = date('Y-m-d', time()-24*3600);// date('Y-m-d',strtotime($_GET['time']));
+    $percentageYesterday = $this->zivotManager->getTotal($this->user->getId(), $yesterday);
     $status = false;
+    $user = $this->userManager->getUserById($this->user->getId());
 
-    if($percentage >=70 || $this->userManager->getUserById($this->user->getId())->position === 1)
+    if($percentageYesterday >=70 || $user->position === 1 || !$user->lifeSupportActive)
       $status = true;
 
     $this->sendJson([
-                    "day"=>$day,
+                    "day"=>$yesterday,
                     "status"=>$status,
-                    "percentage"=>$percentage,
+                    "percentage"=>$percentageYesterday,
                  ]);
 
     $this->terminate();

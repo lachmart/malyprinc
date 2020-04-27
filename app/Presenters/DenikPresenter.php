@@ -61,9 +61,11 @@ class DenikPresenter extends BasePresenter
 
   public function renderZivot()
 	{
+    $this->template->lifeSupportActive = $this->userManager->getUserById($this->user->id)->lifeSupportActive;
     $zivotDone = $this->zivotManager->getDoneToday($this->user->id);
     $this->template->zivotDone = $zivotDone;
     $this->template->allDone = count($zivotDone) === $this->zivotManager->getAll()->count('id');
+
 
     $this->template->totalZivotYesterday = $this->zivotManager->getTotal($this->user->id, date('Y-m-d', time()-24*3600));
     $this->template->totalZivotToday = $this->zivotManager->getTotal($this->user->id, date('Y-m-d'));
@@ -72,6 +74,64 @@ class DenikPresenter extends BasePresenter
     $this->template->specialToDo = $this->zivotManager->getSpecial($this->user->id, date('Y-m-d'),false);
 
   }
+
+  protected function createComponentZivotForm()
+  {
+    $form = new Form;
+
+    $zivotDone =  $this->zivotManager->getDoneToday($this->user->id)->fetchAll();
+    foreach ($this->zivotManager->getAll() as $id => $row){
+      if(array_search($id, array_column($zivotDone, 'zivotId'))===false){
+        $form->addCheckbox(strval($id), mb_strtoupper($row->name))
+        ->setOption('description', Html::el('span')
+		      ->setHtml(' - '.$row->description1.' ('.$row->description2.') - '.$row->value.'%')
+	       );
+      }
+    }
+
+    $form->addSubmit('send', 'Uložit postup');
+    $form->onSuccess[] = [$this, 'zivotFormSucceded'];
+    $this->makeBootstrap4($form);
+    return $form;
+  }
+
+  public function zivotFormSucceded($form, $values)
+  {
+    //\var_dump($values);
+    foreach($values as $key=>$value){
+      if($value)
+        $this->zivotManager->addUserZivot($this->user->id, $key);
+    }
+    $this->redirect("Denik:zivot");
+  }
+  protected function createComponentSpecialForm()
+  {
+    $form = new Form;
+    $form->addSubmit('send', 'Splnil jsem speciální úkol!');
+    $form->onSuccess[] = [$this, 'specialFormSucceded'];
+    $this->makeBootstrap4($form);
+    return $form;
+  }
+
+  public function specialFormSucceded($form, $values)
+  {
+
+        $this->zivotManager->updateSpecial($this->user->id);
+        $this->redirect("Denik:zivot");
+  }
+
+  public function actionDeactivatelifesupport()
+  {
+    $this->userManager->updateLifeSupportActive($this->user->id, 0);
+    $this->redirect("Denik:zivot");
+  }
+
+  public function actionActivatelifesupport()
+  {
+    $this->userManager->updateLifeSupportActive($this->user->id, 1);
+    $this->redirect("Denik:zivot");
+  }
+
   public function renderObjevy()
 	{
     $this->CheckRank(); //nemá dojít k povýšení?
@@ -235,51 +295,6 @@ class DenikPresenter extends BasePresenter
   {
     $this->shareManager->changeReceivingActive($this->user->id, $sharingUserId, 1);
     $this->redirect("Denik:pratele");
-  }
-
-  protected function createComponentZivotForm()
-  {
-    $form = new Form;
-
-    $zivotDone =  $this->zivotManager->getDoneToday($this->user->id)->fetchAll();
-    foreach ($this->zivotManager->getAll() as $id => $row){
-      if(array_search($id, array_column($zivotDone, 'zivotId'))===false){
-        $form->addCheckbox(strval($id), $row->name)
-        ->setOption('description', Html::el('span')
-		      ->setHtml(' - '.$row->description1.' ('.$row->description2.') - '.$row->value.'%')
-	       );
-      }
-    }
-
-    $form->addSubmit('send', 'Uložit postup');
-    $form->onSuccess[] = [$this, 'zivotFormSucceded'];
-    $this->makeBootstrap4($form);
-    return $form;
-  }
-
-  public function zivotFormSucceded($form, $values)
-  {
-    //\var_dump($values);
-    foreach($values as $key=>$value){
-      if($value)
-        $this->zivotManager->addUserZivot($this->user->id, $key);
-    }
-    $this->redirect("Denik:zivot");
-  }
-  protected function createComponentSpecialForm()
-  {
-    $form = new Form;
-    $form->addSubmit('send', 'Splnil jsem speciální úkol!');
-    $form->onSuccess[] = [$this, 'specialFormSucceded'];
-    $this->makeBootstrap4($form);
-    return $form;
-  }
-
-  public function specialFormSucceded($form, $values)
-  {
-
-        $this->zivotManager->updateSpecial($this->user->id);
-        $this->redirect("Denik:zivot");
   }
 
   protected function createComponentInviteForm()

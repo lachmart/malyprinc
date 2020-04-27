@@ -58,5 +58,9 @@ class UserManager
 	{
 			return $this->database->table('rankenum')->fetchPairs('id', 'discoveriesNeeded');
 	}
+	public function updateLifeSupportActive($userId, $bool)
+	{
+			return $this->database->table($this->table)->where('id', $userId)->update(['lifeSupportActive' => $bool]);
+	}
 
 }

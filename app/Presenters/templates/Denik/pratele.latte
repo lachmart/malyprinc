@@ -1,7 +1,7 @@
 {block content}
   <div class="userFriends">
     <h1 n:block="title">Přátelé a pozvánky</h1>
-    <div><a target="_blank" href="https://www.facebook.com/groups/217431993017100/">Skupina na Facebooku</a></div>
+    <div><a target="_blank" class="btn btn-dark" href="https://www.facebook.com/groups/217431993017100/">Skupina na Facebooku</a></div>
 
       {if $user->identity->isSkaut}
       <p class="userSubtitle mt-3">Pozvat přítele do hry (tohle vidí pouze skauti):</p>
@@ -20,11 +20,12 @@
 
       <ul>
       {foreach $Shared as $item}
-      <li>{$item->receiving->email}
-       {if $item->sharingActive}
-         <a n:href="Denik:stopsharing $item->receivingUser">Přestat sdílet</a>
-       {else}
-         <a n:href="Denik:continuesharing $item->receivingUser">Obnovit sdílení</a>
+      <li>
+        <big>{$item->receiving->email}&nbsp</big>
+        {if $item->sharingActive}
+         <a class="btn btn-dark" n:href="Denik:stopsharing $item->receivingUser">Přestat sdílet</a>
+        {else}
+         <a class="btn btn-outline-light" n:href="Denik:continuesharing $item->receivingUser">Obnovit sdílení</a>
         {/if}
        </li>
       {/foreach}
@@ -34,13 +35,14 @@
 
       <ul>
       {foreach $Received as $item}
-      <li>{$item->sharing->email}
-       {if $item->receivingActive}
-         <a n:href="Denik:stopreceiving $item->sharingUser">Vypnout sledování</a>
-       {else}
-         <a n:href="Denik:continuereceiving $item->sharingUser">Zapnout sledování</a>
+      <li>
+        <big>{$item->sharing->email}&nbsp</big>
+        {if $item->receivingActive}
+         <a class="btn btn-dark" n:href="Denik:stopreceiving $item->sharingUser">Vypnout sledování</a>
+        {else}
+         <a class="btn btn-outline-light" n:href="Denik:continuereceiving $item->sharingUser">Zapnout sledování</a>
         {/if}
-        <a n:href="Denik:startsharingto $item->sharingUser">Taky sdílet</a>
+        <a class="btn btn-dark" n:href="Denik:startsharingto $item->sharingUser">Taky sdílet</a>
      </li>
     {/foreach}
     </ul>

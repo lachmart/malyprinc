@@ -274,4 +274,7 @@ body {
 	 text-shadow: 0px 0px 4px #12a0a0;
 	 letter-spacing: 1px;
 }
- 
+
+input[type=checkbox] {
+    transform: scale(2);
+}

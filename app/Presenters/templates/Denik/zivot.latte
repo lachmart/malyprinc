@@ -1,66 +1,75 @@
 {block content}
 <div class="userSystem">
 	<h1 n:block="title">Systém podpory života</h1>
-	<div>Bez systému pro podporu života nelze používat raketu k meziplanetárním letům. Abys mohl zítra letět za dobrodružstvím, je třeba splnit v součtu nejméně 70% z níže uvedených úkolů. Nezbytné rutinní úkoly je třeba začít plnit již první den a pokud se ti některý den nepodaří nevadí, prostě si budeš muset dát pauzu. Občas dostaneš i speciální úkol a je na tobě, zda jej splníš.</div>
-	<br>
-		<p class="userSubtitle">Včera běžely systémy na {$totalZivotYesterday}%</p>
-		{if $totalZivotYesterday >= 70 }
-    <div class="progress" style="height: 30px;">
-      <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="{$totalZivotYesterday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotYesterday}%">
-      </div>
-    </div>
-    {/if}
-		{if $totalZivotYesterday < 70 }
-      <div class="progress" style="height: 30px;">
-        <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="{$totalZivotYesterday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotYesterday}%">
-        </div>
-      </div>
-			<div class="alert alert-danger mt-3" role="alert">To je méně, než 70%! Dnes nemáš sílu na cestování a musíš stabilizovat podporu života na lodi. (Neplatí na Zemi)</div>
-		{/if}
-  <br>
-  <p class="userSubtitle">Systémy běží na {$totalZivotToday}%</p>
-  {if $totalZivotToday >= 70 }
-  <div class="progress" style="height: 30px;">
-    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="{$totalZivotToday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotToday}%">
-    </div>
-  </div>
-  {/if}
-  {if $totalZivotToday < 70 }
-  <div class="progress" style="height: 30px;">
-    <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="{$totalZivotToday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotToday}%">
-    </div>
-  </div>
-  {/if}
+	{if $lifeSupportActive}
+		<div>Bez systému pro podporu života nelze používat raketu k meziplanetárním letům. Abys mohl zítra letět za dobrodružstvím, je třeba splnit v součtu nejméně 70% z níže uvedených úkolů. Nezbytné rutinní úkoly je třeba začít plnit již první den a pokud se ti některý den nepodaří nevadí, prostě si budeš muset dát pauzu. Občas dostaneš i speciální úkol a je na tobě, zda jej splníš.</div>
+		<br>
+			<p class="userSubtitle">Včera běžely systémy na {$totalZivotYesterday}%</p>
+			{if $totalZivotYesterday >= 70 }
+	    <div class="progress" style="height: 30px;">
+	      <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="{$totalZivotYesterday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotYesterday}%">
+	      </div>
+	    </div>
+	    {/if}
+			{if $totalZivotYesterday < 70 }
+	      <div class="progress" style="height: 30px;">
+	        <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="{$totalZivotYesterday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotYesterday}%">
+	        </div>
+	      </div>
+				<div class="alert alert-danger mt-3" role="alert">To je méně, než 70%! Dnes nemáš sílu na cestování a musíš stabilizovat podporu života na lodi. (Neplatí na Zemi)</div>
+			{/if}
+	  <br>
+	  <p class="userSubtitle">Systémy běží na {$totalZivotToday}%</p>
+	  {if $totalZivotToday >= 70 }
+	  <div class="progress" style="height: 30px;">
+	    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="{$totalZivotToday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotToday}%">
+	    </div>
+	  </div>
+	  {/if}
+	  {if $totalZivotToday < 70 }
+	  <div class="progress" style="height: 30px;">
+	    <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="{$totalZivotToday}" aria-valuemin="0" aria-valuemax="100" style="width: {$totalZivotToday}%">
+	    </div>
+	  </div>
+	  {/if}
 
-  <p class="userSubtitle mt-5">Dnes splněno:</p>
-  <ul>
-  <li n:foreach="$zivotDone as $item">{$item->zivot->name}</li>
-  </ul>
-    {if $specialDone}
-  Dnes jsi splnil i specilání úkol: <strong>{$specialDone->special->name}</strong><br><br>
-  {/if}
-  <p class="userSubtitle mt-5">Co jsem ještě nesplnil?<p>
-  {if $allDone}
-  <div class="alert alert-success" role="alert">
-    Tady už jsi všechno splnil! Gratuluji.
-  </div>
+	  <p class="userSubtitle mt-5">Dnes splněno:</p>
+	  <ul>
+	  <li n:foreach="$zivotDone as $item"><big>{$item->zivot->name|upper}</big></li>
+	  </ul>
+	    {if $specialDone}
+	  Dnes jsi splnil i specilání úkol: <strong>{$specialDone->special->name}</strong><br><br>
+	  {/if}
+	  <p class="userSubtitle mt-5">Co jsem ještě nesplnil?<p>
+	  {if $allDone}
+	  <div class="alert alert-success" role="alert">
+	    Tady už jsi všechno splnil! Gratuluji.
+	  </div>
+	  {else}
+	    <div class="form__fullWidth">
+	      {control zivotForm}
+	    </div>
+	  {/if}
 
 
-  {else}
-    <div class="form__fullWidth">
-      {control zivotForm}
-    </div>
-  {/if}
+	  {if $specialToDo}
+	    <p class="userSubtitle mt-5">Dnes mám pro tebe i speciální úkol!</p>
+	    <div><span class="specialTask">Název:</span>{$specialToDo->special->name}</div>
+	    <div><span class="specialTask">Typ:</span>{$specialToDo->special->description1}</div>
+	    <div><span class="specialTask">Popis:</span>{$specialToDo->special->description2}</div>
+	    <div class="form__fullWidth mt-3">
+	     {control specialForm}
+	    </div>
+	  {/if}
+		<hr>
+		<br>
+		<br>
+		<a class="btn btn-outline-danger " n:href="Denik:deactivatelifesupport">O systém podpory se mi stará někdo jiný, nezatěžujte mě podřadnými úkoly. (Vypne se udržování podpory života)</a>
+	{else}
+		<div>Tento systém je deaktivovaný.</div>
+		<br>
+		<a class="btn btn-outline-success " n:href="Denik:activatelifesupport">Zapnout udržování podpory života</a>
+	{/if}
 
-
-  {if $specialToDo}
-    <p class="userSubtitle mt-5">Dnes mám pro tebe i speciální úkol!</p>
-    <div><span class="specialTask">Název:</span>{$specialToDo->special->name}</div>
-    <div><span class="specialTask">Typ:</span>{$specialToDo->special->description1}</div>
-    <div><span class="specialTask">Popis:</span>{$specialToDo->special->description2}</div>
-    <div class="form__fullWidth mt-3">
-     {control specialForm}
-    </div>
-  {/if}
 </div>
 {/block}

@@ -415,7 +415,7 @@ class SignPresenter extends Nette\Application\UI\Presenter
     foreach ($form->getControls() as $control) {
       $type = $control->getOption('type');
       if ($type === 'button') {
-        $control->getControlPrototype()->addClass(empty($usedPrimary) ? 'btn btn-primary' : 'btn btn-secondary');
+        $control->getControlPrototype()->addClass(empty($usedPrimary) ? 'btn btn-outline-light' : 'btn btn-dark');
         $usedPrimary = true;
 
       } elseif (in_array($type, ['text', 'textarea', 'select'], true)) {
