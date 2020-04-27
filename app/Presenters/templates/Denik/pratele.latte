@@ -18,33 +18,39 @@
 
       <p class="userSubtitle mt-3">Sdílím polohu s:</p>
 
-      <ul>
+      <div class="container">
       {foreach $Shared as $item}
-      <li>
-        <big>{$item->receiving->email}&nbsp</big>
+      <div class="row">
+        <div class="col"><big>{$item->receiving->email}</big></div>
+        <div class="col">
         {if $item->sharingActive}
          <a class="btn btn-dark" n:href="Denik:stopsharing $item->receivingUser">Přestat sdílet</a>
         {else}
          <a class="btn btn-outline-light" n:href="Denik:continuesharing $item->receivingUser">Obnovit sdílení</a>
         {/if}
-       </li>
+      </div>
+
+      </div>
       {/foreach}
-      </ul>
+      </div>
 
       <p class="userSubtitle mt-3">Sleduji polohu:</p>
 
-      <ul>
+      <div class="container">
       {foreach $Received as $item}
-      <li>
-        <big>{$item->sharing->email}&nbsp</big>
+      <div class="row">
+        <div class="col"><big>{$item->sharing->email}&nbsp</big></div>
+        <div class="col">
         {if $item->receivingActive}
          <a class="btn btn-dark" n:href="Denik:stopreceiving $item->sharingUser">Vypnout sledování</a>
         {else}
          <a class="btn btn-outline-light" n:href="Denik:continuereceiving $item->sharingUser">Zapnout sledování</a>
         {/if}
+
         <a class="btn btn-dark" n:href="Denik:startsharingto $item->sharingUser">Taky sdílet</a>
-     </li>
+        </div>
+     </div>
     {/foreach}
-    </ul>
+  </div>
   </div>
 {/block}
