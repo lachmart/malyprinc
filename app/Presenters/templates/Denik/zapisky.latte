@@ -1,11 +1,22 @@
 {block content}
 <div class="userSystem">
 	<h1 n:block="title">Zápisník</h1>
-Do hry jsem se zapojil/a {$dateCreated}. Po tom, co jsem udělal/a úkol na Zemi, jsem se vydal/a na cestu vesmírem.<br>
+Do hry jsem se zapojil/a {$dateCreated}.
+{foreach $activities as $activity}
+	{if $activity->planetId == 1}
+Po tom, co jsem udělal/a úkol na Zemi, jsem se vydal/a na cestu vesmírem.<br>
+<div style="float:right; height:200px">
+<img style="transform: rotate(30deg); opacity:0.3;" src="{$basePath}/{$activity->activityLink}-thumb.jpg">.
+</div>
+<br>
+{/if}
+{/foreach}
+
 {foreach $allInfo as $info}
 	<h2>{$info["date"]} </h2>
 
 {foreach $info['flights'] as $flight}
+	<div>
 	{if $flight->start >=  $info["daystart"]}
 		<span>Odlétám na {$flight->targetPlanetId}.</span>
 	{/if}
@@ -13,9 +24,10 @@ Do hry jsem se zapojil/a {$dateCreated}. Po tom, co jsem udělal/a úkol na Zemi
 		<span>Přilétám na  {$flight->targetPlanetId} - {$flight->targetPlanet->name}{$flight->targetPlanet->custom_name}.</span>
 			{foreach $activities as $activity}
 				{if $activity->planetId == $flight->targetPlanetId}
-		  Na této planetě jsem splnil <a href="{$activity->activityLink}">úkol</a>. 
-
-
+		  Na této planetě jsem splnil úkol. </div><br>
+<div style="float:right; height:150px; clear:left">
+			<img <img style="transform: rotate(28deg);opacity:0.3;"  src="{$basePath}/{$activity->activityLink}-thumb.jpg">
+		</div>
 			<br>
 		{/if}
 	{/foreach}
@@ -27,7 +39,7 @@ Do hry jsem se zapojil/a {$dateCreated}. Po tom, co jsem udělal/a úkol na Zemi
 
 
 		 <br>
-
+<div>
 	{if $info["zivotDonePercentage"] > 0}
  		Dneska jsem zvládl/a úkol <span n:foreach="$info['zivotDone'] as $item">  {$item->zivot->name|lower}{if $iterator->last}.{else},{/if}</span>
 	 <br>
@@ -39,8 +51,9 @@ Do hry jsem se zapojil/a {$dateCreated}. Po tom, co jsem udělal/a úkol na Zemi
 	{if $info["specialDone"]}
 		Splnil jsem i specilání úkol {$info["specialDone"]->special->name}.<br>
 	{/if}
+</div>
 	<br>
 {/foreach}
 
-
+<br><br><br>
 {/block}
