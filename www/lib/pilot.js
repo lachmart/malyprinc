@@ -263,7 +263,7 @@ lp_pilot.add_action_to_friends = function(info_text_object, friend) {
                     height: 70*lp_space.scale_width,
                     width: 59*lp_space.scale_height,
                     image: lp_img_friend,
-                    shadowColor: 'white',
+                    shadowColor: 'black',
                     shadowBlur: 35,
                     shadowOffset: { x: 4, y: 4 },
                 });
