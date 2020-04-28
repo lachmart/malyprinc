@@ -60,15 +60,14 @@
 	    <div class="form__fullWidth mt-3">
 	     {control specialForm}
 	    </div>
-	  {/if}
+	   {/if}
+
 		<hr>
-		<br>
-		<br>
-		<a class="btn btn-outline-danger " n:href="Denik:deactivatelifesupport">O systém podpory se mi stará někdo jiný, nezatěžujte mě podřadnými úkoly. (Vypne se udržování podpory života)</a>
+		<a class="btn btn-outline-danger " n:href="Denik:deactivatelifesupport">Deaktivovat systém pro podporu života. Chci plnit pouze aktivity na planetách.</a>
 	{else}
-		<div>Tento systém je deaktivovaný.</div>
+		<div>Systém je deaktivovaný.</div>
 		<br>
-		<a class="btn btn-outline-success " n:href="Denik:activatelifesupport">Zapnout udržování podpory života</a>
+		<a class="btn btn-outline-success " n:href="Denik:activatelifesupport">Zapnout udržování podpory života.</a>
 	{/if}
 
 </div>
