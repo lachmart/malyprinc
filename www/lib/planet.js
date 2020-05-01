@@ -13,6 +13,9 @@ lp_img_planet.src = 'assets/planet2.png';
 var lp_img_planet2 = new Image();
 lp_img_planet2.src = 'assets/planet.png';
 
+var lp_img_redplanet = new Image();
+lp_img_redplanet.src = 'assets/redplanet.png';
+
 var lp_img_planet3 = new Image();
 lp_img_planet3.src = 'assets/planet4.png';
 

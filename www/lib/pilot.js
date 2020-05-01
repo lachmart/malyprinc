@@ -660,9 +660,11 @@ lp_pilot.click_activity = function(worm_hole) {
  * @param y
  * @param text
  * @param size
+ * @param width
+ * @param color
  * @private
  */
-lp_pilot._get_text = function (x, y, text, size, width) {
+lp_pilot._get_text = function (x, y, text, size, width, color) {
     var result = new Konva.Text({
           x: x,
           y: y,
@@ -671,6 +673,10 @@ lp_pilot._get_text = function (x, y, text, size, width) {
          fontFamily: 'Calibri',
          fill: 'white'
     });
+
+    if (color!== undefined) {
+        result.fill(color);
+    }
 
     if (width !== undefined) {
         result.width(width);
@@ -768,6 +774,13 @@ lp_pilot.start_flight = function() {
      var display_time = time_to_end.getDate()+"."+(time_to_end.getMonth()+1)+"."+time_to_end.getFullYear()+" "+time_to_end.getHours()+":"+time_to_end.getMinutes();
 
      var time2 = lp_pilot._get_text(flight.x(), time.y()+time.height(), "Čas příletu: "+display_time, basic_size);
+
+     if (lp_planet.planet_data[lp_planet.measure_target_id].type === "red_planet") {
+         var warning = lp_pilot._get_text(flight.x(), time2.y()+time2.height(), "Trošku složitější aktivita než jinde!", basic_size, 300, "red");
+         lp_pilot.dialog.add(warning);
+     }
+
+
      lp_pilot.counter_title = lp_pilot._get_text(150*lp_space.scale_width, lp_pilot.dialog.height()-(40*lp_space.scale_height), "", header_size);
 
      lp_pilot.dialog.add(flight);
