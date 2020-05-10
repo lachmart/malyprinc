@@ -212,8 +212,12 @@ class DenikPresenter extends BasePresenter
       $image->save($link.'-thumb.jpg', 80, Image::JPEG);
 
       $this->planetManager->setActivityDone($this->user->getId(), $values->planetId, $link);
+
       $this->flashMessage('Právě jsi nahrál úkol!', 'alert alert-success');
+      $activity =   $this->planetManager->getActivityFromUserPlanet($this->user->getId(), $values->planetId);
+      $this->sendMailApprove($activity, 1);
     }
+
     $this->redirect("Denik:objevy");
   }
 
@@ -242,6 +246,8 @@ class DenikPresenter extends BasePresenter
       $values->ukol->move($link);
       $this->planetManager->setActivityDone($this->user->getId(), $values->planetId, $link);
       $this->flashMessage('Právě jsi nahrál úkol!', 'alert alert-success');
+      $activity =   $this->planetManager->getActivityFromUserPlanet($this->user->getId(), $values->planetId);
+      $this->sendMailApprove($activity, 2);
     }
     $this->redirect("Denik:objevy");
   }
@@ -266,7 +272,8 @@ class DenikPresenter extends BasePresenter
     $link = $values->ukol;
     $this->planetManager->setActivityDone($this->user->getId(), $values->planetId, $link);
     $this->flashMessage('Právě jsi nahrál úkol!', 'alert alert-success');
-
+    $activity =   $this->planetManager->getActivityFromUserPlanet($this->user->getId(), $values->planetId);
+    $this->sendMailApprove($activity, 3);
     $this->redirect("Denik:objevy");
   }
 
@@ -414,6 +421,39 @@ class DenikPresenter extends BasePresenter
     $this->template->allInfo = $allInfo;
 
   }
+
+  public function actionApprove($id, $token)
+  {
+      if($this->planetManager->setActivityApproved($id, $token)){
+        $this->flashMessage(')Ukol byl potvrzen.', 'alert alert-success');
+      }
+      else {
+          $this->flashMessage('Úkol je již potvrzen, nebo máš špatný odkaz. POkud se ti něco nezdá, kontaktuj podporu', 'alert alert-danger');
+      }
+      $this->redirect('Denik:');
+
+   }
+
+   private function sendMailApprove($activity, $type){
+     $token = Nette\Utils\Random::generate(10);
+     $this->planetManager->setActivityToken($activity->id, $token);
+     $mail = $this->generateMailMessage('lachmart@skaut.cz');
+     $mail->setSubject('Úkol čeká na schválení');
+     // ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
+     if ($type ==1){
+       $mail->setHtmlBody('<div>Úkol: <img src="https://malyprincolomouc.cz/'.$activity->activityLink.'.jpg">.</div><br>
+                            <div>Potvrzení:
+                            <a href="https://malyprincolomouc.cz/denik/approve?id='.$activity->id.'&token='.$token.'"> tento odkaz</a>.</div><br>
+                            <div>Tým Malého prince</div>');
+     }
+     else{
+       $mail->setHtmlBody('<div>Úkol: <a href="https://malyprincolomouc.cz/'.$activity->activityLink.'.jpg"> Tady</a>.</div><br>
+                            <div>Potvrzení:
+                            <a href="https://malyprincolomouc.cz/denik/approve?id='.$activity->id.'&token='.$token.'"> tento odkaz</a>.</div><br>
+                            <div>Tým Malého prince</div>');
+     }
+      $this->mailer->send($mail);
+   }
 
 
 }

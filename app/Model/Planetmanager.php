@@ -74,6 +74,19 @@ class PlanetManager
 		->where('planetId', $planetId)
 		->update(['activityLink'=>$link]);
 	}
+	public function setActivityToken($id, $token)
+	{
+		return $this->database->table('userplanet')
+		->where('id', $id)
+		->update(['token'=>$token]);
+	}
+	public function setActivityApproved($id, $token)
+	{
+		return $this->database->table('userplanet')
+		->where('id', $id)
+		->where('token', $token)
+		->update(['approved'=>true]);
+	}
 	public function getActivitiesDone($userId)
 	{
 		return $this->database->table('userplanet')
@@ -86,7 +99,16 @@ class PlanetManager
 		return $this->database->table('userplanet')
 		->where('planetId', $planetId)
 		->where('activityLink IS NOT NULL')
+		->where('approved', true)
 		->order('id DESC');
+	}
+
+	public function getActivityFromUserPlanet($userId, $planetId)
+	{
+		return $this->database->table('userplanet')
+		->where('userId', $userId)
+		->where('planetId', $planetId)
+		->fetch();
 	}
 
 	public function getActivity($id)
