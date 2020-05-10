@@ -422,13 +422,13 @@ class DenikPresenter extends BasePresenter
 
   }
 
-  public function actionApprove($id, $token)
+  public function actionApprove($activityId, $token)
   {
-      if($this->planetManager->setActivityApproved($id, $token)){
-        $this->flashMessage(')Ukol byl potvrzen.', 'alert alert-success');
+      if($this->planetManager->setActivityApproved($activityId, $token)){
+        $this->flashMessage('Úkol byl potvrzen.', 'alert alert-success');
       }
       else {
-          $this->flashMessage('Úkol je již potvrzen, nebo máš špatný odkaz. POkud se ti něco nezdá, kontaktuj podporu', 'alert alert-danger');
+          $this->flashMessage('Úkol je již potvrzen id= '.$activityId.' token´='.$token.', nebo máš špatný odkaz. POkud se ti něco nezdá, kontaktuj podporu', 'alert alert-danger');
       }
       $this->redirect('Denik:');
 
@@ -438,18 +438,19 @@ class DenikPresenter extends BasePresenter
      $token = Nette\Utils\Random::generate(10);
      $this->planetManager->setActivityToken($activity->id, $token);
      $mail = $this->generateMailMessage('lachmart@skaut.cz');
+     $mail->addCc('david.pokorny@olc.cz');
      $mail->setSubject('Úkol čeká na schválení');
      // ->setBody("Dobrý den,\nvaše registrace byla přijata. Potvrďte email....");
      if ($type ==1){
        $mail->setHtmlBody('<div>Úkol: <img src="https://malyprincolomouc.cz/'.$activity->activityLink.'.jpg">.</div><br>
                             <div>Potvrzení:
-                            <a href="https://malyprincolomouc.cz/denik/approve?id='.$activity->id.'&token='.$token.'"> tento odkaz</a>.</div><br>
+                            <a href="https://malyprincolomouc.cz/denik/approve?activityId='.$activity->id.'&token='.$token.'"> tento odkaz</a>.</div><br>
                             <div>Tým Malého prince</div>');
      }
      else{
        $mail->setHtmlBody('<div>Úkol: <a href="https://malyprincolomouc.cz/'.$activity->activityLink.'.jpg"> Tady</a>.</div><br>
                             <div>Potvrzení:
-                            <a href="https://malyprincolomouc.cz/denik/approve?id='.$activity->id.'&token='.$token.'"> tento odkaz</a>.</div><br>
+                            <a href="https://malyprincolomouc.cz/denik/approve?activityId='.$activity->id.'&token='.$token.'"> tento odkaz</a>.</div><br>
                             <div>Tým Malého prince</div>');
      }
       $this->mailer->send($mail);
