@@ -213,7 +213,7 @@ class DenikPresenter extends BasePresenter
 
       $this->planetManager->setActivityDone($this->user->getId(), $values->planetId, $link);
 
-      $this->flashMessage('Právě jsi nahrál úkol!', 'alert alert-success');
+      $this->flashMessage('Právě jsi nahrál aktivitu! Úkol jsi splnil, ale mezi ostatními pracemi se objeví po schválení nezávadnosti obsahu. To může trvat i 24 hodin. Klidně leť dále!', 'alert alert-success');
       $activity =   $this->planetManager->getActivityFromUserPlanet($this->user->getId(), $values->planetId);
       $this->sendMailApprove($activity, 1);
     }
@@ -245,7 +245,7 @@ class DenikPresenter extends BasePresenter
       $link = 'upload/'.$values->planetId.'/'.$this->user->getId().$values->ukol->getSanitizedName();
       $values->ukol->move($link);
       $this->planetManager->setActivityDone($this->user->getId(), $values->planetId, $link);
-      $this->flashMessage('Právě jsi nahrál úkol!', 'alert alert-success');
+      $this->flashMessage('Právě jsi nahrál aktivitu! Úkol jsi splnil, ale mezi ostatními pracemi se objeví po schválení nezávadnosti obsahu. To může trvat i 24 hodin. Klidně leť dále!', 'alert alert-success');
       $activity =   $this->planetManager->getActivityFromUserPlanet($this->user->getId(), $values->planetId);
       $this->sendMailApprove($activity, 2);
     }
@@ -271,7 +271,7 @@ class DenikPresenter extends BasePresenter
 
     $link = $values->ukol;
     $this->planetManager->setActivityDone($this->user->getId(), $values->planetId, $link);
-    $this->flashMessage('Právě jsi nahrál úkol!', 'alert alert-success');
+    $this->flashMessage('Právě jsi nahrál aktivitu! Úkol jsi splnil, ale mezi ostatními pracemi se objeví po schválení nezávadnosti obsahu. To může trvat i 24 hodin. Klidně leť dále!', 'alert alert-success');
     $activity =   $this->planetManager->getActivityFromUserPlanet($this->user->getId(), $values->planetId);
     $this->sendMailApprove($activity, 3);
     $this->redirect("Denik:objevy");
