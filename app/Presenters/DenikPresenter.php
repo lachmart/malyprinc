@@ -435,6 +435,7 @@ class DenikPresenter extends BasePresenter
    }
 
    private function sendMailApprove($activity, $type){
+    if(!$activity->token){
      $token = Nette\Utils\Random::generate(10);
      $this->planetManager->setActivityToken($activity->id, $token);
      $mail = $this->generateMailMessage('lachmart@skaut.cz');
@@ -454,6 +455,7 @@ class DenikPresenter extends BasePresenter
                             <div>Tým Malého prince</div>');
      }
       $this->mailer->send($mail);
+      }
    }
 
 
