@@ -448,8 +448,14 @@ class DenikPresenter extends BasePresenter
                             <a href="https://malyprincolomouc.cz/denik/approve?activityId='.$activity->id.'&token='.$token.'"> tento odkaz</a>.</div><br>
                             <div>Tým Malého prince</div>');
      }
-     else{
+     elseif ($type ==2){
        $mail->setHtmlBody('<div>Úkol: <a href="https://malyprincolomouc.cz/'.$activity->activityLink.'"> Tady</a>.</div><br>
+                            <div>Potvrzení:
+                            <a href="https://malyprincolomouc.cz/denik/approve?activityId='.$activity->id.'&token='.$token.'"> tento odkaz</a>.</div><br>
+                            <div>Tým Malého prince</div>');
+     }
+     else {
+       $mail->setHtmlBody('<div>Úkol: <a href='.$activity->activityLink.'"> Tady</a>.</div><br>
                             <div>Potvrzení:
                             <a href="https://malyprincolomouc.cz/denik/approve?activityId='.$activity->id.'&token='.$token.'"> tento odkaz</a>.</div><br>
                             <div>Tým Malého prince</div>');
