@@ -150,8 +150,6 @@ lp_space._createStage = function() {
         height: 70*lp_space.scale_width,
     });
 
-
-
     lp_space.logo.on("mouseenter", function() {lp_space.add_button_effect(lp_space.logo,true, "#B3C6C6",lp_space._layer)});
     lp_space.logo.on("mouseleave", function() {lp_space.add_button_effect(lp_space.logo,false, null, lp_space._layer)});
     lp_space.logo.on("click", function() {lp_action.go_to_deck_logbook()});
@@ -201,9 +199,23 @@ lp_space._add_plannets = function() {
             case "red_planet":
                 lp_planet.create_planet(plannets.planet[pos], lp_img_redplanet);
                 break;
-            case "chair_planet":
-                lp_planet.create_planet(plannets.planet[pos], lp_img_planet3);
+
+            case "planet_1":
+                lp_planet.create_planet(plannets.planet[pos], lp_img_1);
                 break;
+            case "planet_2":
+                lp_planet.create_planet(plannets.planet[pos], lp_img_2);
+                break;
+            case "planet_3":
+                lp_planet.create_planet(plannets.planet[pos], lp_img_3);
+                break;
+            case "planet_4":
+                lp_planet.create_planet(plannets.planet[pos], lp_img_4);
+                break;
+            case "planet_5":
+                lp_planet.create_planet(plannets.planet[pos], lp_img_5);
+                break;
+                
             case "worm_hole":
                 lp_planet.create_planet(plannets.planet[pos], lp_worm_hole);
                 break;

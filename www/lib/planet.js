@@ -16,9 +16,20 @@ lp_img_planet2.src = 'assets/planet.png';
 var lp_img_redplanet = new Image();
 lp_img_redplanet.src = 'assets/redplanet.png';
 
-var lp_img_planet3 = new Image();
-lp_img_planet3.src = 'assets/planet4.png';
+var lp_img_1 = new Image();
+lp_img_1.src = 'assets/planets/1.png';
 
+var lp_img_2 = new Image();
+lp_img_2.src = 'assets/planets/2.png';
+
+var lp_img_3 = new Image();
+lp_img_3.src = 'assets/planets/3.png';
+
+var lp_img_4 = new Image();
+lp_img_4.src = 'assets/planets/4.png';
+
+var lp_img_5 = new Image();
+lp_img_5.src = 'assets/planets/5.png';
 
 var lp_planet = function () {};
 
