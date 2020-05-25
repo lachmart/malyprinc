@@ -31,6 +31,10 @@ lp_img_4.src = 'assets/planets/4.png';
 var lp_img_5 = new Image();
 lp_img_5.src = 'assets/planets/5.png';
 
+var lp_img_b612 = new Image();
+lp_img_b612.src = 'assets/planets/b612.png';
+
+
 var lp_planet = function () {};
 
 lp_planet.vars = function() {

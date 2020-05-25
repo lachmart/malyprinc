@@ -199,7 +199,9 @@ lp_space._add_plannets = function() {
             case "red_planet":
                 lp_planet.create_planet(plannets.planet[pos], lp_img_redplanet);
                 break;
-
+            case "b612":
+                lp_planet.create_planet(plannets.planet[pos], lp_img_b612);
+                break;
             case "planet_1":
                 lp_planet.create_planet(plannets.planet[pos], lp_img_1);
                 break;

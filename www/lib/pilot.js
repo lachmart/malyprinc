@@ -442,7 +442,12 @@ lp_pilot._add_avatar = function(avatar_type, id, json_flight) {
         var saved = localStorage.getItem(lp_pilot.data.id + "rank");
         if (parseInt(saved) !== lp_pilot.data.rank_id) {
             localStorage.setItem(lp_pilot.data.id+"rank", lp_pilot.data.rank_id);
-            lp_space.messagebox("Gratulujeme, právě jsi získal hodnost "+lp_pilot.data.rank_name.toLowerCase()+"!");
+            if (lp_pilot.data.rank_id === 10) {
+                lp_space.messagebox("Gratulujeme, právě jsi získal nejvyšší hodnost "+lp_pilot.data.rank_id+" - "+lp_pilot.data.rank_name.toLowerCase()+"! Tvá cesta se chýlí ke konci. Nyní se vydej na planetu B612.");
+            } else {
+                lp_space.messagebox("Gratulujeme, právě jsi získal hodnost "+lp_pilot.data.rank_id+" - "+lp_pilot.data.rank_name.toLowerCase()+"!");
+            }
+
         }
     }
 };
