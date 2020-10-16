@@ -167,10 +167,10 @@ class SignPresenter extends Nette\Application\UI\Presenter
     $form->addUpload('avatar', 'Foto:')
       ->addRule(Form::IMAGE, 'Avatar musí být JPEG, PNG nebo GIF.')
     ->addRule(Form::MAX_FILE_SIZE, 'Maximální velikost souboru je 10 mB.', 10 * 1024 * 1024 /* v bytech */);
-    $form->addCheckbox('isSkaut', 'Jsem skaut')->setRequired("Tady se mohou registrovat pouze skauti. Chceš i tak hrát? Zařiď si pozvánku od kamaráda, který už hraje ;)");
-    $form->addText('stredisko', 'Středisko')->setRequired("Jsi z toho nejlepšího střediska?")
+    $form->addCheckbox('isSkaut', 'Jsem skaut');//->setRequired("Tady se mohou registrovat pouze skauti. Chceš i tak hrát? Zařiď si pozvánku od kamaráda, který už hraje ;)");
+    $form->addText('stredisko', 'Středisko')//->setRequired("Jsi z toho nejlepšího střediska?")
     ->addRule(Form::INTEGER, 'Zadej prosím pouze číslo, například 4.');
-    $form->addText('oddil', 'Oddíl')->setRequired("Jak si vede tvůj oddíl?");
+    $form->addText('oddil', 'Oddíl');//->setRequired("Jak si vede tvůj oddíl?");
     $form->addSubmit('send', 'Registrovat');
     $form->onSuccess[] = [$this, 'register2FormSucceded'];
     $this->makeBootstrap4($form);
