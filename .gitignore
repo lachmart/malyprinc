@@ -24,3 +24,9 @@ www/assets/source/
 app/config/local.neon
 
 www/activity/
+# local secrets and data, never commit
+*.sql
+app/config/local.neon
+/temp/*
+/log/*
+!/log/.gitignore
